@@ -15,8 +15,8 @@ import java.util.UUID;
 @Service
 public class PasswordResetService {
 
-    @Autowired
-    private EmailService emailService;
+    // @Autowired
+    // private EmailService emailService;
 
     @Autowired
     private UserRepository userRepository; // Tiêm repo User
@@ -44,10 +44,11 @@ public class PasswordResetService {
             PasswordResetToken token = new PasswordResetToken(tokenString, user);
             tokenRepository.save(token);
 
-            // 4. Gửi email
+            // 4. Gửi email (tạm thời comment để test)
             String resetLink = "http://localhost:3000/reset-password?token=" + tokenString;
-            emailService.sendEmail(email, "Yêu cầu Reset Mật khẩu", "Link reset: " + resetLink);
+            // emailService.sendEmail(email, "Yêu cầu Reset Mật khẩu", "Link reset: " + resetLink);
             System.out.println("LOGIC: Đã tạo token " + tokenString + " cho user " + email);
+            System.out.println("Reset link: " + resetLink);
         } else {
             // Không tìm thấy email -> không làm gì cả
             System.out.println("LOGIC: Không tìm thấy email " + email);
