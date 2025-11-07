@@ -1,4 +1,4 @@
-package com.example.server.repository; // Gói của bạn
+package com.example.server.repository;
 
 import com.example.server.entity.PasswordResetToken;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface PasswordResetTokenRepository extends JpaRepository<PasswordResetToken, Long> {
 
-    // Hàm để tìm token bằng chuỗi token
+    // Tìm token bằng chuỗi token (Spring JPA sẽ map theo tên field 'token' trong entity)
     Optional<PasswordResetToken> findByToken(String token);
 }

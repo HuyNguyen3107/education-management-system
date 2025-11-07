@@ -1,9 +1,10 @@
-package com.example.server.entity; // Gói của bạn
+package com.example.server.entity;
 
-import jakarta.persistence.*; // Dùng "javax.persistence" nếu bạn dùng Spring Boot 2
-import java.util.Date;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "password_reset_tokens")
 public class PasswordResetToken {
 
     private static final int EXPIRATION_MINUTES = 15; // Token hết hạn sau 15 phút
@@ -12,46 +13,93 @@ public class PasswordResetToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "reset_token", nullable = false, unique = true, length = 255)
     private String token;
 
-    // Liên kết token này với một User
-    // Giả sử bạn có file User.java trong com.example.server.entity
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date expiryDate;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Transient
+    private LocalDateTime expiryDate;
 
     public PasswordResetToken() {
         super();
     }
 
-    // Constructor để tạo token mới
     public PasswordResetToken(String token, User user) {
         super();
         this.token = token;
         this.user = user;
-        this.expiryDate = calculateExpiryDate();
-    }
-    
-    // Hàm tính thời gian hết hạn (15 phút từ bây giờ)
-    private Date calculateExpiryDate() {
-        return new Date(System.currentTimeMillis() + (EXPIRATION_MINUTES * 60 * 1000));
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
-    // Hàm kiểm tra token còn hạn không
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+        if (updatedAt == null) {
+            updatedAt = LocalDateTime.now();
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    // Hàm kiểm tra token còn hạn không (15 phút từ created_at)
     public boolean isExpired() {
-        return new Date().after(this.expiryDate);
+        LocalDateTime expiry = createdAt.plusMinutes(EXPIRATION_MINUTES);
+        return LocalDateTime.now().isAfter(expiry);
     }
     
-    // ----- Getters và Setters -----
-    public Long getId() { return id; }
-    public String getToken() { return token; }
-    public void setToken(String token) { this.token = token; }
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
-    public Date getExpiryDate() { return expiryDate; }
-    public void setExpiryDate(Date expiryDate) { this.expiryDate = expiryDate; }
+    // Getters và Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }
