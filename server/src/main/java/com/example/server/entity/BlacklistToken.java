@@ -1,6 +1,7 @@
 package com.example.server.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -13,6 +14,12 @@ public class BlacklistToken {
 
     @Column(unique = true, nullable = false)
     private String token;
+
+    @Column(nullable = false, name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(nullable = false, name = "updated_at")
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     public BlacklistToken() {
     }
@@ -35,5 +42,21 @@ public class BlacklistToken {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

@@ -30,13 +30,16 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Email không tồn tại"));
 
+        // Kiểm tra mật khẩu (hash hoặc plain, tùy theo DB)
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())
                 && !request.getPassword().equals(user.getPasswordHash())) {
             throw new RuntimeException("Sai mật khẩu");
         }
 
-        String token = jwtService.generateToken(user.getEmail());
-        user.setIsOnline(true);
+        // Sinh token mới (User implements UserDetails)
+        String token = jwtService.generateToken(user);
+
+        user.setOnline(true);
         userRepository.save(user);
 
         return new LoginResponse("Đăng nhập thành công", token);
@@ -45,13 +48,18 @@ public class AuthService {
     public void logout(String bearerToken) {
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             String token = bearerToken.substring(7);
+
+            // Nếu token chưa bị thu hồi thì thêm vào blacklist
             if (!blacklistTokenRepository.existsByToken(token)) {
                 blacklistTokenRepository.save(new BlacklistToken(token));
             }
 
-            String email = jwtService.extractEmail(token);
+            // Lấy email từ token (JWT subject chính là email)
+            String email = jwtService.extractUsername(token);
+
+            // Cập nhật trạng thái offline
             userRepository.findByEmail(email).ifPresent(u -> {
-                u.setIsOnline(false);
+                u.setOnline(false);
                 userRepository.save(u);
             });
         }
