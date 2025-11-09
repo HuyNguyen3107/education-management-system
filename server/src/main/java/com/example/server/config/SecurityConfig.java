@@ -29,19 +29,21 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // CORS config
+    // ✅ Cấu hình CORS (gọn, đúng chuẩn, không warning)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("*"));
+        config.setAllowedOriginPatterns(List.of("*")); // Dùng allowedOriginPatterns thay cho allowedOrigins để tránh
+                                                       // warning
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true); // Cho phép gửi cookie/token qua request
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
     }
 
-    // Security filter chain
+    // ✅ Cấu hình bảo mật chính
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -49,9 +51,14 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                        // Logout phải có token hợp lệ
+                        .requestMatchers("/api/auth/logout").authenticated()
+                        // Các API khác trong /api/auth/** được phép truy cập tự do (login,
+                        // forgot-password, refresh-token,...)
+                        .requestMatchers("/api/auth/**").permitAll()
+                        // Tất cả request khác phải có token
                         .anyRequest().authenticated())
-                // ✅ KHÔNG cần authenticationProvider
+                // Thêm JWT filter vào trước UsernamePasswordAuthenticationFilter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
