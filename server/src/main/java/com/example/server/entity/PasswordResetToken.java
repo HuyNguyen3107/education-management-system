@@ -2,41 +2,41 @@ package com.example.server.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
-@Table(name = "password_reset_tokens")
+@Table(name = "password_tokens")
 public class PasswordResetToken {
 
     private static final int EXPIRATION_MINUTES = 15; // Token hết hạn sau 15 phút
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
 
-    @Column(name = "reset_token", nullable = false, unique = true, length = 255)
-    private String token;
+    @Column(name = "reset_token", nullable = false, unique = true, length = 200)
+    private String resetToken;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "expired", nullable = false, length = 50)
+    private String expired = "false";
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Transient
-    private LocalDateTime expiryDate;
-
     public PasswordResetToken() {
-        super();
     }
 
-    public PasswordResetToken(String token, User user) {
-        super();
-        this.token = token;
+    public PasswordResetToken(String resetToken, User user) {
+        this.resetToken = resetToken;
         this.user = user;
+        this.expired = "false";
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -63,20 +63,20 @@ public class PasswordResetToken {
     }
     
     // Getters và Setters
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public String getToken() {
-        return token;
+    public String getResetToken() {
+        return resetToken;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
     }
 
     public User getUser() {
@@ -101,5 +101,13 @@ public class PasswordResetToken {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getExpired() {
+        return expired;
+    }
+
+    public void setExpired(String expired) {
+        this.expired = expired;
     }
 }

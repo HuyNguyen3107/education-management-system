@@ -24,22 +24,22 @@ public class User {
     @Column(nullable = false, length = 15)
     private String phone;
     
-    @Column(name = "date_of_birth", nullable = false, length = 10)
+    @Column(name = "date_of_birth", nullable = false, length = 50)
     private String dateOfBirth;
     
     @Column(nullable = false, length = 10)
     private String gender;
     
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, length = 150)
     private String address;
     
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 150)
     private String status;
     
     @Column(name = "academic_year", nullable = false, length = 20)
     private String academicYear;
     
-    @Column(name = "education_level", nullable = false, length = 50)
+    @Column(name = "education_level", nullable = false, length = 30)
     private String educationLevel;
     
     @Column(name = "is_online")
