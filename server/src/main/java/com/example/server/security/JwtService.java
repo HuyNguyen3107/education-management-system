@@ -5,8 +5,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,35 +18,40 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    // Dùng chuỗi 256-bit ngẫu nhiên làm SECRET_KEY (thay bằng chuỗi thật của bạn)
-    private static final String SECRET_KEY = "aef2398rhdsjfh3478sd9fhsd983hf983hf9shd9fh3s9fhsd9f";
+    // 🔐 Lấy SECRET_KEY từ file application.properties hoặc .env
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
 
-    // Hàm lấy email (subject) từ token
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
-    }
-
-    // Hàm kiểm tra token còn hợp lệ hay không
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
-    }
-
-    // Tạo token mới (khi login)
+    // ================== TOKEN TẠO RA ==================
+    // Tạo JWT token với thông tin user
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
 
+    // Cho phép thêm custom claims (nếu cần)
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder()
                 .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername()) // subject = email
+                .setSubject(userDetails.getUsername()) // subject = email (username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24h
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 tiếng
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
+    // ================== TOKEN GIẢI MÃ ==================
+    // Lấy email (subject) từ token
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    // Lấy 1 claim cụ thể
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+    // Giải mã toàn bộ claims
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignInKey())
@@ -53,19 +60,24 @@ public class JwtService {
                 .getBody();
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
-    }
-
+    // ================== TOKEN XÁC THỰC ==================
+    // Kiểm tra token có hết hạn chưa
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
+    // Lấy ngày hết hạn token
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    // Kiểm tra token hợp lệ cho user
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    }
+
+    // ================== KHÓA KÝ TOKEN ==================
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);

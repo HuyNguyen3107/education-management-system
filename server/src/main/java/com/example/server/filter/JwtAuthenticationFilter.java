@@ -1,4 +1,4 @@
-package com.example.server.config;
+package com.example.server.filter;
 
 import com.example.server.repository.UserRepository;
 import com.example.server.security.JwtService;

@@ -30,19 +30,24 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Email không tồn tại"));
 
-        // Kiểm tra mật khẩu (hash hoặc plain, tùy theo DB)
+        // Kiểm tra mật khẩu (hash hoặc plain text, tùy DB)
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())
                 && !request.getPassword().equals(user.getPasswordHash())) {
             throw new RuntimeException("Sai mật khẩu");
         }
 
-        // Sinh token mới (User implements UserDetails)
+        // Sinh JWT token
         String token = jwtService.generateToken(user);
 
+        // Cập nhật trạng thái online
         user.setOnline(true);
         userRepository.save(user);
 
-        return new LoginResponse("Đăng nhập thành công", token);
+        // Ẩn mật khẩu khi trả về
+        user.setPasswordHash(null);
+
+        // ✅ Trả về LoginResponse mới
+        return new LoginResponse(token, user);
     }
 
     public void logout(String bearerToken) {
