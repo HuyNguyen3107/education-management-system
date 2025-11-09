@@ -1,26 +1,34 @@
 package com.example.server.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "blacklist_token")
+@Table(name = "blacklist_token", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_blacklist_token_token", columnNames = "token")
+})
 public class BlacklistToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "token", nullable = false, unique = true, length = 255)
     private String token;
 
-    @Column(nullable = false, name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false, nullable = false)
+    private LocalDateTime createdAt;
 
-    @Column(nullable = false, name = "updated_at")
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 
+    // Constructors
     public BlacklistToken() {
     }
 
@@ -28,6 +36,7 @@ public class BlacklistToken {
         this.token = token;
     }
 
+    // Getters & Setters
     public UUID getId() {
         return id;
     }
