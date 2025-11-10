@@ -1,65 +1,42 @@
-package com.example.server.entity;
+package com.example.server.dto;
 
-import jakarta.persistence.*;
+import com.example.server.entity.User;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
-@Table(name = "users")
-public class User {
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+/**
+ * DTO để trả về thông tin User (không bao gồm password)
+ */
+public class UserResponseDto {
     private UUID id;
-    
-    @Column(nullable = false, unique = true, length = 255)
     private String email;
-    
-    @Column(name = "password_hash", nullable = false, length = 255)
-    private String passwordHash;
-    
-    @Column(nullable = false, length = 255)
     private String name;
-    
-    @Column(nullable = false, length = 15)
     private String phone;
-    
-    @Column(name = "date_of_birth", nullable = false, length = 50)
     private String dateOfBirth;
-    
-    @Column(nullable = false, length = 10)
     private String gender;
-    
-    @Column(nullable = false, length = 150)
     private String address;
-    
-    @Column(nullable = false, length = 150)
     private String status;
-    
-    @Column(name = "academic_year", nullable = false, length = 20)
     private String academicYear;
-    
-    @Column(name = "education_level", nullable = false, length = 30)
     private String educationLevel;
-    
-    @Column(name = "is_online")
-    private Boolean isOnline = false;
-    
-    @Column(name = "created_at", updatable = false)
+    private Boolean isOnline;
     private LocalDateTime createdAt;
-    
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+    // Constructor từ User entity
+    public UserResponseDto(User user) {
+        this.id = user.getId();
+        this.email = user.getEmail();
+        this.name = user.getName();
+        this.phone = user.getPhone();
+        this.dateOfBirth = user.getDateOfBirth();
+        this.gender = user.getGender();
+        this.address = user.getAddress();
+        this.status = user.getStatus();
+        this.academicYear = user.getAcademicYear();
+        this.educationLevel = user.getEducationLevel();
+        this.isOnline = user.getIsOnline();
+        this.createdAt = user.getCreatedAt();
+        this.updatedAt = user.getUpdatedAt();
     }
 
     // Getters and Setters
@@ -77,14 +54,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
     }
 
     public String getName() {
