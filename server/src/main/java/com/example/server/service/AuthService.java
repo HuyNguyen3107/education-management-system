@@ -47,7 +47,18 @@ public class AuthService {
         user.setPasswordHash(null);
 
         // ✅ Trả về LoginResponse mới
-        return new LoginResponse(token, user);
+        return new LoginResponse(
+                token,
+                "Đăng nhập thành công",
+                user.getId().toString(),
+                user.getEmail(),
+                user.getName(),
+                user.getPhone(),
+                user.getDateOfBirth(),
+                user.isOnline(),
+                user.getCreatedAt().toString(),
+                user.getUpdatedAt().toString());
+
     }
 
     public void logout(String bearerToken) {

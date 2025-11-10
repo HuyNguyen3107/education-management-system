@@ -1,7 +1,6 @@
 package com.example.server.config;
 
 import com.example.server.filter.JwtAuthenticationFilter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,25 +18,30 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    // ✅ Constructor thủ công thay vì Lombok
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+
+    // ✅ Mã hóa mật khẩu bằng BCrypt
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // ✅ Cấu hình CORS (gọn, đúng chuẩn, không warning)
+    // ✅ Cấu hình CORS (cho phép tất cả domain gọi API)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("*")); // Dùng allowedOriginPatterns thay cho allowedOrigins để tránh
-                                                       // warning
+        config.setAllowedOriginPatterns(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true); // Cho phép gửi cookie/token qua request
+        config.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
@@ -51,14 +55,13 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Logout phải có token hợp lệ
+                        // ✅ Logout phải có token (đã đăng nhập)
                         .requestMatchers("/api/auth/logout").authenticated()
-                        // Các API khác trong /api/auth/** được phép truy cập tự do (login,
-                        // forgot-password, refresh-token,...)
+                        // ✅ Các đường dẫn khác trong /api/auth/** được phép truy cập không cần token
                         .requestMatchers("/api/auth/**").permitAll()
-                        // Tất cả request khác phải có token
+                        // ✅ Mọi request khác đều yêu cầu xác thực
                         .anyRequest().authenticated())
-                // Thêm JWT filter vào trước UsernamePasswordAuthenticationFilter
+                // ✅ Thêm JWT filter vào chuỗi filter của Spring Security
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
