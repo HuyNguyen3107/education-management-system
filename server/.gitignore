@@ -32,11 +32,13 @@ build/
 ### VS Code ###
 .vscode/
 
-### Environment Variables & Secrets ###
+### Environment & Config Files ###
 .env
-.env.local
-.env.production
-application-dev.properties
-application-prod.properties
-**/application.properties.backup
+application.properties
+application.yml
+src/main/resources/application.properties
+src/main/resources/application.yml
 
+### Logs & Temporary ###
+*.log
+*.tmp

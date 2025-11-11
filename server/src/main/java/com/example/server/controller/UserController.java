@@ -1,6 +1,5 @@
 package com.example.server.controller;
 
-import com.example.server.dto.UserResponseDto;
 import com.example.server.entity.User;
 import com.example.server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,19 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    
     @Autowired
     private UserRepository userRepository;
-    
-    /**
-     * Lấy danh sách tất cả users (không bao gồm password)
-     * Endpoint này yêu cầu authentication
-     */
+
     @GetMapping
     public List<UserResponseDto> getAllUsers() {
         List<User> users = userRepository.findAll();
