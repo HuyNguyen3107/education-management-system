@@ -23,8 +23,8 @@ public class PasswordResetController {
     @PostMapping("/request")
     public ResponseEntity<?> requestPasswordReset(@Valid @RequestBody PasswordResetRequestDto request) {
         try {
-            passwordResetService.handlePasswordResetRequest(request);
-            return ResponseEntity.ok("Link reset mật khẩu đã được gửi!");
+            String message = passwordResetService.handlePasswordResetRequest(request);
+            return ResponseEntity.ok(message);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Lỗi: " + e.getMessage());
         }
