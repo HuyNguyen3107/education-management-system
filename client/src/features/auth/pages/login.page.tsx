@@ -15,6 +15,7 @@ import {
 } from "@mui/icons-material";
 import { useLoginForm } from "../hooks/useLoginForm";
 import { usePageMeta } from "@/hooks/usePageMeta";
+import { ROUTE_PATHS } from "@/constants/route-path.constants";
 import styles from "./login.module.scss";
 
 export const LoginPage = () => {
@@ -104,7 +105,7 @@ export const LoginPage = () => {
 
             <Box className={styles.forgotPasswordSection}>
               <Link
-                href="/forgot-password"
+                href={ROUTE_PATHS.FORGOT_PASSWORD}
                 className={styles.forgotPasswordLink}
               >
                 Quên mật khẩu?

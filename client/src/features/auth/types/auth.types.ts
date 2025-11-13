@@ -26,3 +26,27 @@ export interface User {
   createdAt: string;
   updatedAt: string;
 }
+
+// Password Reset Types
+export interface PasswordResetRequest {
+  email: string;
+}
+
+export interface PasswordResetResponse {
+  message: string;
+}
+
+export interface ValidateTokenResponse {
+  message: string;
+  isValid: boolean;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
+}
+
+export interface ResetPasswordResponse {
+  message: string;
+  success: boolean;
+}
