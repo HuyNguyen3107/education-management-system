@@ -75,6 +75,11 @@ public class AuthService {
                 user.getName(),
                 user.getPhone(),
                 user.getDateOfBirth(),
+                user.getGender(),
+                user.getAddress(),
+                user.getStatus(),
+                user.getAcademicYear(),
+                user.getEducationLevel(),
                 user.isOnline(),
                 user.getCreatedAt().toString(),
                 user.getUpdatedAt().toString());
