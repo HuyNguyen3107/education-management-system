@@ -24,9 +24,14 @@ public class PasswordResetController {
     public ResponseEntity<?> requestPasswordReset(@Valid @RequestBody PasswordResetRequestDto request) {
         try {
             String message = passwordResetService.handlePasswordResetRequest(request);
+            // Thành công trả về 200
             return ResponseEntity.ok(message);
+        } catch (RuntimeException e) {
+            // Email không tồn tại - trả về 404
+            return ResponseEntity.status(404).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Lỗi: " + e.getMessage());
+            // Lỗi server khác - trả về 500
+            return ResponseEntity.status(500).body("Lỗi: " + e.getMessage());
         }
     }
 

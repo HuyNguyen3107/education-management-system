@@ -39,7 +39,7 @@ public class PasswordResetService {
         Optional<User> userOptional = userRepository.findByEmail(email);
         
         if (userOptional.isEmpty()) {
-            return "Email không tồn tại trong hệ thống";
+            throw new RuntimeException("Email không tồn tại trong hệ thống");
         }
 
         User user = userOptional.get();
