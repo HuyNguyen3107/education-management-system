@@ -18,7 +18,7 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    // 🔐 Lấy SECRET_KEY từ file application.properties hoặc .env
+    // Lấy SECRET_KEY từ file application.properties hoặc .env
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
