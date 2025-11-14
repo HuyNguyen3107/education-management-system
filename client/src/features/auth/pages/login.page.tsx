@@ -29,8 +29,6 @@ export const LoginPage = () => {
     emailValidation,
     passwordValidation,
     isLoading,
-    isError,
-    errorMessage,
   } = useLoginForm();
 
   usePageMeta(
@@ -121,12 +119,6 @@ export const LoginPage = () => {
             >
               {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
             </Button>
-
-            {isError && (
-              <Typography className={styles.errorMessage}>
-                {errorMessage}
-              </Typography>
-            )}
 
             <Box className={styles.divider}>
               <span>Hoặc</span>
