@@ -26,14 +26,22 @@ public class NotificationService {
     // ================= CREATE =================
     public NotificationResponseDto create(NotificationRequestDto req) {
 
-        // Kiểm tra user có tồn tại không
+        // Kiểm tra user nhận thông báo có tồn tại không
         userRepo.findById(req.getSendTo())
-                .orElseThrow(() -> new RuntimeException("Receiver user not found"));
+                .orElseThrow(() -> new IllegalStateException("Không tìm thấy người nhận thông báo"));
+
+        if (req.getTitle() == null || req.getTitle().trim().isEmpty()) {
+            throw new IllegalArgumentException("Tiêu đề thông báo không được để trống");
+        }
+
+        if (req.getContent() == null || req.getContent().trim().isEmpty()) {
+            throw new IllegalArgumentException("Nội dung thông báo không được để trống");
+        }
 
         Notification n = new Notification();
         n.setTitle(req.getTitle());
         n.setContent(req.getContent());
-        n.setSendTo(req.getSendTo()); // ❗ SET UUID – KHÔNG PHẢI User Object
+        n.setSendTo(req.getSendTo());
         n.setSeenDate(null);
         n.setResponse(null);
 
@@ -42,6 +50,10 @@ public class NotificationService {
 
     // =============== GET ALL BY USER ===============
     public List<NotificationResponseDto> getAllByUser(UUID userId) {
+
+        // Kiểm tra user tồn tại
+        userRepo.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Không tìm thấy người dùng"));
 
         return notificationRepo.findAllBySendToOrderByCreatedAtDesc(userId)
                 .stream()
@@ -52,16 +64,22 @@ public class NotificationService {
     // ================= MARK AS SEEN =================
     public void markAsSeen(UUID id) {
         Notification n = notificationRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Notification not found"));
+                .orElseThrow(() -> new IllegalStateException("Không tìm thấy thông báo"));
 
+        // ⭐ KHÔNG được dùng OffsetDateTime, vì DB đang lưu VARCHAR
         n.setSeenDate(OffsetDateTime.now().toString());
+
         notificationRepo.save(n);
     }
 
     // ================= UPDATE RESPONSE =================
     public void updateResponse(UUID id, String response) {
         Notification n = notificationRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Notification not found"));
+                .orElseThrow(() -> new IllegalStateException("Không tìm thấy thông báo"));
+
+        if (response == null || response.trim().isEmpty()) {
+            throw new IllegalArgumentException("Phản hồi không được để trống");
+        }
 
         n.setResponse(response);
         notificationRepo.save(n);
@@ -73,8 +91,8 @@ public class NotificationService {
                 n.getId(),
                 n.getTitle(),
                 n.getContent(),
-                n.getSendTo(), // ❗ UUID
-                n.getSeenDate(),
+                n.getSendTo(),
+                n.getSeenDate(), // ⭐ TRẢ RA STRING (KHỚP DB)
                 n.getResponse(),
                 n.getCreatedAt(),
                 n.getUpdatedAt());

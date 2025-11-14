@@ -8,27 +8,38 @@ public class NotificationResponseDto {
     private UUID id;
     private String title;
     private String content;
-    private UUID sendTo; // ❗ ĐÚNG THEO DATABASE
-    private String seenDate;
+    private UUID sendTo;
+    private String seenDate; // ⭐ KHỚP DATABASE (varchar)
     private String response;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 
-    // Constructor đầy đủ (quan trọng)
-    public NotificationResponseDto(UUID id, String title, String content, UUID sendTo,
-            String seenDate, String response,
-            OffsetDateTime createdAt, OffsetDateTime updatedAt) {
+    // Constructor rỗng
+    public NotificationResponseDto() {
+    }
+
+    // Constructor đầy đủ
+    public NotificationResponseDto(
+            UUID id,
+            String title,
+            String content,
+            UUID sendTo,
+            String seenDate, // ⭐ CHỈNH Ở ĐÂY
+            String response,
+            OffsetDateTime createdAt,
+            OffsetDateTime updatedAt) {
+
         this.id = id;
         this.title = title;
         this.content = content;
         this.sendTo = sendTo;
-        this.seenDate = seenDate;
+        this.seenDate = seenDate; // ⭐ String
         this.response = response;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
 
-    // Getters & Setters
+    // ====== GETTERS & SETTERS ======
     public UUID getId() {
         return id;
     }

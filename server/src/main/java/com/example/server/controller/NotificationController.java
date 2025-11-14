@@ -4,6 +4,7 @@ import com.example.server.dto.NotificationRequestDto;
 import com.example.server.dto.NotificationResponseDto;
 import com.example.server.service.NotificationService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,22 +23,55 @@ public class NotificationController {
 
     // ================= CREATE =================
     @PostMapping
-    public ResponseEntity<NotificationResponseDto> create(
+    public ResponseEntity<?> create(
             @Valid @RequestBody NotificationRequestDto request) {
-        return ResponseEntity.ok(service.create(request));
+
+        try {
+            NotificationResponseDto res = service.create(request);
+            return ResponseEntity.ok(res);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body("Lỗi hệ thống: " + e.getMessage());
+        }
     }
 
     // ================= GET ALL FOR USER =================
     @GetMapping("/{userId}")
-    public ResponseEntity<List<NotificationResponseDto>> getAll(@PathVariable UUID userId) {
-        return ResponseEntity.ok(service.getAllByUser(userId));
+    public ResponseEntity<?> getAll(@PathVariable UUID userId) {
+        try {
+            List<NotificationResponseDto> list = service.getAllByUser(userId);
+            return ResponseEntity.ok(list);
+
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body("Lỗi hệ thống: " + e.getMessage());
+        }
     }
 
     // ================= MARK AS SEEN =================
     @PutMapping("/{id}/seen")
     public ResponseEntity<?> markAsSeen(@PathVariable UUID id) {
-        service.markAsSeen(id); // ❗ KHÔNG NHẬN seenDate TỪ CLIENT
-        return ResponseEntity.ok("Notification marked as seen");
+        try {
+            service.markAsSeen(id);
+            return ResponseEntity.ok("Thông báo đã được đánh dấu là đã xem");
+
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body("Lỗi hệ thống: " + e.getMessage());
+        }
     }
 
     // ================= UPDATE RESPONSE =================
@@ -46,12 +80,25 @@ public class NotificationController {
             @PathVariable UUID id,
             @RequestBody Map<String, String> body) {
 
-        String response = body.get("response");
-        if (response == null || response.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Response cannot be empty");
-        }
+        try {
+            String response = body.get("response");
 
-        service.updateResponse(id, response);
-        return ResponseEntity.ok("Response updated");
+            if (response == null || response.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Phản hồi không được để trống");
+            }
+
+            service.updateResponse(id, response);
+            return ResponseEntity.ok("Phản hồi đã được cập nhật");
+
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body("Lỗi hệ thống: " + e.getMessage());
+        }
     }
 }

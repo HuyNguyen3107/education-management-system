@@ -22,10 +22,10 @@ public class Notification {
     private String content;
 
     @Column(name = "send_to", nullable = false)
-    private UUID sendTo; // ❗ KHÔNG dùng ManyToOne
+    private UUID sendTo;
 
     @Column(name = "seen_date", length = 200)
-    private String seenDate;
+    private String seenDate; // ⭐ PHẢI LÀ STRING (KHỚP DB)
 
     @Column(columnDefinition = "TEXT")
     private String response;

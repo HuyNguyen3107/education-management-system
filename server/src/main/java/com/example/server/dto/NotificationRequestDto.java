@@ -6,14 +6,14 @@ import java.util.UUID;
 
 public class NotificationRequestDto {
 
-    @NotBlank(message = "Title cannot be blank")
+    @NotBlank(message = "Tiêu đề thông báo không được để trống")
     private String title;
 
-    @NotBlank(message = "Content cannot be blank")
+    @NotBlank(message = "Nội dung thông báo không được để trống")
     private String content;
 
-    @NotNull(message = "Receiver ID cannot be null")
-    private UUID sendTo; // Chuẩn theo database: send_to uuid
+    @NotNull(message = "ID người nhận không được để trống")
+    private UUID sendTo; // UUID của người nhận thông báo
 
     // Getters & Setters
     public String getTitle() {
