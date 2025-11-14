@@ -20,8 +20,14 @@ public class MajorService {
 
     // CREATE
     public MajorResponseDto create(MajorRequestDto req) {
+
+        if (majorRepository.existsByName(req.getName())) {
+            throw new IllegalArgumentException("Tên ngành đã tồn tại");
+        }
+
         Major m = new Major();
         m.setName(req.getName());
+
         return toDto(majorRepository.save(m));
     }
 
@@ -36,22 +42,31 @@ public class MajorService {
     // GET BY ID
     public MajorResponseDto getById(UUID id) {
         Major m = majorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Major not found"));
+                .orElseThrow(() -> new IllegalStateException("Không tìm thấy ngành có ID: " + id));
         return toDto(m);
     }
 
     // UPDATE
     public MajorResponseDto update(UUID id, MajorRequestDto req) {
+
         Major m = majorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Major not found"));
+                .orElseThrow(() -> new IllegalStateException("Không tìm thấy ngành để cập nhật"));
+
+        // Check tên trùng ngành khác
+        if (majorRepository.existsByName(req.getName())
+                && !m.getName().equalsIgnoreCase(req.getName())) {
+            throw new IllegalArgumentException("Tên ngành đã tồn tại");
+        }
+
         m.setName(req.getName());
+
         return toDto(majorRepository.save(m));
     }
 
     // DELETE
     public void delete(UUID id) {
         if (!majorRepository.existsById(id)) {
-            throw new RuntimeException("Major not found");
+            throw new IllegalStateException("Không tìm thấy ngành để xoá");
         }
         majorRepository.deleteById(id);
     }

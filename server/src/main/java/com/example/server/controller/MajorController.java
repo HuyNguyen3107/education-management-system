@@ -4,6 +4,7 @@ import com.example.server.dto.MajorRequestDto;
 import com.example.server.dto.MajorResponseDto;
 import com.example.server.service.MajorService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,35 +22,83 @@ public class MajorController {
         this.majorService = majorService;
     }
 
-    // POST /api/majors
+    // CREATE
     @PostMapping
-    public ResponseEntity<MajorResponseDto> create(@Valid @RequestBody MajorRequestDto req) {
-        return ResponseEntity.ok(majorService.create(req));
+    public ResponseEntity<?> create(@Valid @RequestBody MajorRequestDto req) {
+        try {
+            return ResponseEntity.ok(majorService.create(req));
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + e.getMessage());
+        }
     }
 
-    // GET /api/majors
+    // GET ALL
     @GetMapping
-    public ResponseEntity<List<MajorResponseDto>> getAll() {
-        return ResponseEntity.ok(majorService.getAll());
+    public ResponseEntity<?> getAll() {
+        try {
+            List<MajorResponseDto> list = majorService.getAll();
+            return ResponseEntity.ok(list);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + e.getMessage());
+        }
     }
 
-    // GET /api/majors/{id}
+    // GET BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<MajorResponseDto> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(majorService.getById(id));
+    public ResponseEntity<?> getById(@PathVariable UUID id) {
+        try {
+            return ResponseEntity.ok(majorService.getById(id));
+
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + e.getMessage());
+        }
     }
 
-    // PUT /api/majors/{id}
+    // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<MajorResponseDto> update(@PathVariable UUID id,
+    public ResponseEntity<?> update(
+            @PathVariable UUID id,
             @Valid @RequestBody MajorRequestDto req) {
-        return ResponseEntity.ok(majorService.update(id, req));
+
+        try {
+            return ResponseEntity.ok(majorService.update(id, req));
+
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + e.getMessage());
+        }
     }
 
-    // DELETE /api/majors/{id}
+    // DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable UUID id) {
-        majorService.delete(id);
-        return ResponseEntity.ok("Major deleted successfully");
+        try {
+            majorService.delete(id);
+            return ResponseEntity.ok("Xoá ngành thành công");
+
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Lỗi hệ thống: " + e.getMessage());
+        }
     }
 }

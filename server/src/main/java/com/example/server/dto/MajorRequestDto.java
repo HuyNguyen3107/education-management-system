@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public class MajorRequestDto {
 
-    @NotBlank(message = "Major name cannot be blank")
+    @NotBlank(message = "Tên ngành không được để trống")
     private String name;
 
     // Getter & Setter
