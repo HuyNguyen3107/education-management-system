@@ -54,7 +54,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/logout").authenticated()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/password-reset/**").permitAll()
-                        // ❗ KHÔNG permit /api/majors/** nữa
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
