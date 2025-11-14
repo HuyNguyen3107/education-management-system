@@ -25,7 +25,7 @@ public class Notification {
     private UUID sendTo;
 
     @Column(name = "seen_date", length = 200)
-    private String seenDate; // ⭐ PHẢI LÀ STRING (KHỚP DB)
+    private String seenDate;
 
     @Column(columnDefinition = "TEXT")
     private String response;

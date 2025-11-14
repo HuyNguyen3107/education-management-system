@@ -66,7 +66,6 @@ public class NotificationService {
         Notification n = notificationRepo.findById(id)
                 .orElseThrow(() -> new IllegalStateException("Không tìm thấy thông báo"));
 
-        // ⭐ KHÔNG được dùng OffsetDateTime, vì DB đang lưu VARCHAR
         n.setSeenDate(OffsetDateTime.now().toString());
 
         notificationRepo.save(n);
@@ -92,7 +91,7 @@ public class NotificationService {
                 n.getTitle(),
                 n.getContent(),
                 n.getSendTo(),
-                n.getSeenDate(), // ⭐ TRẢ RA STRING (KHỚP DB)
+                n.getSeenDate(),
                 n.getResponse(),
                 n.getCreatedAt(),
                 n.getUpdatedAt());

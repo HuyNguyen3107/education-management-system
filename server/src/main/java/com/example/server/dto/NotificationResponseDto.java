@@ -9,7 +9,7 @@ public class NotificationResponseDto {
     private String title;
     private String content;
     private UUID sendTo;
-    private String seenDate; // ⭐ KHỚP DATABASE (varchar)
+    private String seenDate;
     private String response;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
@@ -24,7 +24,7 @@ public class NotificationResponseDto {
             String title,
             String content,
             UUID sendTo,
-            String seenDate, // ⭐ CHỈNH Ở ĐÂY
+            String seenDate,
             String response,
             OffsetDateTime createdAt,
             OffsetDateTime updatedAt) {
@@ -33,7 +33,7 @@ public class NotificationResponseDto {
         this.title = title;
         this.content = content;
         this.sendTo = sendTo;
-        this.seenDate = seenDate; // ⭐ String
+        this.seenDate = seenDate;
         this.response = response;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
