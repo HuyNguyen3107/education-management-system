@@ -1,6 +1,5 @@
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { usePasswordResetRequestMutation } from "../mutations/auth.mutations";
-import { useState } from "react";
 
 interface ForgotPasswordFormInputs {
   email: string;
@@ -11,7 +10,6 @@ interface ForgotPasswordFormInputs {
  * Follows Single Responsibility Principle - handles only forgot password form logic
  */
 export const useForgotPasswordForm = () => {
-  const [isSuccess, setIsSuccess] = useState(false);
   const passwordResetMutation = usePasswordResetRequestMutation();
 
   const {
@@ -27,13 +25,11 @@ export const useForgotPasswordForm = () => {
   });
 
   const onSubmit: SubmitHandler<ForgotPasswordFormInputs> = async (data) => {
-    try {
-      await passwordResetMutation.mutateAsync(data);
-      setIsSuccess(true);
-      reset();
-    } catch (error) {
-      setIsSuccess(false);
-    }
+    passwordResetMutation.mutate(data, {
+      onSuccess: () => {
+        reset();
+      },
+    });
   };
 
   const emailValidation = {
@@ -52,15 +48,7 @@ export const useForgotPasswordForm = () => {
     errors,
 
     // State
-    isSuccess,
     isLoading: passwordResetMutation.isPending,
-    isError: passwordResetMutation.isError,
-    errorMessage:
-      passwordResetMutation.error?.message ||
-      "Gửi yêu cầu thất bại. Vui lòng thử lại.",
-    successMessage:
-      passwordResetMutation.data?.message ||
-      "Link reset mật khẩu đã được gửi đến email của bạn!",
 
     // Validation rules
     emailValidation,

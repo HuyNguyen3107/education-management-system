@@ -4,7 +4,6 @@ import {
   Button,
   Typography,
   Link,
-  Alert,
   IconButton,
   InputAdornment,
   CircularProgress,
@@ -33,7 +32,7 @@ export const ResetPasswordPage = () => {
     errors,
     token,
     isTokenValidating,
-    tokenError,
+    isTokenValid,
     showPassword,
     showConfirmPassword,
     handleTogglePassword,
@@ -41,10 +40,6 @@ export const ResetPasswordPage = () => {
     passwordValidation,
     confirmPasswordValidation,
     isLoading,
-    isError,
-    isSuccess,
-    errorMessage,
-    successMessage,
   } = useResetPasswordForm();
 
   usePageMeta(
@@ -74,14 +69,14 @@ export const ResetPasswordPage = () => {
   }
 
   // Show error if token is invalid
-  if (!token || tokenError) {
+  if (!token || !isTokenValid) {
     return (
       <Box className={styles.loginContainer}>
         <Box className={styles.rightSection}>
           <Box className={styles.loginCard}>
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {tokenError || "Link không hợp lệ hoặc đã hết hạn"}
-            </Alert>
+            <Typography color="error" sx={{ mb: 2 }}>
+              Link không hợp lệ hoặc đã hết hạn
+            </Typography>
             <Link href={ROUTE_PATHS.FORGOT_PASSWORD}>
               <Button variant="contained" fullWidth>
                 Yêu cầu link mới
@@ -124,18 +119,6 @@ export const ResetPasswordPage = () => {
           </Box>
 
           <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-            {isSuccess && (
-              <Alert severity="success" sx={{ mb: 2 }}>
-                {successMessage}
-              </Alert>
-            )}
-
-            {isError && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {errorMessage}
-              </Alert>
-            )}
-
             <TextField
               fullWidth
               label="Mật khẩu mới"
@@ -146,7 +129,7 @@ export const ResetPasswordPage = () => {
               helperText={errors.newPassword?.message}
               className={styles.input}
               autoComplete="new-password"
-              disabled={isLoading || isSuccess}
+              disabled={isLoading}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -172,7 +155,7 @@ export const ResetPasswordPage = () => {
               helperText={errors.confirmPassword?.message}
               className={styles.input}
               autoComplete="new-password"
-              disabled={isLoading || isSuccess}
+              disabled={isLoading}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -193,13 +176,9 @@ export const ResetPasswordPage = () => {
               fullWidth
               variant="contained"
               className={styles.loginButton}
-              disabled={isLoading || isSuccess}
+              disabled={isLoading}
             >
-              {isLoading
-                ? "Đang xử lý..."
-                : isSuccess
-                ? "Thành công!"
-                : "Đặt lại mật khẩu"}
+              {isLoading ? "Đang xử lý..." : "Đặt lại mật khẩu"}
             </Button>
 
             <Box className={styles.forgotPasswordSection}>

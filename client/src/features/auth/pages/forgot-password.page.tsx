@@ -1,4 +1,4 @@
-import { Box, TextField, Button, Typography, Link, Alert } from "@mui/material";
+import { Box, TextField, Button, Typography, Link } from "@mui/material";
 import { School, ArrowBack, Email } from "@mui/icons-material";
 import { useForgotPasswordForm } from "../hooks/useForgotPasswordForm";
 import { usePageMeta } from "@/hooks/usePageMeta";
@@ -17,10 +17,6 @@ export const ForgotPasswordPage = () => {
     errors,
     emailValidation,
     isLoading,
-    isError,
-    isSuccess,
-    errorMessage,
-    successMessage,
   } = useForgotPasswordForm();
 
   usePageMeta(
@@ -57,18 +53,6 @@ export const ForgotPasswordPage = () => {
           </Box>
 
           <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-            {isSuccess && (
-              <Alert severity="success" sx={{ mb: 2 }}>
-                {successMessage}
-              </Alert>
-            )}
-
-            {isError && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {errorMessage}
-              </Alert>
-            )}
-
             <TextField
               fullWidth
               label="Email"

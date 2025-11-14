@@ -1,9 +1,12 @@
 import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { AppRoutes } from "./routes/app.routes";
 import { Suspense } from "react";
 import { CircularProgress, Box } from "@mui/material";
 import "./App.css";
+import "./styles/toast.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,6 +34,18 @@ function App() {
           }
         >
           <AppRoutes />
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={true}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored"
+          />
         </Suspense>
       </BrowserRouter>
     </QueryClientProvider>

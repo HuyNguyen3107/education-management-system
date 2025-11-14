@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useSearchParams } from "react-router-dom";
 import {
   useValidateTokenMutation,
   useSubmitNewPasswordMutation,
 } from "../mutations/auth.mutations";
+import { showWarningToast } from "@/libs/toast.libs";
 
 interface ResetPasswordFormInputs {
   newPassword: string;
@@ -20,7 +21,6 @@ export const useResetPasswordForm = () => {
   const token = searchParams.get("token") || "";
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const validateTokenMutation = useValidateTokenMutation();
   const submitPasswordMutation = useSubmitNewPasswordMutation();
@@ -42,21 +42,18 @@ export const useResetPasswordForm = () => {
   useEffect(() => {
     if (token) {
       validateTokenMutation.mutate(token);
+    } else {
+      showWarningToast(
+        "Token không được tìm thấy. Vui lòng kiểm tra lại link."
+      );
     }
   }, [token]);
 
-  const onSubmit: SubmitHandler<ResetPasswordFormInputs> = async (data) => {
-    try {
-      const result = await submitPasswordMutation.mutateAsync({
-        token,
-        newPassword: data.newPassword,
-      });
-      if (result.success) {
-        setIsSuccess(true);
-      }
-    } catch (error) {
-      setIsSuccess(false);
-    }
+  const onSubmit: SubmitHandler<ResetPasswordFormInputs> = (data) => {
+    submitPasswordMutation.mutate({
+      token,
+      newPassword: data.newPassword,
+    });
   };
 
   const handleTogglePassword = () => {
@@ -96,13 +93,8 @@ export const useResetPasswordForm = () => {
 
     // Token state
     token,
-    isTokenValid:
-      validateTokenMutation.isSuccess && validateTokenMutation.data?.isValid,
+    isTokenValid: validateTokenMutation.isSuccess,
     isTokenValidating: validateTokenMutation.isPending,
-    tokenError:
-      validateTokenMutation.data?.isValid === false
-        ? validateTokenMutation.data.message
-        : null,
 
     // Password visibility
     showPassword,
@@ -115,14 +107,6 @@ export const useResetPasswordForm = () => {
     confirmPasswordValidation,
 
     // Submit state
-    isSuccess,
     isLoading: submitPasswordMutation.isPending,
-    isError: submitPasswordMutation.isError,
-    errorMessage:
-      submitPasswordMutation.error?.message ||
-      "Đặt lại mật khẩu thất bại. Vui lòng thử lại.",
-    successMessage:
-      submitPasswordMutation.data?.message ||
-      "Đặt lại mật khẩu thành công! Đang chuyển đến trang đăng nhập...",
   };
 };
