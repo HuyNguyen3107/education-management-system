@@ -26,7 +26,6 @@ public class NotificationService {
     // ================= CREATE =================
     public NotificationResponseDto create(NotificationRequestDto req) {
 
-        // Kiểm tra user nhận thông báo có tồn tại không
         userRepo.findById(req.getSendTo())
                 .orElseThrow(() -> new IllegalStateException("Không tìm thấy người nhận thông báo"));
 
@@ -51,7 +50,6 @@ public class NotificationService {
     // =============== GET ALL BY USER ===============
     public List<NotificationResponseDto> getAllByUser(UUID userId) {
 
-        // Kiểm tra user tồn tại
         userRepo.findById(userId)
                 .orElseThrow(() -> new IllegalStateException("Không tìm thấy người dùng"));
 
@@ -82,6 +80,14 @@ public class NotificationService {
 
         n.setResponse(response);
         notificationRepo.save(n);
+    }
+
+    // ================= DELETE =================
+    public void delete(UUID id) {
+        Notification n = notificationRepo.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Không tìm thấy thông báo"));
+
+        notificationRepo.delete(n);
     }
 
     // ================= CONVERTER =================

@@ -101,4 +101,31 @@ public class NotificationController {
                     .body("Lỗi hệ thống: " + e.getMessage());
         }
     }
+
+    // ================= DELETE =================
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable UUID id) {
+        try {
+            service.delete(id);
+            return ResponseEntity.ok("Xoá thông báo thành công");
+
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body("Lỗi hệ thống: " + e.getMessage());
+        }
+    }
+
+    // ================= VALIDATION HANDLER =================
+    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleValidation(org.springframework.web.bind.MethodArgumentNotValidException ex) {
+        String message = ex.getBindingResult().getFieldError().getDefaultMessage();
+        return ResponseEntity.badRequest().body(message);
+    }
+
 }
