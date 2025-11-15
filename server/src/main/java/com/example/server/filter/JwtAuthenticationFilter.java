@@ -21,7 +21,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
-    // ✅ Constructor thủ công thay cho @RequiredArgsConstructor
     public JwtAuthenticationFilter(JwtService jwtService, UserRepository userRepository) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
@@ -34,37 +33,65 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         try {
-            final String authHeader = request.getHeader("Authorization");
+            String path = request.getServletPath();
 
-            // ✅ Nếu không có header hoặc không bắt đầu bằng Bearer => bỏ qua
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            // Bỏ qua API public
+            if (path.startsWith("/api/auth") || path.startsWith("/api/password-reset")) {
                 filterChain.doFilter(request, response);
                 return;
             }
 
-            final String jwt = authHeader.substring(7);
-            final String email = jwtService.extractUsername(jwt);
+            final String authHeader = request.getHeader("Authorization");
 
-            // ✅ Nếu email hợp lệ và chưa xác thực trong context
-            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            // ❌ Thiếu token → 401 + message bảo mật
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                sendUnauthorized(response);
+                return;
+            }
+
+            final String jwt = authHeader.substring(7);
+
+            String email;
+            try {
+                email = jwtService.extractUsername(jwt);
+            } catch (Exception ex) {
+                sendUnauthorized(response);
+                return;
+            }
+
+            if (email == null) {
+                sendUnauthorized(response);
+                return;
+            }
+
+            // Nếu chưa có authentication -> kiểm tra token
+            if (SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userRepository.findByEmail(email).orElse(null);
 
-                // ✅ Kiểm tra token hợp lệ và user tồn tại
-                if (userDetails != null && jwtService.isTokenValid(jwt, userDetails)) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
-                    authToken.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                if (userDetails == null || !jwtService.isTokenValid(jwt, userDetails)) {
+                    sendUnauthorized(response);
+                    return;
                 }
+
+                // Set authentication nếu hợp lệ
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
 
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
-            // ✅ Khi token không hợp lệ hoặc có lỗi giải mã
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Invalid or expired token: " + e.getMessage());
+            sendUnauthorized(response);
         }
+    }
+
+    private void sendUnauthorized(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write("{\"message\":\"Lỗi hệ thống\"}");
     }
 }
