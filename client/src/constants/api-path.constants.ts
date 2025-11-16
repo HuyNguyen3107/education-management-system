@@ -5,4 +5,9 @@ export const API_PATHS = {
     LOGIN: "/auth/login",
     LOGOUT: "/auth/logout",
   },
+  PASSWORD_RESET: {
+    REQUEST: "/password-reset/request",
+    VALIDATE: "/password-reset/validate",
+    SUBMIT: "/password-reset/submit",
+  },
 } as const;

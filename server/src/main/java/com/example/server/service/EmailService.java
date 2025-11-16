@@ -32,9 +32,9 @@ public class EmailService {
 
             mailSender.send(message);
 
-            return "✅ Gửi email thành công đến: " + toEmail;
+            return "Gửi email thành công đến: " + toEmail;
         } catch (Exception e) {
-            return "❌ Không thể gửi email đến " + toEmail + ": " + e.getMessage();
+            return "Không thể gửi email đến " + toEmail + ": " + e.getMessage();
         }
     }
 }

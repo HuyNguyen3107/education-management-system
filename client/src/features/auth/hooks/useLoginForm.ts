@@ -64,9 +64,5 @@ export const useLoginForm = () => {
 
     // Mutation state
     isLoading: loginMutation.isPending,
-    isError: loginMutation.isError,
-    errorMessage:
-      loginMutation.error?.message ||
-      "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.",
   };
 };

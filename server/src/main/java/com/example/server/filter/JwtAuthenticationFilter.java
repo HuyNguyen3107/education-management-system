@@ -43,6 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             final String authHeader = request.getHeader("Authorization");
 
+            // ❌ Thiếu token → 401 + message bảo mật
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 sendUnauthorized(response);
                 return;
@@ -84,7 +85,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
-            sendUnauthorized(response);
+            // ✅ Khi token không hợp lệ hoặc có lỗi giải mã
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            
+            String jsonResponse = String.format(
+                "{\"status\": 401, \"message\": \"Token không hợp lệ hoặc đã hết hạn\", \"error\": \"%s\"}", 
+                e.getMessage()
+            );
+            
+            response.getWriter().write(jsonResponse);
         }
     }
 
