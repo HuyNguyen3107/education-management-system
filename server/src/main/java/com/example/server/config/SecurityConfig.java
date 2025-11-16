@@ -61,6 +61,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         //Password reset APIs không cần token
                         .requestMatchers("/api/password-reset/**").permitAll()
+                        //News APIs - chỉ GET không cần token
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/news/**").permitAll()
                         //Mọi request khác đều yêu cầu xác thực
                         .anyRequest().authenticated())
                 //Thêm JWT filter vào chuỗi filter của Spring Security
