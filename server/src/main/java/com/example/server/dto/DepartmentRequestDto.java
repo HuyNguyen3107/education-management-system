@@ -10,7 +10,7 @@ public class DepartmentRequestDto {
     @NotBlank(message = "Tên khoa không được để trống.")
     private String name;
 
-    @NotNull(message = "Ngành (major_id) không được để trống.")
+    @NotNull(message = "Ngành không được để trống.")
     private UUID majorId;
 
     // GETTERS & SETTERS
