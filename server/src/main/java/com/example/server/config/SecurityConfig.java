@@ -58,11 +58,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/logout").authenticated()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/password-reset/**").permitAll()
-                        // News APIs - chỉ GET không cần token
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/news/**").permitAll()
-                        .requestMatchers("/api/specializations/**").authenticated()
-
-                        // Mọi request khác đều yêu cầu xác thực
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
