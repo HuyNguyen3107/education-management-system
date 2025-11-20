@@ -13,16 +13,16 @@ public class TimeRegister {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "type_semester", length = 100)
+    @Column(name = "type_semester", length = 100, nullable = true)
     private String typeSemester;
 
-    @Column(name = "type_register", length = 100)
+    @Column(name = "type_register", length = 100, nullable = true)
     private String typeRegister;
 
-    @Column(name = "open_time", length = 100)
+    @Column(name = "open_time", length = 100, nullable = true)
     private String openTime;
 
-    @Column(name = "end_time", length = 100)
+    @Column(name = "end_time", length = 100, nullable = true)
     private String endTime;
 
     @Column(name = "created_at", nullable = false, updatable = false)
