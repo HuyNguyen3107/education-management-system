@@ -58,32 +58,30 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/logout").authenticated()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/password-reset/**").permitAll()
-                        //News APIs - chỉ GET không cần token
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/news/**").permitAll()
-                        //Mọi request khác đều yêu cầu xác thực
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             response.setStatus(403);
                             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                            
+
                             Map<String, Object> responseBody = new HashMap<>();
                             responseBody.put("status", 403);
                             responseBody.put("message", "Bạn không có quyền truy cập");
                             responseBody.put("error", accessDeniedException.getMessage());
-                            
+
                             ObjectMapper mapper = new ObjectMapper();
                             response.getWriter().write(mapper.writeValueAsString(responseBody));
                         })
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(401);
                             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                            
+
                             Map<String, Object> responseBody = new HashMap<>();
                             responseBody.put("status", 401);
                             responseBody.put("message", "Yêu cầu xác thực");
                             responseBody.put("error", authException.getMessage());
-                            
+
                             ObjectMapper mapper = new ObjectMapper();
                             response.getWriter().write(mapper.writeValueAsString(responseBody));
                         }))
