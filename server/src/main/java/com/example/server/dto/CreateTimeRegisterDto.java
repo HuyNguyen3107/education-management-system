@@ -5,15 +5,17 @@ import jakarta.validation.constraints.Size;
 
 public class CreateTimeRegisterDto {
 
-    @Size(max = 100, message = "Loại học kỳ không được vượt quá 100 ký tự")
+    @Size(max = 300, message = "Loại học kỳ không được vượt quá 300 ký tự")
     private String typeSemester;
 
-    @Size(max = 100, message = "Loại đăng ký không được vượt quá 100 ký tự")
+    @Size(max = 300, message = "Loại đăng ký không được vượt quá 300 ký tự")
     private String typeRegister;
 
+    @NotBlank(message = "Thời gian mở không được để trống")
     @Size(max = 100, message = "Thời gian mở không được vượt quá 100 ký tự")
     private String openTime;
 
+    @NotBlank(message = "Thời gian kết thúc không được để trống")
     @Size(max = 100, message = "Thời gian kết thúc không được vượt quá 100 ký tự")
     private String endTime;
 
