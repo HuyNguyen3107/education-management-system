@@ -69,6 +69,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/time-registers/**").authenticated()
                         //Subjects APIs - tất cả đều cần token
                         .requestMatchers("/api/subjects/**").authenticated()
+                        //Students APIs - tất cả đều cần token
+                        .requestMatchers("/api/students/**").authenticated()
                         //Mọi request khác đều yêu cầu xác thực
                         .anyRequest().authenticated())
                 //Thêm JWT filter vào chuỗi filter của Spring Security
