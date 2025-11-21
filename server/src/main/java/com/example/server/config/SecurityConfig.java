@@ -22,18 +22,18 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    //Constructor thủ công thay vì Lombok
+    // Constructor thủ công thay vì Lombok
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
-    //Mã hóa mật khẩu bằng BCrypt
+    // Mã hóa mật khẩu bằng BCrypt
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    //Cấu hình CORS (cho phép tất cả domain gọi API)
+    // Cấu hình CORS (cho phép tất cả domain gọi API)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
@@ -55,21 +55,17 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        //Logout phải có token (đã đăng nhập)
+                        // Logout phải có token (đã đăng nhập)
                         .requestMatchers("/api/auth/logout").authenticated()
-                        //Các đường dẫn khác trong /api/auth/** được phép truy cập không cần token
+                        // Các đường dẫn khác trong /api/auth/** được phép truy cập không cần token
                         .requestMatchers("/api/auth/**").permitAll()
-                        //Password reset APIs không cần token
+                        // Password reset APIs không cần token
                         .requestMatchers("/api/password-reset/**").permitAll()
-                        //News APIs - chỉ GET không cần token
+                        // News APIs - chỉ GET không cần token
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/news/**").permitAll()
-                        //Prerequisite Subjects APIs - tất cả đều cần token
-                        .requestMatchers("/api/prerequisite-subjects/**").authenticated()
-                        //Time Registers APIs - tất cả đều cần token
-                        .requestMatchers("/api/time-registers/**").authenticated()
-                        //Mọi request khác đều yêu cầu xác thực
+                        // Mọi request khác đều yêu cầu xác thực
                         .anyRequest().authenticated())
-                //Thêm JWT filter vào chuỗi filter của Spring Security
+                // Thêm JWT filter vào chuỗi filter của Spring Security
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
