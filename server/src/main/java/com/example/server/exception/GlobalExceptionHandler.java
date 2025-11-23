@@ -3,6 +3,7 @@ package com.example.server.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -33,6 +34,16 @@ public class GlobalExceptionHandler {
         response.put("errors", errors);
         
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<?> handleResponseStatusException(
+            ResponseStatusException ex,
+            WebRequest request) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", ex.getStatusCode().value());
+        response.put("message", ex.getReason());
+        return new ResponseEntity<>(response, ex.getStatusCode());
     }
 
     /**
