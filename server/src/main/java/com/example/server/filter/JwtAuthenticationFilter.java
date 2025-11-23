@@ -101,6 +101,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void sendUnauthorized(HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write("{\"message\":\"Lỗi hệ thống\"}");
+        response.getWriter().write("{\"status\":401,\"message\":\"Yêu cầu xác thực\"}");
     }
 }
