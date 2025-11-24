@@ -65,7 +65,7 @@ public class NewsController {
      * PUT /api/news/{id} - Cập nhật tin tức
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateNews(@PathVariable UUID id, @RequestBody UpdateNewsDto dto) {
+    public ResponseEntity<?> updateNews(@PathVariable UUID id, @Valid @RequestBody UpdateNewsDto dto) {
         try {
             NewsResponseDto news = newsService.updateNews(id, dto);
             return ResponseEntity.ok(news);

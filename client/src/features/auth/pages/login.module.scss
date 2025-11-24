@@ -1,0 +1,337 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+.loginContainer {
+    display: flex;
+    min-height: 100vh;
+    font-family: 'Roboto', sans-serif;
+    overflow: hidden;
+
+    .leftSection {
+        flex: 1;
+        background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 3rem;
+        color: white;
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .logoSection {
+            z-index: 1;
+            text-align: center;
+            margin-bottom: 3rem;
+
+            .logoIcon {
+                font-size: 5rem;
+                margin-bottom: 1rem;
+                filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+            }
+
+            .schoolName {
+                font-weight: 700;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+                margin-bottom: 0.5rem;
+                line-height: 1.4;
+            }
+
+            .systemName {
+                font-weight: 400;
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+                opacity: 0.95;
+            }
+        }
+
+        .illustrationSection {
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .illustrationIcon {
+                font-size: 15rem;
+                opacity: 0.2;
+                animation: float 6s ease-in-out infinite;
+            }
+        }
+    }
+
+    .rightSection {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+
+        .loginCard {
+            width: 100%;
+            max-width: 480px;
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.6s ease-out;
+
+            .header {
+                text-align: center;
+                margin-bottom: 2.5rem;
+
+                .title {
+                    color: #8B0000;
+                    font-weight: 700;
+                    margin-bottom: 0.5rem;
+                }
+
+                .subtitle {
+                    color: #666;
+                    font-size: 0.95rem;
+                }
+            }
+
+            .form {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+
+                .input {
+                    .MuiOutlinedInput-root {
+                        border-radius: 12px;
+                        background-color: #f8f9fa;
+                        transition: all 0.3s ease;
+
+                        &:hover {
+                            background-color: #f0f2f5;
+                        }
+
+                        &.Mui-focused {
+                            background-color: white;
+                            box-shadow: 0 0 0 2px rgba(139, 0, 0, 0.1);
+                        }
+
+                        fieldset {
+                            border-color: #e0e0e0;
+                        }
+
+                        &:hover fieldset {
+                            border-color: #8B0000;
+                        }
+
+                        &.Mui-focused fieldset {
+                            border-color: #8B0000;
+                            border-width: 2px;
+                        }
+                    }
+
+                    .MuiInputLabel-root {
+                        &.Mui-focused {
+                            color: #8B0000;
+                        }
+                    }
+                }
+
+                .forgotPasswordSection {
+                    text-align: right;
+                    margin-top: -0.5rem;
+
+                    .forgotPasswordLink {
+                        color: #8B0000;
+                        font-size: 0.9rem;
+                        text-decoration: none;
+                        font-weight: 500;
+                        transition: all 0.3s ease;
+
+                        &:hover {
+                            color: #DC143C;
+                            text-decoration: underline;
+                        }
+                    }
+                }
+
+                .loginButton {
+                    background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+                    color: white;
+                    padding: 14px;
+                    border-radius: 12px;
+                    font-size: 1rem;
+                    font-weight: 600;
+                    text-transform: none;
+                    box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
+                    transition: all 0.3s ease;
+
+                    &:hover {
+                        background: linear-gradient(135deg, #a00000 0%, #ff1744 100%);
+                        box-shadow: 0 6px 16px rgba(139, 0, 0, 0.4);
+                        transform: translateY(-2px);
+                    }
+
+                    &:active {
+                        transform: translateY(0);
+                    }
+
+                    &:disabled {
+                        background: #ccc;
+                        box-shadow: none;
+                    }
+                }
+
+                .errorMessage {
+                    color: #d32f2f;
+                    text-align: center;
+                    font-size: 0.9rem;
+                    padding: 0.75rem;
+                    background-color: #ffebee;
+                    border-radius: 8px;
+                    border-left: 4px solid #d32f2f;
+                }
+
+                .divider {
+                    text-align: center;
+                    position: relative;
+                    margin: 0.5rem 0;
+
+                    &::before,
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        top: 50%;
+                        width: 40%;
+                        height: 1px;
+                        background-color: #e0e0e0;
+                    }
+
+                    &::before {
+                        left: 0;
+                    }
+
+                    &::after {
+                        right: 0;
+                    }
+
+                    span {
+                        background-color: white;
+                        padding: 0 1rem;
+                        color: #999;
+                        font-size: 0.9rem;
+                    }
+                }
+
+                .microsoftButton {
+                    border: 2px solid #0078d4;
+                    color: #0078d4;
+                    padding: 12px;
+                    border-radius: 12px;
+                    font-size: 1rem;
+                    font-weight: 600;
+                    text-transform: none;
+                    transition: all 0.3s ease;
+
+                    &:hover {
+                        background-color: #0078d4;
+                        color: white;
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(0, 120, 212, 0.3);
+                    }
+
+                    &:active {
+                        transform: translateY(0);
+                    }
+                }
+            }
+        }
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Responsive Design
+@media (max-width: 968px) {
+    .loginContainer {
+        flex-direction: column;
+
+        .leftSection {
+            min-height: 40vh;
+            padding: 2rem;
+
+            .logoSection {
+                margin-bottom: 1rem;
+
+                .logoIcon {
+                    font-size: 3rem;
+                }
+
+                .schoolName {
+                    font-size: 1.5rem;
+                }
+
+                .systemName {
+                    font-size: 1rem;
+                }
+            }
+
+            .illustrationSection {
+                display: none;
+            }
+        }
+
+        .rightSection {
+            min-height: 60vh;
+            padding: 1.5rem;
+
+            .loginCard {
+                padding: 2rem;
+            }
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .loginContainer {
+        .rightSection {
+            .loginCard {
+                padding: 1.5rem;
+
+                .header {
+                    margin-bottom: 2rem;
+
+                    .title {
+                        font-size: 1.75rem;
+                    }
+                }
+            }
+        }
+    }
+}

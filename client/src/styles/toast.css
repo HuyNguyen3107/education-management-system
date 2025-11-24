@@ -1,0 +1,105 @@
+/* Custom Scrollbar for Toast Container */
+.Toastify__toast-container {
+  width: 360px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05);
+}
+
+/* Webkit scrollbar (Chrome, Safari, Edge) */
+.Toastify__toast-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.Toastify__toast-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  margin: 5px 0;
+}
+
+.Toastify__toast-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+  border: 2px solid rgba(0, 0, 0, 0.05);
+  background-clip: padding-box;
+}
+
+.Toastify__toast-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.35);
+  background-clip: padding-box;
+}
+
+/* Firefox scrollbar */
+.Toastify__toast-container {
+  scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05);
+  scrollbar-width: thin;
+}
+
+/* Custom Toast Styling */
+.Toastify__toast {
+  font-family: "Roboto", sans-serif;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+/* Success Toast */
+.Toastify__toast--success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.Toastify__toast--success .Toastify__toast-icon {
+  color: white;
+}
+
+/* Error Toast */
+.Toastify__toast--error {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.Toastify__toast--error .Toastify__toast-icon {
+  color: white;
+}
+
+/* Warning Toast */
+.Toastify__toast--warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+}
+
+.Toastify__toast--warning .Toastify__toast-icon {
+  color: white;
+}
+
+/* Info Toast */
+.Toastify__toast--info {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+}
+
+.Toastify__toast--info .Toastify__toast-icon {
+  color: white;
+}
+
+/* Close Button */
+.Toastify__close-button {
+  color: white;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.Toastify__close-button:hover {
+  opacity: 1;
+}
+
+/* Progress Bar */
+.Toastify__progress-bar {
+  background: rgba(255, 255, 255, 0.8);
+}
