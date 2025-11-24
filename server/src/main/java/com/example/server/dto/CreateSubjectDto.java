@@ -2,6 +2,7 @@ package com.example.server.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.UUID;
 
@@ -21,7 +22,7 @@ public class CreateSubjectDto {
 
     private Float numberOfCredit;
 
-    private String ingredientSecretion;
+    private JsonNode ingredientSecretion;
 
     @NotBlank(message = "Học kỳ không được để trống")
     @Size(max = 300, message = "Học kỳ không được vượt quá 300 ký tự")
@@ -32,7 +33,7 @@ public class CreateSubjectDto {
     }
 
     public CreateSubjectDto(String name, String subjectCode, UUID majorId, UUID specializationId,
-                            Float numberOfCredit, String ingredientSecretion, String semester) {
+                            Float numberOfCredit, JsonNode ingredientSecretion, String semester) {
         this.name = name;
         this.subjectCode = subjectCode;
         this.majorId = majorId;
@@ -83,11 +84,11 @@ public class CreateSubjectDto {
         this.numberOfCredit = numberOfCredit;
     }
 
-    public String getIngredientSecretion() {
+    public JsonNode getIngredientSecretion() {
         return ingredientSecretion;
     }
 
-    public void setIngredientSecretion(String ingredientSecretion) {
+    public void setIngredientSecretion(JsonNode ingredientSecretion) {
         this.ingredientSecretion = ingredientSecretion;
     }
 

@@ -1,6 +1,9 @@
 package com.example.server.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -28,8 +31,9 @@ public class Subject {
     @Column(name = "number_of_credit", nullable = true)
     private Float numberOfCredit;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "ingredient_secretion", columnDefinition = "json")
-    private String ingredientSecretion;
+    private JsonNode ingredientSecretion;
 
     @Column(name = "semester", length = 300, nullable = false)
     private String semester;
@@ -56,7 +60,7 @@ public class Subject {
     }
 
     public Subject(String name, String subjectCode, UUID majorId, UUID specializationId, 
-                   Float numberOfCredit, String ingredientSecretion, String semester) {
+                   Float numberOfCredit, JsonNode ingredientSecretion, String semester) {
         this.name = name;
         this.subjectCode = subjectCode;
         this.majorId = majorId;
@@ -115,11 +119,11 @@ public class Subject {
         this.numberOfCredit = numberOfCredit;
     }
 
-    public String getIngredientSecretion() {
+    public JsonNode getIngredientSecretion() {
         return ingredientSecretion;
     }
 
-    public void setIngredientSecretion(String ingredientSecretion) {
+    public void setIngredientSecretion(JsonNode ingredientSecretion) {
         this.ingredientSecretion = ingredientSecretion;
     }
 

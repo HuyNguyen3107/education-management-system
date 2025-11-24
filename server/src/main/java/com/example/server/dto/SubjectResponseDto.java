@@ -1,6 +1,7 @@
 package com.example.server.dto;
 
 import com.example.server.entity.Subject;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,7 +14,7 @@ public class SubjectResponseDto {
     private UUID majorId;
     private UUID specializationId;
     private Float numberOfCredit;
-    private String ingredientSecretion;
+    private JsonNode ingredientSecretion;
     private String semester;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -84,11 +85,11 @@ public class SubjectResponseDto {
         this.numberOfCredit = numberOfCredit;
     }
 
-    public String getIngredientSecretion() {
+    public JsonNode getIngredientSecretion() {
         return ingredientSecretion;
     }
 
-    public void setIngredientSecretion(String ingredientSecretion) {
+    public void setIngredientSecretion(JsonNode ingredientSecretion) {
         this.ingredientSecretion = ingredientSecretion;
     }
 
