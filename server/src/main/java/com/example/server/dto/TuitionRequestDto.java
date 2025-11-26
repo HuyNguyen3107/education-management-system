@@ -5,16 +5,16 @@ import jakarta.validation.constraints.NotNull;
 
 public class TuitionRequestDto {
 
-    @NotNull(message = "Học phí (price) không được để trống.")
+    @NotNull(message = "Học phí không được để trống.")
     private Double price;
 
-    @NotBlank(message = "Học kỳ (semester) không được để trống.")
+    @NotBlank(message = "Học kỳ không được để trống.")
     private String semester;
 
-    @NotBlank(message = "Năm (year) không được để trống.")
+    @NotBlank(message = "Năm không được để trống.")
     private String year;
 
-    @NotBlank(message = "Niên khóa (academic_year) không được để trống.")
+    @NotBlank(message = "Niên khóa không được để trống.")
     private String academicYear;
 
     public Double getPrice() {
