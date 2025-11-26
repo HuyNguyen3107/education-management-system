@@ -21,8 +21,7 @@ public class CreditClass {
     @Column(name = "teacher_id", nullable = false)
     private UUID teacherId;
 
-    // "group" là từ khóa SQL nhưng dùng làm tên cột vẫn OK
-    @Column(name = "group", length = 10)
+    @Column(name = "group_name", length = 10)
     private String group;
 
     @Column(nullable = false, length = 30)
