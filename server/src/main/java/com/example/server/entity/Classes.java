@@ -5,34 +5,25 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "subjects")
-public class Subject {
+@Table(name = "classes")
+public class Classes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
-    @Column(name = "name", length = 500, nullable = false)
-    private String name;
+    @Column(name = "class_code", length = 200, nullable = false)
+    private String classCode;
 
-    @Column(name = "subject_code", length = 200, nullable = false)
-    private String subjectCode;
+    @Column(name = "teacher_id", nullable = false)
+    private UUID teacherId;
 
     @Column(name = "major_id")
     private UUID majorId;
 
     @Column(name = "specialization_id")
     private UUID specializationId;
-
-    @Column(name = "number_of_credit", nullable = true)
-    private Float numberOfCredit;
-
-    @Column(name = "ingredient_secretion", columnDefinition = "json", nullable = false)
-    private String ingredientSecretion;
-
-    @Column(name = "semester", length = 300, nullable = false)
-    private String semester;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -52,18 +43,14 @@ public class Subject {
     }
 
     // Constructors
-    public Subject() {
+    public Classes() {
     }
 
-    public Subject(String name, String subjectCode, UUID majorId, UUID specializationId, 
-                   Float numberOfCredit, String ingredientSecretion, String semester) {
-        this.name = name;
-        this.subjectCode = subjectCode;
+    public Classes(String classCode, UUID teacherId, UUID majorId, UUID specializationId) {
+        this.classCode = classCode;
+        this.teacherId = teacherId;
         this.majorId = majorId;
         this.specializationId = specializationId;
-        this.numberOfCredit = numberOfCredit;
-        this.ingredientSecretion = ingredientSecretion;
-        this.semester = semester;
     }
 
     // Getters and Setters
@@ -75,20 +62,20 @@ public class Subject {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getClassCode() {
+        return classCode;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setClassCode(String classCode) {
+        this.classCode = classCode;
     }
 
-    public String getSubjectCode() {
-        return subjectCode;
+    public UUID getTeacherId() {
+        return teacherId;
     }
 
-    public void setSubjectCode(String subjectCode) {
-        this.subjectCode = subjectCode;
+    public void setTeacherId(UUID teacherId) {
+        this.teacherId = teacherId;
     }
 
     public UUID getMajorId() {
@@ -105,30 +92,6 @@ public class Subject {
 
     public void setSpecializationId(UUID specializationId) {
         this.specializationId = specializationId;
-    }
-
-    public Float getNumberOfCredit() {
-        return numberOfCredit;
-    }
-
-    public void setNumberOfCredit(Float numberOfCredit) {
-        this.numberOfCredit = numberOfCredit;
-    }
-
-    public String getIngredientSecretion() {
-        return ingredientSecretion;
-    }
-
-    public void setIngredientSecretion(String ingredientSecretion) {
-        this.ingredientSecretion = ingredientSecretion;
-    }
-
-    public String getSemester() {
-        return semester;
-    }
-
-    public void setSemester(String semester) {
-        this.semester = semester;
     }
 
     public LocalDateTime getCreatedAt() {

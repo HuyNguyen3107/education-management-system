@@ -1,6 +1,7 @@
 package com.example.server.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.UUID;
@@ -21,6 +22,7 @@ public class CreateSubjectDto {
 
     private Float numberOfCredit;
 
+    @NotNull(message = "Ingredient secretion không được để trống")
     private String ingredientSecretion;
 
     @NotBlank(message = "Học kỳ không được để trống")
