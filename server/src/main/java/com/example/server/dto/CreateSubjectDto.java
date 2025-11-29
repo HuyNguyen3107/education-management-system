@@ -1,6 +1,7 @@
 package com.example.server.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -22,7 +23,8 @@ public class CreateSubjectDto {
 
     private Float numberOfCredit;
 
-    private JsonNode ingredientSecretion;
+    @NotNull(message = "Ingredient secretion không được để trống")
+    private String ingredientSecretion;
 
     @NotBlank(message = "Học kỳ không được để trống")
     @Size(max = 300, message = "Học kỳ không được vượt quá 300 ký tự")
