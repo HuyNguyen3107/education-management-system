@@ -6,7 +6,9 @@ import com.example.server.dto.UpdateSubjectDto;
 import com.example.server.entity.Subject;
 import com.example.server.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +34,7 @@ public class SubjectService {
      */
     public SubjectResponseDto getSubjectById(UUID id) {
         Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy môn học với ID: " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy môn học với ID: " + id));
         return new SubjectResponseDto(subject);
     }
 
@@ -41,7 +43,7 @@ public class SubjectService {
      */
     public SubjectResponseDto getSubjectByCode(String subjectCode) {
         Subject subject = subjectRepository.findBySubjectCode(subjectCode)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy môn học với mã: " + subjectCode));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy môn học với mã: " + subjectCode));
         return new SubjectResponseDto(subject);
     }
 
@@ -51,7 +53,7 @@ public class SubjectService {
     public SubjectResponseDto createSubject(CreateSubjectDto dto) {
         // Kiểm tra mã môn học đã tồn tại chưa
         if (subjectRepository.findBySubjectCode(dto.getSubjectCode()).isPresent()) {
-            throw new RuntimeException("Mã môn học đã tồn tại: " + dto.getSubjectCode());
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Mã môn học đã tồn tại: " + dto.getSubjectCode());
         }
 
         Subject subject = new Subject();
@@ -72,16 +74,19 @@ public class SubjectService {
      */
     public SubjectResponseDto updateSubject(UUID id, UpdateSubjectDto dto) {
         Subject subject = subjectRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy môn học với ID: " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy môn học với ID: " + id));
 
         if (dto.getName() != null && !dto.getName().trim().isEmpty()) {
             subject.setName(dto.getName());
         }
-        if (dto.getSubjectCode() != null && !dto.getSubjectCode().trim().isEmpty()) {
+        if (dto.getSubjectCode() != null) {
+            if (dto.getSubjectCode().trim().isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Mã môn học không được để trống.");
+            }
             // Kiểm tra mã môn học mới có trùng với môn học khác không
             subjectRepository.findBySubjectCode(dto.getSubjectCode()).ifPresent(existing -> {
                 if (!existing.getId().equals(id)) {
-                    throw new RuntimeException("Mã môn học đã tồn tại: " + dto.getSubjectCode());
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Mã môn học đã tồn tại: " + dto.getSubjectCode());
                 }
             });
             subject.setSubjectCode(dto.getSubjectCode());
@@ -111,7 +116,7 @@ public class SubjectService {
      */
     public void deleteSubject(UUID id) {
         if (!subjectRepository.existsById(id)) {
-            throw new RuntimeException("Không tìm thấy môn học với ID: " + id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy môn học với ID: " + id);
         }
         subjectRepository.deleteById(id);
     }

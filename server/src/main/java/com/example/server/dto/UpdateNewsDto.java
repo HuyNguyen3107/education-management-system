@@ -1,8 +1,13 @@
 package com.example.server.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class UpdateNewsDto {
 
+    @NotBlank(message = "Tiêu đề không được để trống")
     private String title;
+
+    @NotBlank(message = "Nội dung không được để trống")
     private String content;
 
     // Constructors
