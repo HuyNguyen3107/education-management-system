@@ -32,39 +32,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain)
             throws ServletException, IOException {
+        final String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
+        final String jwt = authHeader.substring(7);
+        String email;
         try {
-            final String authHeader = request.getHeader("Authorization");
+            email = jwtService.extractUsername(jwt);
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Invalid or expired token");
+            return;
+        }
 
-            // ✅ Nếu không có header hoặc không bắt đầu bằng Bearer => bỏ qua
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                filterChain.doFilter(request, response);
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userRepository.findByEmail(email).orElse(null);
+            boolean valid = userDetails != null && jwtService.isTokenValid(jwt, userDetails);
+            if (valid) {
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            } else {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
-
-            final String jwt = authHeader.substring(7);
-            final String email = jwtService.extractUsername(jwt);
-
-            // ✅ Nếu email hợp lệ và chưa xác thực trong context
-            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userRepository.findByEmail(email).orElse(null);
-
-                // ✅ Kiểm tra token hợp lệ và user tồn tại
-                if (userDetails != null && jwtService.isTokenValid(jwt, userDetails)) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
-                    authToken.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-                }
-            }
-
-            filterChain.doFilter(request, response);
-
-        } catch (Exception e) {
-            // ✅ Khi token không hợp lệ hoặc có lỗi giải mã
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Invalid or expired token: " + e.getMessage());
         }
+
+        filterChain.doFilter(request, response);
     }
 }
