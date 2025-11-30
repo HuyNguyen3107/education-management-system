@@ -24,7 +24,7 @@ public class CreateSubjectDto {
     private Float numberOfCredit;
 
     @NotNull(message = "Ingredient secretion không được để trống")
-    private String ingredientSecretion;
+    private JsonNode ingredientSecretion;
 
     @NotBlank(message = "Học kỳ không được để trống")
     @Size(max = 300, message = "Học kỳ không được vượt quá 300 ký tự")
