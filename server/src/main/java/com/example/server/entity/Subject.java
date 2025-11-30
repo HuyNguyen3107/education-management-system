@@ -32,7 +32,8 @@ public class Subject {
     private Float numberOfCredit;
 
     @Column(name = "ingredient_secretion", columnDefinition = "json", nullable = false)
-    private String ingredientSecretion;
+    @JdbcTypeCode(SqlTypes.JSON)
+    private JsonNode ingredientSecretion;
 
     @Column(name = "semester", length = 300, nullable = false)
     private String semester;
