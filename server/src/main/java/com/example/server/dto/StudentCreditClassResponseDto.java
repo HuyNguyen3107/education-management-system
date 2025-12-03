@@ -1,6 +1,7 @@
 package com.example.server.dto;
 
 import com.example.server.entity.StudentCreditClass;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,8 +11,8 @@ public class StudentCreditClassResponseDto {
     private UUID id;
     private UUID studentId;
     private UUID creditClassId;
-    private String scores;
-    private String examSchedule;
+    private JsonNode scores;
+    private JsonNode examSchedule;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -29,7 +30,7 @@ public class StudentCreditClassResponseDto {
         this.updatedAt = studentCreditClass.getUpdatedAt();
     }
 
-    public StudentCreditClassResponseDto(UUID id, UUID studentId, UUID creditClassId, String scores, String examSchedule, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public StudentCreditClassResponseDto(UUID id, UUID studentId, UUID creditClassId, JsonNode scores, JsonNode examSchedule, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.studentId = studentId;
         this.creditClassId = creditClassId;
@@ -64,19 +65,19 @@ public class StudentCreditClassResponseDto {
         this.creditClassId = creditClassId;
     }
 
-    public String getScores() {
+    public JsonNode getScores() {
         return scores;
     }
 
-    public void setScores(String scores) {
+    public void setScores(JsonNode scores) {
         this.scores = scores;
     }
 
-    public String getExamSchedule() {
+    public JsonNode getExamSchedule() {
         return examSchedule;
     }
 
-    public void setExamSchedule(String examSchedule) {
+    public void setExamSchedule(JsonNode examSchedule) {
         this.examSchedule = examSchedule;
     }
 

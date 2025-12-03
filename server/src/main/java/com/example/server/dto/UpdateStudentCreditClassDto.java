@@ -1,5 +1,6 @@
 package com.example.server.dto;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.UUID;
 
 public class UpdateStudentCreditClassDto {
@@ -8,15 +9,15 @@ public class UpdateStudentCreditClassDto {
 
     private UUID creditClassId;
 
-    private String scores;
+    private JsonNode scores;
 
-    private String examSchedule;
+    private JsonNode examSchedule;
 
     // Constructors
     public UpdateStudentCreditClassDto() {
     }
 
-    public UpdateStudentCreditClassDto(UUID studentId, UUID creditClassId, String scores, String examSchedule) {
+    public UpdateStudentCreditClassDto(UUID studentId, UUID creditClassId, JsonNode scores, JsonNode examSchedule) {
         this.studentId = studentId;
         this.creditClassId = creditClassId;
         this.scores = scores;
@@ -40,19 +41,19 @@ public class UpdateStudentCreditClassDto {
         this.creditClassId = creditClassId;
     }
 
-    public String getScores() {
+    public JsonNode getScores() {
         return scores;
     }
 
-    public void setScores(String scores) {
+    public void setScores(JsonNode scores) {
         this.scores = scores;
     }
 
-    public String getExamSchedule() {
+    public JsonNode getExamSchedule() {
         return examSchedule;
     }
 
-    public void setExamSchedule(String examSchedule) {
+    public void setExamSchedule(JsonNode examSchedule) {
         this.examSchedule = examSchedule;
     }
 }

@@ -1,6 +1,8 @@
 package com.example.server.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Type;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -18,11 +20,11 @@ public class StudentCreditClass {
     @Column(name = "credit_class_id", nullable = false)
     private UUID creditClassId;
 
-    @Column(name = "scores", columnDefinition = "TEXT")
-    private String scores;
+    @Column(name = "scores", columnDefinition = "jsonb")
+    private JsonNode scores;
 
-    @Column(name = "exam_schedule", columnDefinition = "TEXT")
-    private String examSchedule;
+    @Column(name = "exam_schedule", columnDefinition = "jsonb")
+    private JsonNode examSchedule;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -45,7 +47,7 @@ public class StudentCreditClass {
     public StudentCreditClass() {
     }
 
-    public StudentCreditClass(UUID studentId, UUID creditClassId, String scores, String examSchedule) {
+    public StudentCreditClass(UUID studentId, UUID creditClassId, JsonNode scores, JsonNode examSchedule) {
         this.studentId = studentId;
         this.creditClassId = creditClassId;
         this.scores = scores;
@@ -77,19 +79,19 @@ public class StudentCreditClass {
         this.creditClassId = creditClassId;
     }
 
-    public String getScores() {
+    public JsonNode getScores() {
         return scores;
     }
 
-    public void setScores(String scores) {
+    public void setScores(JsonNode scores) {
         this.scores = scores;
     }
 
-    public String getExamSchedule() {
+    public JsonNode getExamSchedule() {
         return examSchedule;
     }
 
-    public void setExamSchedule(String examSchedule) {
+    public void setExamSchedule(JsonNode examSchedule) {
         this.examSchedule = examSchedule;
     }
 
