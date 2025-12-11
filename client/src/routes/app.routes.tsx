@@ -1,7 +1,20 @@
-import { useRoutes } from "react-router-dom";
+import { useRoutes, Navigate } from "react-router-dom";
 import { authRoutes } from "@/features/auth/routes/auth.routes";
 import { ROUTE_PATHS } from "@/constants/route-path.constants";
-import { Navigate } from "react-router-dom";
+import { DashboardLayout } from "@/features/dashboard/layouts/DashboardLayout";
+import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
+import { UsersPage } from "@/features/users/pages/UsersPage";
+import { StudentsPage } from "@/features/students/pages/StudentsPage";
+import { LecturersPage } from "@/features/lecturers/pages/LecturersPage";
+import { NewsPage } from "@/features/news/pages/NewsPage";
+import { MajorsPage } from "@/features/majors/pages/MajorsPage";
+import { DepartmentsPage } from "@/features/departments/pages/DepartmentsPage";
+import { SpecializationsPage } from "@/features/specializations/pages/SpecializationsPage";
+import { NotificationsPage } from "@/features/notifications/pages/NotificationsPage";
+import { TuitionsPage } from "@/features/tuitions/pages/TuitionsPage";
+import { TimeRegistersPage } from "@/features/time-registers/pages/TimeRegistersPage";
+import { GuestGuard } from "@/components/guards/GuestGuard";
+import { AuthGuard } from "@/components/guards/AuthGuard";
 
 export const AppRoutes = () => {
   const routes = useRoutes([
@@ -9,10 +22,64 @@ export const AppRoutes = () => {
       path: ROUTE_PATHS.HOME,
       element: <Navigate to={ROUTE_PATHS.LOGIN} replace />,
     },
-    ...authRoutes,
+    {
+      element: <GuestGuard />,
+      children: authRoutes,
+    },
     {
       path: ROUTE_PATHS.DASHBOARD,
-      element: <div>Dashboard - Coming soon</div>,
+      element: <AuthGuard />,
+      children: [
+        {
+          element: <DashboardLayout />,
+          children: [
+            {
+              index: true,
+              element: <DashboardPage />,
+            },
+            {
+              path: "users",
+              element: <UsersPage />,
+            },
+            {
+              path: "students",
+              element: <StudentsPage />,
+            },
+            {
+              path: "lecturers",
+              element: <LecturersPage />,
+            },
+            {
+              path: "news",
+              element: <NewsPage />,
+            },
+            {
+              path: "majors",
+              element: <MajorsPage />,
+            },
+            {
+              path: "departments",
+              element: <DepartmentsPage />,
+            },
+            {
+              path: "specializations",
+              element: <SpecializationsPage />,
+            },
+            {
+              path: "notifications",
+              element: <NotificationsPage />,
+            },
+            {
+              path: "tuitions",
+              element: <TuitionsPage />,
+            },
+            {
+              path: "time-registers",
+              element: <TimeRegistersPage />,
+            },
+          ],
+        },
+      ],
     },
   ]);
 

@@ -8,6 +8,7 @@ public class DepartmentResponseDto {
     private UUID id;
     private String name;
     private UUID majorId;
+    private String majorName;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 
@@ -35,6 +36,14 @@ public class DepartmentResponseDto {
 
     public void setMajorId(UUID majorId) {
         this.majorId = majorId;
+    }
+
+    public String getMajorName() {
+        return majorName;
+    }
+
+    public void setMajorName(String majorName) {
+        this.majorName = majorName;
     }
 
     public OffsetDateTime getCreatedAt() {

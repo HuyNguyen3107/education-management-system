@@ -13,12 +13,24 @@ import {
   School,
   Microsoft,
 } from "@mui/icons-material";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/store/auth.store";
 import { useLoginForm } from "../hooks/useLoginForm";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { ROUTE_PATHS } from "@/constants/route-path.constants";
 import styles from "./login.module.scss";
 
 export const LoginPage = () => {
+  const navigate = useNavigate();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate(ROUTE_PATHS.DASHBOARD, { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
   const {
     register,
     handleSubmit,

@@ -37,12 +37,15 @@ public class MajorController {
         }
     }
 
-    // GET ALL
+    // GET ALL WITH PAGINATION AND SEARCH
     @GetMapping
-    public ResponseEntity<?> getAll() {
+    public ResponseEntity<?> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword
+    ) {
         try {
-            List<MajorResponseDto> list = majorService.getAll();
-            return ResponseEntity.ok(list);
+            return ResponseEntity.ok(majorService.getMajors(page, size, keyword));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

@@ -48,10 +48,10 @@ public class User implements UserDetails {
     @Column(nullable = false, length = 150)
     private String status;
 
-    @Column(name = "academic_year", nullable = false, length = 20)
+    @Column(name = "academic_year", length = 20)
     private String academicYear;
     
-    @Column(name = "education_level", nullable = false, length = 30)
+    @Column(name = "education_level", length = 30)
     private String educationLevel;
 
     @Column(name = "is_online", nullable = false)
