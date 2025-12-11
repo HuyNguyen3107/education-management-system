@@ -64,4 +64,14 @@ export const API_PATHS = {
     UPDATE: (id: string) => `/time-registers/${id}`,
     DELETE: (id: string) => `/time-registers/${id}`,
   },
+  PREREQUISITE_SUBJECTS: {
+    GET_ALL: "/prerequisite-subjects",
+    GET_BY_ID: (id: string) => `/prerequisite-subjects/${id}`,
+    GET_BY_REGISTER_CODE: (registerCode: string) => `/prerequisite-subjects/register-code/${registerCode}`,
+    GET_BY_PREREQUISITE_CODE: (prerequisiteCode: string) => `/prerequisite-subjects/prerequisite-code/${prerequisiteCode}`,
+    SEARCH: "/prerequisite-subjects/search",
+    CREATE: "/prerequisite-subjects",
+    UPDATE: (id: string) => `/prerequisite-subjects/${id}`,
+    DELETE: (id: string) => `/prerequisite-subjects/${id}`,
+  },
 } as const;

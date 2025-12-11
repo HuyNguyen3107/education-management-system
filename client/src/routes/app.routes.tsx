@@ -13,6 +13,8 @@ import { SpecializationsPage } from "@/features/specializations/pages/Specializa
 import { NotificationsPage } from "@/features/notifications/pages/NotificationsPage";
 import { TuitionsPage } from "@/features/tuitions/pages/TuitionsPage";
 import { TimeRegistersPage } from "@/features/time-registers/pages/TimeRegistersPage";
+import { PrerequisiteSubjectsPage } from "@/features/prerequisite-subjects/pages/PrerequisiteSubjectsPage";
+import { ProfilePage } from "@/features/profile/pages/ProfilePage";
 import { GuestGuard } from "@/components/guards/GuestGuard";
 import { AuthGuard } from "@/components/guards/AuthGuard";
 
@@ -76,6 +78,14 @@ export const AppRoutes = () => {
             {
               path: "time-registers",
               element: <TimeRegistersPage />,
+            },
+            {
+              path: "prerequisite-subjects",
+              element: <PrerequisiteSubjectsPage />,
+            },
+            {
+              path: "profile",
+              element: <ProfilePage />,
             },
           ],
         },

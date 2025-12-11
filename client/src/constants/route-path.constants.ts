@@ -12,6 +12,8 @@ export const ROUTE_PATHS = {
   NOTIFICATIONS: "/dashboard/notifications",
   TUITIONS: "/dashboard/tuitions",
   TIME_REGISTERS: "/dashboard/time-registers",
+  PREREQUISITE_SUBJECTS: "/dashboard/prerequisite-subjects",
+  PROFILE: "/dashboard/profile",
   FORGOT_PASSWORD: "/forgot-password",
   RESET_PASSWORD: "/reset-password",
 } as const;
