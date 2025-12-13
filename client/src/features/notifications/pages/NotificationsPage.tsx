@@ -39,8 +39,16 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useState, useEffect, useMemo } from "react";
 import { NotificationFormDialog } from "../components/NotificationFormDialog";
 import { NotificationDeleteDialog } from "../components/NotificationDeleteDialog";
+import { NotificationDetailDialog } from "../components/NotificationDetailDialog";
 import type { NotificationWithUser } from "../types/notification.types";
 import { toast } from "react-toastify";
+
+// Helper function to strip HTML tags for preview
+const stripHtml = (html: string) => {
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || "";
+};
 
 export const NotificationsPage = () => {
   const [page, setPage] = useState(0);
@@ -61,6 +69,10 @@ export const NotificationsPage = () => {
   const [notificationToDelete, setNotificationToDelete] =
     useState<NotificationWithUser | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [selectedDetailData, setSelectedDetailData] =
+    useState<NotificationWithUser | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -97,7 +109,7 @@ export const NotificationsPage = () => {
       filtered = filtered.filter(
         (n) =>
           n.title.toLowerCase().includes(search) ||
-          n.content.toLowerCase().includes(search) ||
+          stripHtml(n.content).toLowerCase().includes(search) ||
           n.user?.fullName.toLowerCase().includes(search) ||
           n.user?.email.toLowerCase().includes(search)
       );
@@ -132,6 +144,12 @@ export const NotificationsPage = () => {
   const handleEditNotification = (notification: NotificationWithUser) => {
     setEditingNotification(notification);
     setFormOpen(true);
+    handleCloseMenu();
+  };
+
+  const handleViewDetail = (notification: NotificationWithUser) => {
+    setSelectedDetailData(notification);
+    setDetailDialogOpen(true);
     handleCloseMenu();
   };
 
@@ -370,7 +388,7 @@ export const NotificationsPage = () => {
                           whiteSpace: "nowrap",
                         }}
                       >
-                        {notification.content}
+                        {stripHtml(notification.content)}
                       </Typography>
                     </TableCell>
                     <TableCell>
@@ -411,13 +429,22 @@ export const NotificationsPage = () => {
                     </TableCell>
                     <TableCell align="right">
                       <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 0.5 }}>
+                        <Tooltip title="Xem chi tiết">
+                          <IconButton
+                            size="small"
+                            color="info"
+                            onClick={() => handleViewDetail(notification)}
+                          >
+                            <VisibilityIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
                         {!notification.seenDate && (
                           <Tooltip title="Đánh dấu đã xem">
                             <IconButton
                               size="small"
                               onClick={() => handleMarkAsSeen(notification)}
                             >
-                              <VisibilityIcon fontSize="small" />
+                              <VisibilityOffIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>
                         )}
@@ -481,7 +508,12 @@ export const NotificationsPage = () => {
         isLoading={deleteNotificationMutation.isPending}
         error={deleteError}
       />
+
+      <NotificationDetailDialog
+        open={detailDialogOpen}
+        onClose={() => setDetailDialogOpen(false)}
+        data={selectedDetailData}
+      />
     </Box>
   );
 };
-

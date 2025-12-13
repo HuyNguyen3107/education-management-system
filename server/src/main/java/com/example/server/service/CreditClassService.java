@@ -2,13 +2,18 @@ package com.example.server.service;
 
 import com.example.server.dto.CreditClassRequestDto;
 import com.example.server.dto.CreditClassResponseDto;
+import com.example.server.dto.ScheduleItemDto;
 import com.example.server.entity.CreditClass;
 import com.example.server.repository.CreditClassRepository;
 import com.example.server.repository.TeacherRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,11 +22,14 @@ public class CreditClassService {
 
     private final CreditClassRepository creditClassRepository;
     private final TeacherRepository teacherRepository;
+    private final ObjectMapper objectMapper;
 
     public CreditClassService(CreditClassRepository creditClassRepository,
-            TeacherRepository teacherRepository) {
+            TeacherRepository teacherRepository,
+            ObjectMapper objectMapper) {
         this.creditClassRepository = creditClassRepository;
         this.teacherRepository = teacherRepository;
+        this.objectMapper = objectMapper;
     }
 
     public List<CreditClassResponseDto> getAll() {
@@ -55,7 +63,7 @@ public class CreditClassService {
         creditClass.setName(request.getName().trim());
         creditClass.setQuantity(request.getQuantity());
         creditClass.setRoom(request.getRoom() != null ? request.getRoom().trim() : null);
-        creditClass.setSchedule(request.getSchedule().trim());
+        creditClass.setSchedule(request.getSchedule() != null ? convertScheduleToJson(request.getSchedule()) : null);
         creditClass.setSemester(request.getSemester().trim());
 
         return toResponse(creditClassRepository.save(creditClass));
@@ -80,7 +88,7 @@ public class CreditClassService {
         creditClass.setName(request.getName().trim());
         creditClass.setQuantity(request.getQuantity());
         creditClass.setRoom(request.getRoom() != null ? request.getRoom().trim() : null);
-        creditClass.setSchedule(request.getSchedule().trim());
+        creditClass.setSchedule(request.getSchedule() != null ? convertScheduleToJson(request.getSchedule()) : null);
         creditClass.setSemester(request.getSemester().trim());
 
         return toResponse(creditClassRepository.save(creditClass));
@@ -96,6 +104,28 @@ public class CreditClassService {
         creditClassRepository.deleteById(id);
     }
 
+    private JsonNode convertScheduleToJson(List<ScheduleItemDto> scheduleItems) {
+        try {
+            return objectMapper.valueToTree(scheduleItems);
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Lỗi chuyển đổi lịch học sang JSON: " + e.getMessage());
+        }
+    }
+
+    private List<ScheduleItemDto> convertJsonToSchedule(JsonNode jsonNode) {
+        try {
+            if (jsonNode == null || jsonNode.isNull()) {
+                return new ArrayList<>();
+            }
+            return objectMapper.convertValue(jsonNode, new TypeReference<List<ScheduleItemDto>>() {});
+        } catch (Exception e) {
+            // Fallback for old text format - return empty list
+            return new ArrayList<>();
+        }
+    }
+
     private CreditClassResponseDto toResponse(CreditClass creditClass) {
         CreditClassResponseDto res = new CreditClassResponseDto();
         res.setId(creditClass.getId());
@@ -105,7 +135,7 @@ public class CreditClassService {
         res.setName(creditClass.getName());
         res.setQuantity(creditClass.getQuantity());
         res.setRoom(creditClass.getRoom());
-        res.setSchedule(creditClass.getSchedule());
+        res.setSchedule(convertJsonToSchedule(creditClass.getSchedule()));
         res.setSemester(creditClass.getSemester());
         res.setCreatedAt(creditClass.getCreatedAt());
         res.setUpdatedAt(creditClass.getUpdatedAt());

@@ -2,7 +2,11 @@ package com.example.server.entity;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -33,8 +37,9 @@ public class CreditClass {
     @Column(columnDefinition = "TEXT")
     private String room;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String schedule;
+    @Column(name = "schedule", columnDefinition = "json")
+    @JdbcTypeCode(SqlTypes.JSON)
+    private JsonNode schedule;
 
     @Column(nullable = false, length = 300)
     private String semester;
@@ -99,11 +104,11 @@ public class CreditClass {
         this.room = room;
     }
 
-    public String getSchedule() {
+    public JsonNode getSchedule() {
         return schedule;
     }
 
-    public void setSchedule(String schedule) {
+    public void setSchedule(JsonNode schedule) {
         this.schedule = schedule;
     }
 

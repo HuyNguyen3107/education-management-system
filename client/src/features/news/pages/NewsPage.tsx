@@ -15,6 +15,7 @@ import {
   TablePagination,
   Checkbox,
   CircularProgress,
+  Tooltip,
 } from "@mui/material";
 import {
   useNews,
@@ -27,11 +28,20 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useState, useEffect } from "react";
 import { NewsFormDialog } from "../components/NewsFormDialog";
 import { NewsDeleteDialog } from "../components/NewsDeleteDialog";
+import { NewsDetailDialog } from "../components/NewsDetailDialog";
 import type { News, CreateNewsRequest } from "../types/news.types";
 import { toast } from "react-toastify";
+
+// Helper function to strip HTML tags for preview
+const stripHtml = (html: string) => {
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || "";
+};
 
 export const NewsPage = () => {
   const [page, setPage] = useState(0);
@@ -49,6 +59,9 @@ export const NewsPage = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [newsToDelete, setNewsToDelete] = useState<News | null>(null); // For single delete
   const [isBatchDelete, setIsBatchDelete] = useState(false);
+
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [selectedNewsDetail, setSelectedNewsDetail] = useState<News | null>(null);
 
   // Debounce search
   useEffect(() => {
@@ -98,6 +111,11 @@ export const NewsPage = () => {
   const handleEditNews = (news: News) => {
     setEditingNews(news);
     setFormOpen(true);
+  };
+
+  const handleViewDetail = (news: News) => {
+    setSelectedNewsDetail(news);
+    setDetailDialogOpen(true);
   };
 
   const handleDeleteOne = (news: News) => {
@@ -209,6 +227,7 @@ export const NewsPage = () => {
                   />
                 </TableCell>
                 <TableCell>Tiêu đề</TableCell>
+                <TableCell>Nội dung</TableCell>
                 <TableCell>Ngày tạo</TableCell>
                 <TableCell align="right">Hành động</TableCell>
               </TableRow>
@@ -216,13 +235,13 @@ export const NewsPage = () => {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={4} align="center" sx={{ py: 3 }}>
+                  <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
                     <CircularProgress />
                   </TableCell>
                 </TableRow>
               ) : newsList.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} align="center" sx={{ py: 3 }}>
+                  <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
                     <Typography color="textSecondary">
                       Không tìm thấy dữ liệu
                     </Typography>
@@ -237,23 +256,51 @@ export const NewsPage = () => {
                         onChange={() => handleSelectOne(news.id)}
                       />
                     </TableCell>
-                    <TableCell width="60%">{news.title}</TableCell>
+                    <TableCell width="30%">
+                      <Typography fontWeight={500}>{news.title}</Typography>
+                    </TableCell>
+                    <TableCell width="40%">
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          maxWidth: 400,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          color: "text.secondary",
+                        }}
+                      >
+                        {stripHtml(news.content)}
+                      </Typography>
+                    </TableCell>
                     <TableCell>
                       {new Date(news.createdAt).toLocaleDateString("vi-VN")}
                     </TableCell>
                     <TableCell align="right">
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleEditNews(news)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        color="error"
-                        onClick={() => handleDeleteOne(news)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
+                      <Tooltip title="Xem chi tiết">
+                        <IconButton
+                          color="info"
+                          onClick={() => handleViewDetail(news)}
+                        >
+                          <VisibilityIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Chỉnh sửa">
+                        <IconButton
+                          color="primary"
+                          onClick={() => handleEditNews(news)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Xóa">
+                        <IconButton
+                          color="error"
+                          onClick={() => handleDeleteOne(news)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))
@@ -291,6 +338,12 @@ export const NewsPage = () => {
         count={isBatchDelete ? selectedIds.length : 1}
         title={newsToDelete?.title}
         isLoading={deleteMutation.isPending || deleteBatchMutation.isPending}
+      />
+
+      <NewsDetailDialog
+        open={detailDialogOpen}
+        onClose={() => setDetailDialogOpen(false)}
+        data={selectedNewsDetail}
       />
     </Box>
   );

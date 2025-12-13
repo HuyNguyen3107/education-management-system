@@ -10,8 +10,14 @@ import { NewsPage } from "@/features/news/pages/NewsPage";
 import { MajorsPage } from "@/features/majors/pages/MajorsPage";
 import { DepartmentsPage } from "@/features/departments/pages/DepartmentsPage";
 import { SpecializationsPage } from "@/features/specializations/pages/SpecializationsPage";
+import { ClassesPage } from "@/features/classes/pages/ClassesPage";
+import { CreditClassesPage } from "@/features/credit-classes/pages/CreditClassesPage";
+import { StudentCreditClassesPage } from "@/features/student-credit-classes/pages/StudentCreditClassesPage";
+import { SubjectsPage } from "@/features/subjects/pages/SubjectsPage";
+import { AspirationRegistersPage } from "@/features/aspiration-registers/pages/AspirationRegistersPage";
 import { NotificationsPage } from "@/features/notifications/pages/NotificationsPage";
 import { TuitionsPage } from "@/features/tuitions/pages/TuitionsPage";
+import { StudentTuitionsPage } from "@/features/student-tuitions/pages/StudentTuitionsPage";
 import { TimeRegistersPage } from "@/features/time-registers/pages/TimeRegistersPage";
 import { PrerequisiteSubjectsPage } from "@/features/prerequisite-subjects/pages/PrerequisiteSubjectsPage";
 import { ProfilePage } from "@/features/profile/pages/ProfilePage";
@@ -68,12 +74,36 @@ export const AppRoutes = () => {
               element: <SpecializationsPage />,
             },
             {
+              path: "classes",
+              element: <ClassesPage />,
+            },
+            {
+              path: "credit-classes",
+              element: <CreditClassesPage />,
+            },
+            {
+              path: "student-credit-classes",
+              element: <StudentCreditClassesPage />,
+            },
+            {
+              path: "subjects",
+              element: <SubjectsPage />,
+            },
+            {
+              path: "aspiration-registers",
+              element: <AspirationRegistersPage />,
+            },
+            {
               path: "notifications",
               element: <NotificationsPage />,
             },
             {
               path: "tuitions",
               element: <TuitionsPage />,
+            },
+            {
+              path: "student-tuitions",
+              element: <StudentTuitionsPage />,
             },
             {
               path: "time-registers",

@@ -29,6 +29,12 @@ import {
   School as SchoolIcon,
   Business as BusinessIcon,
   Category as CategoryIcon,
+  Class as ClassIcon,
+  CreditScore as CreditScoreIcon,
+  MenuBook as MenuBookIcon,
+  HowToReg as HowToRegIcon,
+  Receipt as ReceiptIcon,
+  Assignment as AssignmentIcon,
   ExpandLess,
   ExpandMore,
 } from "@mui/icons-material";
@@ -101,6 +107,31 @@ const menuGroups: MenuGroup[] = [
         icon: <CategoryIcon />,
       },
       {
+        title: "Lớp học",
+        path: ROUTE_PATHS.CLASSES,
+        icon: <ClassIcon />,
+      },
+      {
+        title: "Lớp tín chỉ",
+        path: ROUTE_PATHS.CREDIT_CLASSES,
+        icon: <CreditScoreIcon />,
+      },
+      {
+        title: "ĐK lớp tín chỉ",
+        path: ROUTE_PATHS.STUDENT_CREDIT_CLASSES,
+        icon: <AssignmentIcon />,
+      },
+      {
+        title: "Môn học",
+        path: ROUTE_PATHS.SUBJECTS,
+        icon: <MenuBookIcon />,
+      },
+      {
+        title: "Nguyện vọng đăng ký",
+        path: ROUTE_PATHS.ASPIRATION_REGISTERS,
+        icon: <HowToRegIcon />,
+      },
+      {
         title: "Tin tức",
         path: ROUTE_PATHS.NEWS,
         icon: <ArticleIcon />,
@@ -114,6 +145,11 @@ const menuGroups: MenuGroup[] = [
         title: "Học phí",
         path: ROUTE_PATHS.TUITIONS,
         icon: <AttachMoneyIcon />,
+      },
+      {
+        title: "Học phí sinh viên",
+        path: ROUTE_PATHS.STUDENT_TUITIONS,
+        icon: <ReceiptIcon />,
       },
       {
         title: "Thời gian đăng ký",

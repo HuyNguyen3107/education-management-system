@@ -10,6 +10,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { useEffect } from "react";
 import type { CreateNewsRequest, News } from "../types/news.types";
+import { RichTextEditor } from "@/components/RichTextEditor";
 
 interface NewsFormDialogProps {
   open: boolean;
@@ -63,7 +64,7 @@ export const NewsFormDialog = ({
       </DialogTitle>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <DialogContent>
-          <Box display="flex" flexDirection="column" gap={2}>
+          <Box display="flex" flexDirection="column" gap={3}>
             <Controller
               name="title"
               control={control}
@@ -75,22 +76,24 @@ export const NewsFormDialog = ({
                   fullWidth
                   error={!!errors.title}
                   helperText={errors.title?.message}
+                  placeholder="Nhập tiêu đề tin tức"
                 />
               )}
             />
+
             <Controller
               name="content"
               control={control}
               rules={{ required: "Vui lòng nhập nội dung" }}
               render={({ field }) => (
-                <TextField
-                  {...field}
+                <RichTextEditor
+                  value={field.value}
+                  onChange={field.onChange}
                   label="Nội dung"
-                  fullWidth
-                  multiline
-                  rows={6}
+                  placeholder="Nhập nội dung tin tức..."
                   error={!!errors.content}
                   helperText={errors.content?.message}
+                  minHeight={250}
                 />
               )}
             />

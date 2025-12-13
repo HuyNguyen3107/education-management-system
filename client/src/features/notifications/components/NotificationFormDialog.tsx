@@ -16,6 +16,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useEffect } from "react";
 import type { NotificationWithUser } from "../types/notification.types";
 import { useGetAllUsers } from "../../users/queries/user.queries";
+import { RichTextEditor } from "@/components/RichTextEditor";
 
 interface NotificationFormDialogProps {
   open: boolean;
@@ -76,7 +77,7 @@ export const NotificationFormDialog = ({
       </DialogTitle>
       <form onSubmit={handleSubmit(onFormSubmit)}>
         <DialogContent>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 1 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
             <Controller
               name="sendTo"
               control={control}
@@ -119,15 +120,14 @@ export const NotificationFormDialog = ({
               control={control}
               rules={{ required: "Nội dung là bắt buộc" }}
               render={({ field }) => (
-                <TextField
-                  {...field}
+                <RichTextEditor
+                  value={field.value}
+                  onChange={field.onChange}
                   label="Nội dung"
-                  fullWidth
-                  multiline
-                  rows={6}
+                  placeholder="Nhập nội dung thông báo..."
                   error={!!errors.content}
                   helperText={errors.content?.message}
-                  placeholder="Nhập nội dung thông báo"
+                  minHeight={200}
                 />
               )}
             />
@@ -147,4 +147,3 @@ export const NotificationFormDialog = ({
     </Dialog>
   );
 };
-
