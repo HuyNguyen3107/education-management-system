@@ -54,7 +54,7 @@ const menuItems: MenuItem[] = [
   },
   {
     title: "Thông báo từ ban quản trị",
-    path: "#",
+    path: ROUTE_PATHS.PUBLIC_ADMIN_NOTIFICATIONS,
     icon: <CampaignIcon />,
   },
   {
@@ -125,6 +125,17 @@ export const PublicSidebar = ({ open, onToggle }: PublicSidebarProps) => {
   };
 
   const isActive = (path: string) => {
+    // For home page, check if pathname starts with /public/home (but not admin-notifications)
+    if (path === ROUTE_PATHS.PUBLIC_HOME) {
+      return (
+        location.pathname.startsWith("/public/home") &&
+        !location.pathname.includes("/admin-notifications")
+      );
+    }
+    // For admin notifications, check exact match or starts with
+    if (path === ROUTE_PATHS.PUBLIC_ADMIN_NOTIFICATIONS) {
+      return location.pathname.startsWith("/public/home/admin-notifications");
+    }
     return location.pathname === path;
   };
 

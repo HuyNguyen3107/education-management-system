@@ -25,6 +25,10 @@ import { GuestGuard } from "@/components/guards/GuestGuard";
 import { AuthGuard } from "@/components/guards/AuthGuard";
 import { PublicLayout } from "@/features/public/layouts/PublicLayout";
 import { PublicHomePage } from "@/features/public/pages/PublicHomePage";
+import { PublicNewsDetailPage } from "@/features/public/pages/PublicNewsDetailPage";
+import { PublicNewsListPage } from "@/features/public/pages/PublicNewsListPage";
+import { PublicAdminNotificationsPage } from "@/features/public/pages/PublicAdminNotificationsPage";
+import { PublicNotificationDetailPage } from "@/features/public/pages/PublicNotificationDetailPage";
 
 export const AppRoutes = () => {
   const routes = useRoutes([
@@ -39,6 +43,22 @@ export const AppRoutes = () => {
         {
           path: "home",
           element: <PublicHomePage />,
+        },
+        {
+          path: "home/all",
+          element: <PublicNewsListPage />,
+        },
+        {
+          path: "home/admin-notifications",
+          element: <PublicAdminNotificationsPage />,
+        },
+        {
+          path: "home/notification/:id",
+          element: <PublicNotificationDetailPage />,
+        },
+        {
+          path: "home/:id",
+          element: <PublicNewsDetailPage />,
         },
       ],
     },

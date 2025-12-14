@@ -23,4 +23,5 @@ export const ROUTE_PATHS = {
   FORGOT_PASSWORD: "/forgot-password",
   RESET_PASSWORD: "/reset-password",
   PUBLIC_HOME: "/public/home",
+  PUBLIC_ADMIN_NOTIFICATIONS: "/public/home/admin-notifications",
 } as const;

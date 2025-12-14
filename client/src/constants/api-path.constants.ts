@@ -41,7 +41,8 @@ export const API_PATHS = {
     DELETE: (id: string) => `/teachers/${id}`,
   },
   NOTIFICATIONS: {
-    GET_ALL_BY_USER: (userId: string) => `/notifications/${userId}`,
+    GET_ALL_BY_USER: (userId: string) => `/notifications/user/${userId}`,
+    GET_BY_ID: (id: string) => `/notifications/detail/${id}`,
     CREATE: "/notifications",
     MARK_AS_SEEN: (id: string) => `/notifications/${id}/seen`,
     UPDATE_RESPONSE: (id: string) => `/notifications/${id}/response`,
@@ -57,8 +58,10 @@ export const API_PATHS = {
   TIME_REGISTERS: {
     GET_ALL: "/time-registers",
     GET_BY_ID: (id: string) => `/time-registers/${id}`,
-    GET_BY_TYPE_SEMESTER: (typeSemester: string) => `/time-registers/type-semester/${typeSemester}`,
-    GET_BY_TYPE_REGISTER: (typeRegister: string) => `/time-registers/type-register/${typeRegister}`,
+    GET_BY_TYPE_SEMESTER: (typeSemester: string) =>
+      `/time-registers/type-semester/${typeSemester}`,
+    GET_BY_TYPE_REGISTER: (typeRegister: string) =>
+      `/time-registers/type-register/${typeRegister}`,
     SEARCH: "/time-registers/search",
     CREATE: "/time-registers",
     UPDATE: (id: string) => `/time-registers/${id}`,
@@ -67,8 +70,10 @@ export const API_PATHS = {
   PREREQUISITE_SUBJECTS: {
     GET_ALL: "/prerequisite-subjects",
     GET_BY_ID: (id: string) => `/prerequisite-subjects/${id}`,
-    GET_BY_REGISTER_CODE: (registerCode: string) => `/prerequisite-subjects/register-code/${registerCode}`,
-    GET_BY_PREREQUISITE_CODE: (prerequisiteCode: string) => `/prerequisite-subjects/prerequisite-code/${prerequisiteCode}`,
+    GET_BY_REGISTER_CODE: (registerCode: string) =>
+      `/prerequisite-subjects/register-code/${registerCode}`,
+    GET_BY_PREREQUISITE_CODE: (prerequisiteCode: string) =>
+      `/prerequisite-subjects/prerequisite-code/${prerequisiteCode}`,
     SEARCH: "/prerequisite-subjects/search",
     CREATE: "/prerequisite-subjects",
     UPDATE: (id: string) => `/prerequisite-subjects/${id}`,
