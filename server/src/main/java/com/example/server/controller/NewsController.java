@@ -6,6 +6,10 @@ import com.example.server.dto.UpdateNewsDto;
 import com.example.server.service.NewsService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,13 +25,15 @@ public class NewsController {
     private NewsService newsService;
 
     /**
-     * GET /api/news - Lấy tất cả tin tức
+     * GET /api/news - Lấy danh sách tin tức (có phân trang & tìm kiếm)
      */
     @GetMapping
-    public ResponseEntity<List<NewsResponseDto>> getAllNews() {
+    public ResponseEntity<Page<NewsResponseDto>> getNews(
+            @RequestParam(required = false) String search,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         try {
-            List<NewsResponseDto> newsList = newsService.getAllNews();
-            return ResponseEntity.ok(newsList);
+            Page<NewsResponseDto> newsPage = newsService.getNews(search, pageable);
+            return ResponseEntity.ok(newsPage);
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
         }
@@ -92,15 +98,15 @@ public class NewsController {
     }
 
     /**
-     * GET /api/news/search?keyword=... - Tìm kiếm tin tức
+     * DELETE /api/news/batch - Xóa nhiều tin tức
      */
-    @GetMapping("/search")
-    public ResponseEntity<List<NewsResponseDto>> searchNews(@RequestParam String keyword) {
+    @DeleteMapping("/batch")
+    public ResponseEntity<?> deleteNewsBatch(@RequestBody List<UUID> ids) {
         try {
-            List<NewsResponseDto> newsList = newsService.searchNews(keyword);
-            return ResponseEntity.ok(newsList);
+            newsService.deleteNewsBatch(ids);
+            return ResponseEntity.ok("Xóa danh sách tin tức thành công");
         } catch (Exception e) {
-            return ResponseEntity.status(500).build();
+            return ResponseEntity.status(500).body("Lỗi: " + e.getMessage());
         }
     }
 }

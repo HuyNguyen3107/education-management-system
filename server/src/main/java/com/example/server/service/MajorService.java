@@ -4,6 +4,10 @@ import com.example.server.dto.MajorRequestDto;
 import com.example.server.dto.MajorResponseDto;
 import com.example.server.entity.Major;
 import com.example.server.repository.MajorRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,7 +35,21 @@ public class MajorService {
         return toDto(majorRepository.save(m));
     }
 
-    // GET ALL
+    // GET ALL WITH PAGINATION AND SEARCH
+    public Page<MajorResponseDto> getMajors(int page, int size, String keyword) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        
+        Page<Major> majorPage;
+        if (keyword != null && !keyword.isEmpty()) {
+            majorPage = majorRepository.searchByName(keyword, pageable);
+        } else {
+            majorPage = majorRepository.findAll(pageable);
+        }
+
+        return majorPage.map(this::toDto);
+    }
+
+    // GET ALL (Legacy)
     public List<MajorResponseDto> getAll() {
         return majorRepository.findAll()
                 .stream()

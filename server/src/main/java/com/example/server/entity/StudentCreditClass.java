@@ -2,7 +2,8 @@ package com.example.server.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -21,9 +22,11 @@ public class StudentCreditClass {
     private UUID creditClassId;
 
     @Column(name = "scores", columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode scores;
 
     @Column(name = "exam_schedule", columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode examSchedule;
 
     @Column(name = "created_at", nullable = false, updatable = false)

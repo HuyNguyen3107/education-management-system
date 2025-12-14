@@ -33,8 +33,8 @@ http.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      useAuthStore.getState().clearAuth();
-      window.location.href = "/login";
+      // useAuthStore.getState().clearAuth();
+      // window.location.href = "/login";
     }
     return Promise.reject(error);
   }
