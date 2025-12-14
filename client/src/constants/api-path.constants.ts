@@ -29,6 +29,8 @@ export const API_PATHS = {
     GET_BY_ID: (id: string) => `/students/${id}`,
     GET_BY_CODE: (code: string) => `/students/code/${code}`,
     GET_BY_USER_ID: (userId: string) => `/students/user/${userId}`,
+    GET_TRAINING_PROGRAM: (userId: string) =>
+      `/students/training-program/${userId}`,
     CREATE: "/students",
     UPDATE: (id: string) => `/students/${id}`,
     DELETE: (id: string) => `/students/${id}`,

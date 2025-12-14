@@ -59,7 +59,7 @@ const menuItems: MenuItem[] = [
   },
   {
     title: "Xem chương trình đào tạo",
-    path: "#",
+    path: ROUTE_PATHS.TRAINING_PROGRAM,
     icon: <MenuBookIcon />,
   },
   {

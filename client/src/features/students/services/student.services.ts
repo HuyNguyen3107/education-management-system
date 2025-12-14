@@ -4,6 +4,7 @@ import type {
   Student,
   CreateStudentRequest,
   UpdateStudentRequest,
+  TrainingProgramDto,
 } from "../types/student.types";
 
 export const studentService = {
@@ -18,12 +19,23 @@ export const studentService = {
   },
 
   getStudentByCode: async (code: string): Promise<Student> => {
-    const response = await http.get<Student>(API_PATHS.STUDENTS.GET_BY_CODE(code));
+    const response = await http.get<Student>(
+      API_PATHS.STUDENTS.GET_BY_CODE(code)
+    );
     return response.data;
   },
 
   getStudentByUserId: async (userId: string): Promise<Student> => {
-    const response = await http.get<Student>(API_PATHS.STUDENTS.GET_BY_USER_ID(userId));
+    const response = await http.get<Student>(
+      API_PATHS.STUDENTS.GET_BY_USER_ID(userId)
+    );
+    return response.data;
+  },
+
+  getTrainingProgram: async (userId: string): Promise<TrainingProgramDto[]> => {
+    const response = await http.get<TrainingProgramDto[]>(
+      API_PATHS.STUDENTS.GET_TRAINING_PROGRAM(userId)
+    );
     return response.data;
   },
 
@@ -32,8 +44,14 @@ export const studentService = {
     return response.data;
   },
 
-  updateStudent: async (id: string, data: UpdateStudentRequest): Promise<Student> => {
-    const response = await http.put<Student>(API_PATHS.STUDENTS.UPDATE(id), data);
+  updateStudent: async (
+    id: string,
+    data: UpdateStudentRequest
+  ): Promise<Student> => {
+    const response = await http.put<Student>(
+      API_PATHS.STUDENTS.UPDATE(id),
+      data
+    );
     return response.data;
   },
 
@@ -41,4 +59,3 @@ export const studentService = {
     await http.delete(API_PATHS.STUDENTS.DELETE(id));
   },
 };
-

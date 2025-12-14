@@ -12,6 +12,6 @@ import java.util.UUID;
 public interface SpecializationRepository extends JpaRepository<Specialization, UUID> {
     boolean existsByNameIgnoreCase(String name);
 
-    @Query("SELECT s FROM Specialization s WHERE (:keyword IS NULL OR LOWER(s.name) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    @Query("SELECT s FROM Specialization s WHERE (:keyword IS NULL OR :keyword = '' OR LOWER(s.name) LIKE LOWER(CONCAT('%', :keyword, '%')))")
     Page<Specialization> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
 }

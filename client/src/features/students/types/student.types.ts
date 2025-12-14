@@ -31,3 +31,22 @@ export interface UpdateStudentRequest {
   userId?: string;
 }
 
+export interface SubjectResponseDto {
+  id: string;
+  name: string;
+  subjectCode: string;
+  majorId: string;
+  specializationId: string;
+  numberOfCredit: number;
+  semester: string;
+  ingredientSecretion: any;
+  isStudied: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TrainingProgramDto {
+  semester: string;
+  totalCredits: number;
+  subjects: SubjectResponseDto[];
+}

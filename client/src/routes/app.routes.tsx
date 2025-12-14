@@ -5,6 +5,7 @@ import { DashboardLayout } from "@/features/dashboard/layouts/DashboardLayout";
 import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
 import { UsersPage } from "@/features/users/pages/UsersPage";
 import { StudentsPage } from "@/features/students/pages/StudentsPage";
+import { TrainingProgramPage } from "@/features/students/pages/TrainingProgramPage";
 import { LecturersPage } from "@/features/lecturers/pages/LecturersPage";
 import { NewsPage } from "@/features/news/pages/NewsPage";
 import { MajorsPage } from "@/features/majors/pages/MajorsPage";
@@ -84,6 +85,10 @@ export const AppRoutes = () => {
             {
               path: "students",
               element: <StudentsPage />,
+            },
+            {
+              path: "training-program",
+              element: <TrainingProgramPage />,
             },
             {
               path: "lecturers",

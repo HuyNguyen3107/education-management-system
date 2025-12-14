@@ -4,6 +4,7 @@ export const ROUTE_PATHS = {
   DASHBOARD: "/dashboard",
   USERS: "/dashboard/users",
   STUDENTS: "/dashboard/students",
+  TRAINING_PROGRAM: "/dashboard/training-program",
   LECTURERS: "/dashboard/lecturers",
   NEWS: "/dashboard/news",
   MAJORS: "/dashboard/majors",
