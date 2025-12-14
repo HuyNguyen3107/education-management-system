@@ -3,9 +3,12 @@ package com.example.server.repository;
 import com.example.server.entity.StudentTuition;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface StudentTuitionRepository extends JpaRepository<StudentTuition, UUID> {
+
+    List<StudentTuition> findByStudentId(UUID studentId);
 
     boolean existsByStudentIdAndTuitionId(UUID studentId, UUID tuitionId);
 

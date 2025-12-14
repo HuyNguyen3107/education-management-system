@@ -2,6 +2,7 @@ package com.example.server.controller;
 
 import com.example.server.dto.AspirationRegisterRequestDto;
 import com.example.server.dto.AspirationRegisterResponseDto;
+import com.example.server.dto.SubjectResponseDto;
 import com.example.server.service.AspirationRegisterService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,33 +21,26 @@ public class AspirationRegisterController {
         this.aspirationRegisterService = aspirationRegisterService;
     }
 
-    @GetMapping
-    public List<AspirationRegisterResponseDto> getAll() {
-        return aspirationRegisterService.getAll();
+    @GetMapping("/student/{studentId}")
+    public List<AspirationRegisterResponseDto> getByStudentId(@PathVariable UUID studentId) {
+        return aspirationRegisterService.getAspirationsByStudentId(studentId);
     }
 
-    @GetMapping("/{id}")
-    public AspirationRegisterResponseDto getById(@PathVariable UUID id) {
-        return aspirationRegisterService.getById(id);
+    @GetMapping("/available-subjects/{studentId}")
+    public List<SubjectResponseDto> getAvailableSubjects(@PathVariable UUID studentId) {
+        return aspirationRegisterService.getAvailableSubjects(studentId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AspirationRegisterResponseDto create(
             @Valid @RequestBody AspirationRegisterRequestDto request) {
-        return aspirationRegisterService.create(request);
-    }
-
-    @PutMapping("/{id}")
-    public AspirationRegisterResponseDto update(
-            @PathVariable UUID id,
-            @Valid @RequestBody AspirationRegisterRequestDto request) {
-        return aspirationRegisterService.update(id, request);
+        return aspirationRegisterService.createAspiration(request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
-        aspirationRegisterService.delete(id);
+        aspirationRegisterService.deleteAspiration(id);
     }
 }

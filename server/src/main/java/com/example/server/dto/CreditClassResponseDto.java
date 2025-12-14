@@ -18,6 +18,16 @@ public class CreditClassResponseDto {
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 
+    private Integer enrolledCount;
+
+    public Integer getEnrolledCount() {
+        return enrolledCount;
+    }
+
+    public void setEnrolledCount(Integer enrolledCount) {
+        this.enrolledCount = enrolledCount;
+    }
+
     public UUID getId() {
         return id;
     }

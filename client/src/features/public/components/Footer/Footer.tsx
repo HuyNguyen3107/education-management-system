@@ -20,21 +20,21 @@ export const Footer = () => {
   useEffect(() => {
     // Check if already visited in this session
     const sessionVisited = sessionStorage.getItem("visited");
-
+    
     if (!sessionVisited) {
       // Mark as visited in this session
       sessionStorage.setItem("visited", "true");
-
+      
       // Load total visits
       const totalVisits = parseInt(
         localStorage.getItem("totalVisits") || "0",
         10
       );
-
+      
       // Increment visit count
       const newTotalVisits = totalVisits + 1;
       localStorage.setItem("totalVisits", newTotalVisits.toString());
-
+      
       // Load today's visits
       const today = new Date().toDateString();
       const todayVisitsKey = `visits_${today}`;
@@ -61,7 +61,7 @@ export const Footer = () => {
         localStorage.getItem("totalVisits") || "0",
         10
       );
-
+      
       const today = new Date().toDateString();
       const todayVisitsKey = `visits_${today}`;
       const todayVisits = parseInt(
@@ -180,10 +180,7 @@ export const Footer = () => {
             textAlign: "center",
           }}
         >
-          <Typography
-            variant="caption"
-            sx={{ color: "rgba(255, 255, 255, 0.6)", fontSize: "0.7rem" }}
-          >
+          <Typography variant="caption" sx={{ color: "rgba(255, 255, 255, 0.6)", fontSize: "0.7rem" }}>
             © 2025 Education Management System. Tất cả quyền được bảo lưu.
           </Typography>
         </Box>
@@ -191,3 +188,4 @@ export const Footer = () => {
     </Box>
   );
 };
+

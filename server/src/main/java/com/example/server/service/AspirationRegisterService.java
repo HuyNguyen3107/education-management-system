@@ -2,102 +2,220 @@ package com.example.server.service;
 
 import com.example.server.dto.AspirationRegisterRequestDto;
 import com.example.server.dto.AspirationRegisterResponseDto;
-import com.example.server.entity.AspirationRegister;
-import com.example.server.repository.AspirationRegisterRepository;
-import com.example.server.repository.StudentRepository;
-import org.springframework.http.HttpStatus;
+import com.example.server.dto.SubjectResponseDto;
+import com.example.server.entity.*;
+import com.example.server.repository.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class AspirationRegisterService {
 
-    private final AspirationRegisterRepository aspirationRegisterRepository;
-    private final StudentRepository studentRepository;
+    @Autowired
+    private AspirationRegisterRepository aspirationRegisterRepository;
 
-    public AspirationRegisterService(
-            AspirationRegisterRepository aspirationRegisterRepository,
-            StudentRepository studentRepository) {
-        this.aspirationRegisterRepository = aspirationRegisterRepository;
-        this.studentRepository = studentRepository;
+    @Autowired
+    private TimeRegisterRepository timeRegisterRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private StudentMajorRepository studentMajorRepository;
+
+    @Autowired
+    private SubjectRepository subjectRepository;
+
+    @Autowired
+    private StudentCreditClassRepository studentCreditClassRepository;
+
+    @Autowired
+    private CreditClassRepository creditClassRepository;
+
+    private static final String DATE_FORMAT = "dd/MM/yyyy";
+
+    public List<AspirationRegisterResponseDto> getAspirationsByStudentId(UUID studentId) {
+        return aspirationRegisterRepository.findByStudentId(studentId).stream()
+                .map(AspirationRegisterResponseDto::new)
+                .collect(Collectors.toList());
     }
 
-    public List<AspirationRegisterResponseDto> getAll() {
-        return aspirationRegisterRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
-    }
-
-    public AspirationRegisterResponseDto getById(UUID id) {
-        AspirationRegister entity = aspirationRegisterRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Không tìm thấy đăng ký nguyện vọng với id: " + id));
-
-        return toResponse(entity);
-    }
-
-    public AspirationRegisterResponseDto create(AspirationRegisterRequestDto request) {
-
-        if (!studentRepository.existsById(request.getStudentId())) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "student_id không tồn tại.");
+    public AspirationRegisterResponseDto createAspiration(AspirationRegisterRequestDto dto) {
+        // Validate student exists
+        if (!userRepository.existsById(dto.getStudentId())) {
+            throw new RuntimeException("Student not found");
         }
 
-        AspirationRegister entity = new AspirationRegister();
-        entity.setSubjectCode(request.getSubjectCode().trim());
-        entity.setStudentId(request.getStudentId());
-        entity.setReason(request.getReason().trim());
-        entity.setSemester(request.getSemester().trim());
+        AspirationRegister aspiration = new AspirationRegister();
+        aspiration.setStudentId(dto.getStudentId());
+        aspiration.setSubjectCode(dto.getSubjectCode());
+        aspiration.setReason(dto.getReason());
+        aspiration.setSemester(dto.getSemester());
 
-        return toResponse(aspirationRegisterRepository.save(entity));
+        AspirationRegister saved = aspirationRegisterRepository.save(aspiration);
+        return new AspirationRegisterResponseDto(saved);
     }
 
-    public AspirationRegisterResponseDto update(UUID id, AspirationRegisterRequestDto request) {
-
-        AspirationRegister entity = aspirationRegisterRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Không tìm thấy đăng ký nguyện vọng với id: " + id));
-
-        if (!studentRepository.existsById(request.getStudentId())) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "student_id không tồn tại.");
-        }
-
-        entity.setSubjectCode(request.getSubjectCode().trim());
-        entity.setStudentId(request.getStudentId());
-        entity.setReason(request.getReason().trim());
-        entity.setSemester(request.getSemester().trim());
-
-        return toResponse(aspirationRegisterRepository.save(entity));
-    }
-
-    public void delete(UUID id) {
+    public void deleteAspiration(UUID id) {
         if (!aspirationRegisterRepository.existsById(id)) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Không tìm thấy đăng ký nguyện vọng với id: " + id);
+            throw new RuntimeException("Aspiration not found");
         }
-
         aspirationRegisterRepository.deleteById(id);
     }
 
-    private AspirationRegisterResponseDto toResponse(AspirationRegister entity) {
-        AspirationRegisterResponseDto res = new AspirationRegisterResponseDto();
-        res.setId(entity.getId());
-        res.setSubjectCode(entity.getSubjectCode());
-        res.setStudentId(entity.getStudentId());
-        res.setReason(entity.getReason());
-        res.setSemester(entity.getSemester());
-        res.setCreatedAt(entity.getCreatedAt());
-        res.setUpdatedAt(entity.getUpdatedAt());
-        return res;
+    public List<SubjectResponseDto> getAvailableSubjects(UUID studentId) {
+        // 1. Check Time Window
+        TimeRegister activePeriod = findActiveWishlistPeriod();
+        if (activePeriod == null) {
+            throw new RuntimeException("Hiện không trong thời gian đăng ký nguyện vọng.");
+        }
+
+        // 2. Get Student Info
+        User student = userRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
+
+        // 3. Parse Semester Info
+        String typeSemester = activePeriod.getTypeSemester(); // e.g., "Học kỳ 1 năm 2024-2025"
+        SemesterInfo semesterInfo = parseSemesterString(typeSemester);
+
+        // 4. Parse Student Academic Year
+        String academicYear = student.getAcademicYear(); // e.g., "2021-2025"
+        int startYear = parseStartYear(academicYear);
+
+        // 5. Calculate Student Year and Program Semester
+        int currentStudentYear = semesterInfo.year - startYear + 1;
+        // Assuming 2 semesters per year for the calculation logic
+        // Program Semester = (Year - 1) * 2 + SemesterIndex
+        int programSemester = (currentStudentYear - 1) * 2 + semesterInfo.semesterIndex;
+
+        List<Subject> subjects = new ArrayList<>();
+
+        if (semesterInfo.semesterIndex == 1 || semesterInfo.semesterIndex == 2) {
+            // Main Semester Logic
+            StudentMajor studentMajor = studentMajorRepository.findByStudentId(studentId).stream()
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Sinh viên chưa có chuyên ngành"));
+
+            // Find subjects for this Major/Specialization and Semester
+            // Using a helper method to filter in memory or we could add a repository method
+            List<Subject> allSubjects = subjectRepository.findByMajorIdOrSpecializationId(
+                    studentMajor.getMajorId(), studentMajor.getSpecializationId());
+
+            String targetSemesterStr = String.valueOf(programSemester);
+            subjects = allSubjects.stream()
+                    .filter(s -> s.getSemester().equals(targetSemesterStr))
+                    .collect(Collectors.toList());
+
+        } else {
+            // Sub Semester (Summer/Winter) Logic - Failed Subjects
+            List<StudentCreditClass> enrolledClasses = studentCreditClassRepository.findByStudentId(studentId);
+
+            for (StudentCreditClass scc : enrolledClasses) {
+                if (isFailed(scc.getScores())) {
+                    // Find subject
+                    Optional<CreditClass> creditClassOpt = creditClassRepository.findById(scc.getCreditClassId());
+                    if (creditClassOpt.isPresent()) {
+                        CreditClass cc = creditClassOpt.get();
+                        Optional<Subject> subjectOpt = subjectRepository.findBySubjectCode(cc.getSubjectCode());
+                        subjectOpt.ifPresent(subjects::add);
+                    }
+                }
+            }
+        }
+
+        return subjects.stream()
+                .map(SubjectResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    private TimeRegister findActiveWishlistPeriod() {
+        List<TimeRegister> periods = timeRegisterRepository.findByTypeRegister("wishlist_registration");
+        LocalDate now = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+
+        for (TimeRegister p : periods) {
+            try {
+                LocalDate start = LocalDate.parse(p.getOpenTime(), formatter);
+                LocalDate end = LocalDate.parse(p.getEndTime(), formatter);
+                if (!now.isBefore(start) && !now.isAfter(end)) {
+                    return p;
+                }
+            } catch (Exception e) {
+                // Ignore parsing errors, maybe log them
+                continue;
+            }
+        }
+        return null;
+    }
+
+    private static class SemesterInfo {
+        int semesterIndex;
+        int year;
+
+        SemesterInfo(int s, int y) {
+            this.semesterIndex = s;
+            this.year = y;
+        }
+    }
+
+    private SemesterInfo parseSemesterString(String typeSemester) {
+        // Example: "Học kỳ 1 năm 2024-2025"
+        // Regex to extract semester and first year
+        Pattern pattern = Pattern.compile("Học kỳ (\\d+) năm (\\d{4})");
+        Matcher matcher = pattern.matcher(typeSemester);
+
+        if (matcher.find()) {
+            int sem = Integer.parseInt(matcher.group(1));
+            int year = Integer.parseInt(matcher.group(2));
+            return new SemesterInfo(sem, year);
+        }
+        // Fallback or error
+        throw new RuntimeException("Định dạng học kỳ không hợp lệ: " + typeSemester);
+    }
+
+    private int parseStartYear(String academicYear) {
+        // Example: "2021-2025"
+        try {
+            return Integer.parseInt(academicYear.split("-")[0]);
+        } catch (Exception e) {
+            throw new RuntimeException("Định dạng niên khóa không hợp lệ: " + academicYear);
+        }
+    }
+
+    private boolean isFailed(JsonNode scores) {
+        if (scores == null)
+            return false;
+        // Check for specific "F" grade or score < 4.0
+        // Structure assumption: simple key-value or complex object
+
+        // Strategy 1: Look for "grade": "F" or "letter_grade": "F"
+        if (scores.has("grade") && "F".equalsIgnoreCase(scores.get("grade").asText()))
+            return true;
+        if (scores.has("letter_grade") && "F".equalsIgnoreCase(scores.get("letter_grade").asText()))
+            return true;
+
+        // Strategy 2: Look for "final_score" or "final" < 4.0
+        double finalScore = -1;
+        if (scores.has("final_score"))
+            finalScore = scores.get("final_score").asDouble();
+        else if (scores.has("final"))
+            finalScore = scores.get("final").asDouble();
+
+        if (finalScore >= 0 && finalScore < 4.0)
+            return true;
+
+        return false;
     }
 }

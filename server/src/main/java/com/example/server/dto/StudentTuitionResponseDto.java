@@ -9,6 +9,7 @@ public class StudentTuitionResponseDto {
     private UUID studentId;
     private UUID tuitionId;
     private Double endow;
+    private Double paid;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 
@@ -42,6 +43,14 @@ public class StudentTuitionResponseDto {
 
     public void setEndow(Double endow) {
         this.endow = endow;
+    }
+
+    public Double getPaid() {
+        return paid;
+    }
+
+    public void setPaid(Double paid) {
+        this.paid = paid;
     }
 
     public OffsetDateTime getCreatedAt() {

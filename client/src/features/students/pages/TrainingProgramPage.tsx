@@ -14,6 +14,10 @@ import {
   FormControl,
   CircularProgress,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { useAuthStore } from "@/store/auth.store";
 import { useTrainingProgram } from "../queries/student.queries";
@@ -24,7 +28,7 @@ import PrintIcon from "@mui/icons-material/Print";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import ListIcon from "@mui/icons-material/List";
 import CheckIcon from "@mui/icons-material/Check";
-import { useMemo, Fragment } from "react";
+import { useMemo, Fragment, useState } from "react";
 import type {
   TrainingProgramDto,
   SubjectResponseDto,
@@ -40,6 +44,20 @@ export const TrainingProgramPage = () => {
     error,
   } = useTrainingProgram(user?.id || "");
 
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedSubject, setSelectedSubject] =
+    useState<SubjectResponseDto | null>(null);
+
+  const handleOpenModal = (subject: SubjectResponseDto) => {
+    setSelectedSubject(subject);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedSubject(null);
+  };
+
   const { data: majorsData } = useMajors({ size: 1000 });
   const majors = majorsData?.content || [];
   const { data: specializationsData } = useSpecializations({ size: 1000 });
@@ -53,10 +71,13 @@ export const TrainingProgramPage = () => {
   }, [majors]);
 
   const specializationMap = useMemo(() => {
-    return specializations.reduce((acc: { [x: string]: any; }, spec: { id: string | number; name: any; }) => {
-      acc[spec.id] = spec.name;
-      return acc;
-    }, {} as Record<string, string>);
+    return specializations.reduce(
+      (acc: { [x: string]: any }, spec: { id: string | number; name: any }) => {
+        acc[spec.id] = spec.name;
+        return acc;
+      },
+      {} as Record<string, string>
+    );
   }, [specializations]);
 
   // Helper to calculate periods
@@ -123,7 +144,7 @@ export const TrainingProgramPage = () => {
               {getPeriods(subject, "thực hành")}
             </TableCell>
             <TableCell align="center">
-              <IconButton size="small">
+              <IconButton size="small" onClick={() => handleOpenModal(subject)}>
                 <ListIcon fontSize="small" />
               </IconButton>
             </TableCell>
@@ -243,6 +264,66 @@ export const TrainingProgramPage = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Dialog
+        open={openModal}
+        onClose={handleCloseModal}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ borderBottom: "1px solid #e0e0e0", pb: 1 }}>
+          <Typography variant="h6" fontWeight="bold">
+            Tiết thành phần - {selectedSubject?.name}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {selectedSubject?.subjectCode}
+          </Typography>
+        </DialogTitle>
+        <DialogContent sx={{ mt: 2 }}>
+          {selectedSubject?.ingredientSecretion &&
+          Array.isArray(selectedSubject.ingredientSecretion) &&
+          selectedSubject.ingredientSecretion.length > 0 ? (
+            <TableContainer component={Paper} variant="outlined">
+              <Table size="small">
+                <TableHead>
+                  <TableRow sx={{ bgcolor: "#f5f5f5" }}>
+                    <TableCell>Tên thành phần</TableCell>
+                    <TableCell align="center">Số tiết</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {selectedSubject.ingredientSecretion.map(
+                    (item: any, idx: number) => (
+                      <TableRow key={idx} hover>
+                        <TableCell>{item.name}</TableCell>
+                        <TableCell align="center">{item.periods}</TableCell>
+                      </TableRow>
+                    )
+                  )}
+                  <TableRow sx={{ bgcolor: "#f9fafb" }}>
+                    <TableCell sx={{ fontWeight: "bold" }}>Tổng cộng</TableCell>
+                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                      {selectedSubject.ingredientSecretion.reduce(
+                        (sum: number, item: any) => sum + (item.periods || 0),
+                        0
+                      )}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Typography align="center" color="text.secondary" sx={{ py: 3 }}>
+              Không có thông tin tiết thành phần
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ borderTop: "1px solid #e0e0e0", pt: 1 }}>
+          <Button onClick={handleCloseModal} color="inherit">
+            Đóng
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

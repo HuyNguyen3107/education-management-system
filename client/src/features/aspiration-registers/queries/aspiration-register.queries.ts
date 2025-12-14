@@ -8,13 +8,39 @@ import type {
 export const aspirationRegisterQueryKeys = {
   all: ["aspiration-registers"] as const,
   lists: () => [...aspirationRegisterQueryKeys.all, "list"] as const,
-  detail: (id: string) => [...aspirationRegisterQueryKeys.all, "detail", id] as const,
+  detail: (id: string) =>
+    [...aspirationRegisterQueryKeys.all, "detail", id] as const,
+  byStudent: (studentId: string) =>
+    [...aspirationRegisterQueryKeys.all, "student", studentId] as const,
+  availableSubjects: (studentId: string) =>
+    [
+      ...aspirationRegisterQueryKeys.all,
+      "available-subjects",
+      studentId,
+    ] as const,
 };
 
 export const useAspirationRegisters = () => {
   return useQuery({
     queryKey: aspirationRegisterQueryKeys.lists(),
     queryFn: () => aspirationRegisterService.getAllAspirationRegisters(),
+  });
+};
+
+export const useAspirationRegistersByStudent = (studentId: string) => {
+  return useQuery({
+    queryKey: aspirationRegisterQueryKeys.byStudent(studentId),
+    queryFn: () => aspirationRegisterService.getByStudentId(studentId),
+    enabled: !!studentId,
+  });
+};
+
+export const useAvailableSubjects = (studentId: string) => {
+  return useQuery({
+    queryKey: aspirationRegisterQueryKeys.availableSubjects(studentId),
+    queryFn: () => aspirationRegisterService.getAvailableSubjects(studentId),
+    enabled: !!studentId,
+    retry: false, // Don't retry if validation fails (e.g. not in time window)
   });
 };
 
@@ -32,7 +58,9 @@ export const useCreateAspirationRegister = () => {
     mutationFn: (data: CreateAspirationRegisterRequest) =>
       aspirationRegisterService.createAspirationRegister(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: aspirationRegisterQueryKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: aspirationRegisterQueryKeys.all,
+      });
     },
   });
 };
@@ -40,10 +68,17 @@ export const useCreateAspirationRegister = () => {
 export const useUpdateAspirationRegister = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateAspirationRegisterRequest }) =>
-      aspirationRegisterService.updateAspirationRegister(id, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: UpdateAspirationRegisterRequest;
+    }) => aspirationRegisterService.updateAspirationRegister(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: aspirationRegisterQueryKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: aspirationRegisterQueryKeys.all,
+      });
     },
   });
 };
@@ -51,10 +86,12 @@ export const useUpdateAspirationRegister = () => {
 export const useDeleteAspirationRegister = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => aspirationRegisterService.deleteAspirationRegister(id),
+    mutationFn: (id: string) =>
+      aspirationRegisterService.deleteAspirationRegister(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: aspirationRegisterQueryKeys.all });
+      queryClient.invalidateQueries({
+        queryKey: aspirationRegisterQueryKeys.all,
+      });
     },
   });
 };
-

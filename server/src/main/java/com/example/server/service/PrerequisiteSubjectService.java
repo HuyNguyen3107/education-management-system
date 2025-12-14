@@ -1,13 +1,19 @@
 package com.example.server.service;
 
 import com.example.server.dto.CreatePrerequisiteSubjectDto;
+import com.example.server.dto.PrerequisiteSubjectPublicDto;
 import com.example.server.dto.PrerequisiteSubjectResponseDto;
 import com.example.server.dto.UpdatePrerequisiteSubjectDto;
 import com.example.server.entity.PrerequisiteSubject;
 import com.example.server.repository.PrerequisiteSubjectRepository;
+import com.example.server.repository.StudentMajorRepository;
+import com.example.server.repository.StudentRepository;
+import com.example.server.entity.Student;
+import com.example.server.entity.StudentMajor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -17,6 +23,12 @@ public class PrerequisiteSubjectService {
 
     @Autowired
     private PrerequisiteSubjectRepository prerequisiteSubjectRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private StudentMajorRepository studentMajorRepository;
 
     /**
      * Lấy tất cả môn tiên quyết
@@ -98,8 +110,34 @@ public class PrerequisiteSubjectService {
      * Tìm kiếm theo cả 2 mã
      */
     public List<PrerequisiteSubjectResponseDto> searchByBothCodes(String registerCode, String prerequisiteCode) {
-        return prerequisiteSubjectRepository.findByRegisterCodeAndPrerequisiteCode(registerCode, prerequisiteCode).stream()
+        return prerequisiteSubjectRepository.findByRegisterCodeAndPrerequisiteCode(registerCode, prerequisiteCode)
+                .stream()
                 .map(PrerequisiteSubjectResponseDto::new)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Lấy danh sách môn tiên quyết public (kèm tên môn học), lọc theo userId nếu có
+     */
+    public List<PrerequisiteSubjectPublicDto> getPublicPrerequisiteSubjects(UUID userId) {
+        if (userId != null) {
+            // Tìm sinh viên theo userId
+            Student student = studentRepository.findByUserId(userId).orElse(null);
+            if (student != null) {
+                // Lấy thông tin ngành/chuyên ngành của sinh viên
+                // Giả sử sinh viên chỉ có 1 ngành chính (lấy cái đầu tiên tìm thấy)
+                List<StudentMajor> studentMajors = studentMajorRepository.findByStudentId(student.getId());
+                if (!studentMajors.isEmpty()) {
+                    StudentMajor sm = studentMajors.get(0);
+                    // Lọc môn tiên quyết theo ngành/chuyên ngành
+                    return prerequisiteSubjectRepository.findByMajorAndSpecialization(sm.getMajorId(),
+                            sm.getSpecializationId());
+                }
+            }
+        }
+        // Nếu không có userId hoặc không tìm thấy sinh viên/ngành, trả về tất cả (hoặc
+        // list rỗng tùy logic, ở đây giữ nguyên logic cũ là trả về tất cả nếu không
+        // lọc)
+        return prerequisiteSubjectRepository.findAllWithNames();
     }
 }

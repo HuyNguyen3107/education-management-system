@@ -18,12 +18,22 @@ export const studentTuitionService = {
     return response.data;
   },
 
-  createStudentTuition: async (data: CreateStudentTuitionRequest): Promise<StudentTuition> => {
+  getStudentTuitionDetails: async (studentId: string): Promise<any[]> => {
+    const response = await http.get<any[]>(`${API_BASE}/details/${studentId}`);
+    return response.data;
+  },
+
+  createStudentTuition: async (
+    data: CreateStudentTuitionRequest
+  ): Promise<StudentTuition> => {
     const response = await http.post<StudentTuition>(API_BASE, data);
     return response.data;
   },
 
-  updateStudentTuition: async (id: string, data: UpdateStudentTuitionRequest): Promise<StudentTuition> => {
+  updateStudentTuition: async (
+    id: string,
+    data: UpdateStudentTuitionRequest
+  ): Promise<StudentTuition> => {
     const response = await http.put<StudentTuition>(`${API_BASE}/${id}`, data);
     return response.data;
   },
@@ -32,4 +42,3 @@ export const studentTuitionService = {
     await http.delete(`${API_BASE}/${id}`);
   },
 };
-

@@ -31,6 +31,13 @@ import { PublicNewsDetailPage } from "@/features/public/pages/PublicNewsDetailPa
 import { PublicNewsListPage } from "@/features/public/pages/PublicNewsListPage";
 import { PublicAdminNotificationsPage } from "@/features/public/pages/PublicAdminNotificationsPage";
 import { PublicNotificationDetailPage } from "@/features/public/pages/PublicNotificationDetailPage";
+import { PublicPrerequisiteSubjectsPage } from "@/features/public/pages/PublicPrerequisiteSubjectsPage";
+import { StudentWishlistRegistrationPage } from "@/features/aspiration-registers/pages/StudentWishlistRegistrationPage";
+import { StudentSubjectRegistrationPage } from "@/features/student-credit-classes/pages/StudentSubjectRegistrationPage";
+import { StudentTuitionViewingPage } from "@/features/student-tuitions/pages/StudentTuitionViewingPage";
+import { StudentWeeklySchedulePage } from "@/features/student-credit-classes/pages/StudentWeeklySchedulePage";
+import { StudentExamSchedulePage } from "@/features/student-credit-classes/pages/StudentExamSchedulePage";
+import { StudentGradePage } from "@/features/student-credit-classes/pages/StudentGradePage";
 
 export const AppRoutes = () => {
   const routes = useRoutes([
@@ -62,6 +69,38 @@ export const AppRoutes = () => {
           path: "home/:id",
           element: <PublicNewsDetailPage />,
         },
+        {
+          path: "training-program",
+          element: <TrainingProgramPage />,
+        },
+        {
+          path: "prerequisite-subjects",
+          element: <PublicPrerequisiteSubjectsPage />,
+        },
+        {
+          path: "wishlist-registration",
+          element: <StudentWishlistRegistrationPage />,
+        },
+        {
+          path: "subject-registration",
+          element: <StudentSubjectRegistrationPage />,
+        },
+        {
+          path: "tuition-viewing",
+          element: <StudentTuitionViewingPage />,
+        },
+        {
+          path: "weekly-schedule",
+          element: <StudentWeeklySchedulePage />,
+        },
+        {
+          path: "exam-schedule",
+          element: <StudentExamSchedulePage />,
+        },
+        {
+          path: "grade-viewing",
+          element: <StudentGradePage />,
+        },
       ],
     },
     {
@@ -86,10 +125,6 @@ export const AppRoutes = () => {
             {
               path: "students",
               element: <StudentsPage />,
-            },
-            {
-              path: "training-program",
-              element: <TrainingProgramPage />,
             },
             {
               path: "lecturers",

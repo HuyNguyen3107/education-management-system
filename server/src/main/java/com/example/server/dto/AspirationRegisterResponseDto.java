@@ -1,5 +1,6 @@
 package com.example.server.dto;
 
+import com.example.server.entity.AspirationRegister;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -12,6 +13,19 @@ public class AspirationRegisterResponseDto {
     private String semester;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
+
+    public AspirationRegisterResponseDto() {
+    }
+
+    public AspirationRegisterResponseDto(AspirationRegister entity) {
+        this.id = entity.getId();
+        this.subjectCode = entity.getSubjectCode();
+        this.studentId = entity.getStudentId();
+        this.reason = entity.getReason();
+        this.semester = entity.getSemester();
+        this.createdAt = entity.getCreatedAt();
+        this.updatedAt = entity.getUpdatedAt();
+    }
 
     public UUID getId() {
         return id;

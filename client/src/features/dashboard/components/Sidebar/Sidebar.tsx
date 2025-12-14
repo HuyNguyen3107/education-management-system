@@ -98,11 +98,6 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           icon: <PersonIcon />,
         },
         {
-          title: "Chương trình đào tạo",
-          path: ROUTE_PATHS.TRAINING_PROGRAM,
-          icon: <MenuBookIcon />,
-        },
-        {
           title: "Giảng viên",
           path: ROUTE_PATHS.LECTURERS,
           icon: <PersonOutlineIcon />,

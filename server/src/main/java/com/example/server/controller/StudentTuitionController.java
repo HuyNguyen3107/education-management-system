@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -18,6 +19,11 @@ public class StudentTuitionController {
 
     public StudentTuitionController(StudentTuitionService studentTuitionService) {
         this.studentTuitionService = studentTuitionService;
+    }
+
+    @GetMapping("/details/{studentId}")
+    public List<Map<String, Object>> getDetailsByStudent(@PathVariable UUID studentId) {
+        return studentTuitionService.getStudentTuitionDetails(studentId);
     }
 
     @GetMapping
