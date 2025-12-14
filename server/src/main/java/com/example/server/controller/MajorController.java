@@ -40,11 +40,15 @@ public class MajorController {
     // GET ALL WITH PAGINATION AND SEARCH
     @GetMapping
     public ResponseEntity<?> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "10") int size,
             @RequestParam(required = false) String keyword
     ) {
         try {
+            // If page is 0 and size is large, return all (for dropdowns)
+            if (size >= 10000) {
+                return ResponseEntity.ok(majorService.getAll());
+            }
             return ResponseEntity.ok(majorService.getMajors(page, size, keyword));
 
         } catch (Exception e) {

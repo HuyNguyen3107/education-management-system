@@ -12,7 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class SpecializationService {
@@ -31,6 +33,20 @@ public class SpecializationService {
         Page<Specialization> specializationPage = specializationRepository.findByKeyword(keyword, pageRequest);
 
         return specializationPage.map(this::toResponse);
+    }
+
+    public List<SpecializationResponseDto> getAll() {
+        return specializationRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<SpecializationResponseDto> getByMajorId(UUID majorId) {
+        return specializationRepository.findByMajorId(majorId)
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     public SpecializationResponseDto getById(UUID id) {

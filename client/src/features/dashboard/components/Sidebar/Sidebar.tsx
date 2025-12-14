@@ -168,6 +168,11 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           icon: <ReceiptIcon />,
         },
         {
+          title: "Gán ngành/chuyên ngành",
+          path: ROUTE_PATHS.STUDENT_MAJORS,
+          icon: <SchoolIcon />,
+        },
+        {
           title: "Thời gian đăng ký",
           path: ROUTE_PATHS.TIME_REGISTERS,
           icon: <ScheduleIcon />,

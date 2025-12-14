@@ -18,6 +18,7 @@ export const ROUTE_PATHS = {
   NOTIFICATIONS: "/dashboard/notifications",
   TUITIONS: "/dashboard/tuitions",
   STUDENT_TUITIONS: "/dashboard/student-tuitions",
+  STUDENT_MAJORS: "/dashboard/student-majors",
   TIME_REGISTERS: "/dashboard/time-registers",
   PREREQUISITE_SUBJECTS: "/dashboard/prerequisite-subjects",
   PROFILE: "/dashboard/profile",

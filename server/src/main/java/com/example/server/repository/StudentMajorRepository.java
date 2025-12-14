@@ -15,4 +15,8 @@ public interface StudentMajorRepository extends JpaRepository<StudentMajor, UUID
     List<StudentMajor> findByMajorId(UUID majorId);
 
     List<StudentMajor> findBySpecializationId(UUID specializationId);
+
+    boolean existsByStudentId(UUID studentId);
+
+    boolean existsByStudentIdAndMajorId(UUID studentId, UUID majorId);
 }

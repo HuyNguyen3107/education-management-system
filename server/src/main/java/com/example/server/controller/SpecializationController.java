@@ -23,10 +23,18 @@ public class SpecializationController {
 
     @GetMapping
     public ResponseEntity<?> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String keyword
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) UUID majorId
     ) {
+        if (majorId != null) {
+            return ResponseEntity.ok(specializationService.getByMajorId(majorId));
+        }
+        // If page is 0 and size is large, return all (for dropdowns)
+        if (size >= 10000) {
+            return ResponseEntity.ok(specializationService.getAll());
+        }
         return ResponseEntity.ok(specializationService.getSpecializations(page, size, keyword));
     }
 

@@ -10,6 +10,8 @@ export interface User {
   academicYear: string;
   status: string;
   role?: string;
+  majorId?: string;
+  specializationId?: string;
 }
 
 export interface Role {
@@ -75,4 +77,6 @@ export interface UpdateUserRequest {
   status?: string;
   academicYear?: string;
   educationLevel?: string;
+  majorId?: string;
+  specializationId?: string;
 }

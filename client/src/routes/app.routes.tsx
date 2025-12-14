@@ -19,6 +19,7 @@ import { AspirationRegistersPage } from "@/features/aspiration-registers/pages/A
 import { NotificationsPage } from "@/features/notifications/pages/NotificationsPage";
 import { TuitionsPage } from "@/features/tuitions/pages/TuitionsPage";
 import { StudentTuitionsPage } from "@/features/student-tuitions/pages/StudentTuitionsPage";
+import { StudentMajorsPage } from "@/features/student-majors/pages/StudentMajorsPage";
 import { TimeRegistersPage } from "@/features/time-registers/pages/TimeRegistersPage";
 import { PrerequisiteSubjectsPage } from "@/features/prerequisite-subjects/pages/PrerequisiteSubjectsPage";
 import { ProfilePage } from "@/features/profile/pages/ProfilePage";
@@ -141,6 +142,10 @@ export const AppRoutes = () => {
             {
               path: "student-tuitions",
               element: <StudentTuitionsPage />,
+            },
+            {
+              path: "student-majors",
+              element: <StudentMajorsPage />,
             },
             {
               path: "time-registers",
