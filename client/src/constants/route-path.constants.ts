@@ -22,4 +22,5 @@ export const ROUTE_PATHS = {
   PROFILE: "/dashboard/profile",
   FORGOT_PASSWORD: "/forgot-password",
   RESET_PASSWORD: "/reset-password",
+  PUBLIC_HOME: "/public/home",
 } as const;

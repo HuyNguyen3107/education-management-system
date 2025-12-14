@@ -23,12 +23,24 @@ import { PrerequisiteSubjectsPage } from "@/features/prerequisite-subjects/pages
 import { ProfilePage } from "@/features/profile/pages/ProfilePage";
 import { GuestGuard } from "@/components/guards/GuestGuard";
 import { AuthGuard } from "@/components/guards/AuthGuard";
+import { PublicLayout } from "@/features/public/layouts/PublicLayout";
+import { PublicHomePage } from "@/features/public/pages/PublicHomePage";
 
 export const AppRoutes = () => {
   const routes = useRoutes([
     {
       path: ROUTE_PATHS.HOME,
       element: <Navigate to={ROUTE_PATHS.LOGIN} replace />,
+    },
+    {
+      path: "/public",
+      element: <PublicLayout />,
+      children: [
+        {
+          path: "home",
+          element: <PublicHomePage />,
+        },
+      ],
     },
     {
       element: <GuestGuard />,
