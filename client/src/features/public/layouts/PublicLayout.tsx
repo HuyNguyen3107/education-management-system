@@ -6,6 +6,7 @@ import { Footer } from "../components/Footer/Footer";
 import { Outlet } from "react-router-dom";
 
 const drawerWidth = 280;
+const drawerWidthCollapsed = 72;
 
 export const PublicLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -14,30 +15,33 @@ export const PublicLayout = () => {
     setSidebarOpen((prev) => !prev);
   };
 
+  const currentDrawerWidth = sidebarOpen ? drawerWidth : drawerWidthCollapsed;
+
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", bgcolor: "#f9fafb", minHeight: "100vh" }}>
+    <Box sx={{ display: "flex", bgcolor: "#f9fafb", minHeight: "100vh" }}>
       <CssBaseline />
-      <PublicHeader onMenuClick={handleSidebarToggle} sidebarOpen={sidebarOpen} />
+      <PublicHeader
+        onMenuClick={handleSidebarToggle}
+        sidebarOpen={sidebarOpen}
+      />
       <PublicSidebar open={sidebarOpen} onToggle={handleSidebarToggle} />
       <Box
-        component="main"
         sx={{
           display: "flex",
           flexDirection: "column",
           flexGrow: 1,
-          p: 4,
-          width: {
-            sm: `calc(100% - ${sidebarOpen ? drawerWidth : 72}px)`,
-          },
-          ml: {
-            sm: `${sidebarOpen ? drawerWidth : 72}px`,
-          },
-          mt: "80px", // Height of the Header
+          minHeight: "100vh",
           transition: "width 0.3s ease, margin-left 0.3s ease",
-          minHeight: "calc(100vh - 80px)",
         }}
       >
-        <Box sx={{ flexGrow: 1 }}>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            p: 3,
+            mt: "64px", // Height of the Header
+          }}
+        >
           <Outlet />
         </Box>
         <Footer />
@@ -45,4 +49,3 @@ export const PublicLayout = () => {
     </Box>
   );
 };
-

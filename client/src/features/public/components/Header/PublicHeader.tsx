@@ -4,55 +4,14 @@ import {
   IconButton,
   Box,
   Typography,
-  InputBase,
-  Stack,
+  Avatar,
+  Menu,
+  MenuItem,
+  Divider,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import MenuIcon from "@mui/icons-material/Menu";
-import { styled, alpha } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
-import { ROUTE_PATHS } from "@/constants/route-path.constants";
-
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: "16px",
-  backgroundColor: alpha("#f3f4f6", 1),
-  "&:hover": {
-    backgroundColor: alpha("#e5e7eb", 1),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
-    width: "auto",
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  color: "#9ca3af",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "#1f2937",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1.5, 1, 1.5, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "300px",
-    },
-    fontSize: "0.95rem",
-  },
-}));
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { useState } from "react";
 
 interface PublicHeaderProps {
   onMenuClick?: () => void;
@@ -66,7 +25,16 @@ export const PublicHeader = ({
   onMenuClick,
   sidebarOpen = true,
 }: PublicHeaderProps) => {
-  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <AppBar
@@ -81,14 +49,13 @@ export const PublicHeader = ({
         ml: {
           sm: `${sidebarOpen ? drawerWidth : drawerWidthCollapsed}px`,
         },
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        backdropFilter: "blur(8px)",
-        borderBottom: "1px solid #f3f4f6",
-        color: "#333",
+        backgroundColor: "#B71C1C",
+        color: "#fff",
         transition: "width 0.3s ease, margin-left 0.3s ease",
+        zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >
-      <Toolbar sx={{ height: 80 }}>
+      <Toolbar sx={{ minHeight: "64px !important", px: 2 }}>
         <IconButton
           color="inherit"
           aria-label="open drawer"
@@ -99,50 +66,102 @@ export const PublicHeader = ({
           <MenuIcon />
         </IconButton>
 
-        <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
-          <Typography
-            variant="h6"
-            component="div"
-            onClick={() => navigate(ROUTE_PATHS.PUBLIC_HOME)}
+        <Box sx={{ flexGrow: 1 }} />
+
+        {/* User Info */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1.5,
+            cursor: "pointer",
+            px: 1.5,
+            py: 0.5,
+            borderRadius: 1,
+            "&:hover": {
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+            },
+          }}
+          onClick={handleClick}
+        >
+          <Avatar
             sx={{
-              color: "#111827",
-              fontWeight: 600,
-              display: { xs: "none", md: "block" },
-              cursor: "pointer",
-              "&:hover": {
-                color: "#B71C1C",
-              },
+              width: 40,
+              height: 40,
+              bgcolor: "rgba(255, 255, 255, 0.2)",
             }}
           >
-            Trang chủ
-          </Typography>
-          <Search sx={{ display: { xs: "none", sm: "block" }, ml: 4 }}>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Tìm kiếm..."
-              inputProps={{ "aria-label": "search" }}
-            />
-          </Search>
+            <Typography variant="body2" sx={{ color: "#fff", fontWeight: 600 }}>
+              NMH
+            </Typography>
+          </Avatar>
+          <Box sx={{ display: { xs: "none", sm: "block" } }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "#fff",
+                fontWeight: 600,
+                lineHeight: 1.2,
+                fontSize: "0.9rem",
+              }}
+            >
+              Nguyễn Mạnh Huy
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                color: "rgba(255, 255, 255, 0.8)",
+                fontSize: "0.75rem",
+                display: "block",
+              }}
+            >
+              B21DCVT231
+            </Typography>
+          </Box>
+          <KeyboardArrowDownIcon
+            sx={{
+              color: "#fff",
+              fontSize: 20,
+              transition: "transform 0.2s",
+              transform: open ? "rotate(180deg)" : "rotate(0deg)",
+            }}
+          />
         </Box>
 
-        <Stack direction="row" spacing={2} alignItems="center">
-          <Typography
-            variant="body2"
-            sx={{
-              color: "#6b7280",
-              cursor: "pointer",
-              "&:hover": {
-                color: "#111827",
-              },
-              display: { xs: "none", sm: "block" },
-            }}
-            onClick={() => navigate(ROUTE_PATHS.LOGIN)}
-          >
-            Đăng nhập
-          </Typography>
-        </Stack>
+        {/* User Menu */}
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          PaperProps={{
+            sx: {
+              mt: 1,
+              minWidth: 200,
+              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
+            },
+          }}
+        >
+          <MenuItem onClick={handleClose}>
+            <Typography variant="body2">Thông tin cá nhân</Typography>
+          </MenuItem>
+          <MenuItem onClick={handleClose}>
+            <Typography variant="body2">Cài đặt</Typography>
+          </MenuItem>
+          <Divider />
+          <MenuItem onClick={handleClose}>
+            <Typography variant="body2" color="error">
+              Đăng xuất
+            </Typography>
+          </MenuItem>
+        </Menu>
       </Toolbar>
     </AppBar>
   );

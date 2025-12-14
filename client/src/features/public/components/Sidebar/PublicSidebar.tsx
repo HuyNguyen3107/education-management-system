@@ -11,12 +11,22 @@ import {
   useTheme,
   useMediaQuery,
   Tooltip,
+  Divider,
 } from "@mui/material";
 import {
-  Menu as MenuIcon,
   ChevronLeft as ChevronLeftIcon,
   Home as HomeIcon,
-  Article as ArticleIcon,
+  Campaign as CampaignIcon,
+  MenuBook as MenuBookIcon,
+  Subject as SubjectIcon,
+  Assignment as AssignmentIcon,
+  HowToReg as HowToRegIcon,
+  AccountBalanceWallet as AccountBalanceWalletIcon,
+  Receipt as ReceiptIcon,
+  CalendarToday as CalendarTodayIcon,
+  CalendarMonth as CalendarMonthIcon,
+  Event as EventIcon,
+  Grade as GradeIcon,
   School as SchoolIcon,
 } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -43,9 +53,59 @@ const menuItems: MenuItem[] = [
     icon: <HomeIcon />,
   },
   {
-    title: "Tin tức",
-    path: ROUTE_PATHS.PUBLIC_HOME, // Will filter to show news
-    icon: <ArticleIcon />,
+    title: "Thông báo từ ban quản trị",
+    path: "#",
+    icon: <CampaignIcon />,
+  },
+  {
+    title: "Xem chương trình đào tạo",
+    path: "#",
+    icon: <MenuBookIcon />,
+  },
+  {
+    title: "Xem môn học tiên quyết",
+    path: "#",
+    icon: <SubjectIcon />,
+  },
+  {
+    title: "Đăng ký môn học",
+    path: "#",
+    icon: <AssignmentIcon />,
+  },
+  {
+    title: "Đăng ký môn nguyện vọng",
+    path: "#",
+    icon: <HowToRegIcon />,
+  },
+  {
+    title: "Xem học phí",
+    path: "#",
+    icon: <AccountBalanceWalletIcon />,
+  },
+  {
+    title: "Hóa đơn điện tử",
+    path: "#",
+    icon: <ReceiptIcon />,
+  },
+  {
+    title: "Thời khóa biểu dạng tuần",
+    path: "#",
+    icon: <CalendarTodayIcon />,
+  },
+  {
+    title: "Thời khóa biểu dạng học kỳ",
+    path: "#",
+    icon: <CalendarMonthIcon />,
+  },
+  {
+    title: "Xem lịch thi",
+    path: "#",
+    icon: <EventIcon />,
+  },
+  {
+    title: "Xem điểm",
+    path: "#",
+    icon: <GradeIcon />,
   },
 ];
 
@@ -56,7 +116,9 @@ export const PublicSidebar = ({ open, onToggle }: PublicSidebarProps) => {
   const navigate = useNavigate();
 
   const handleNavigate = (path: string) => {
-    navigate(path);
+    if (path !== "#") {
+      navigate(path);
+    }
     if (isMobile) {
       onToggle();
     }
@@ -72,9 +134,9 @@ export const PublicSidebar = ({ open, onToggle }: PublicSidebarProps) => {
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        background: "linear-gradient(180deg, #B71C1C 0%, #8B0000 100%)",
-        color: "#fff",
-        boxShadow: "4px 0 20px rgba(0, 0, 0, 0.1)",
+        background: "#fff",
+        color: "#333",
+        boxShadow: "2px 0 8px rgba(0, 0, 0, 0.1)",
       }}
     >
       {/* Logo Section */}
@@ -83,10 +145,9 @@ export const PublicSidebar = ({ open, onToggle }: PublicSidebarProps) => {
           display: "flex",
           alignItems: "center",
           justifyContent: open ? "space-between" : "center",
-          p: 2.5,
-          minHeight: 72,
-          borderBottom: "1px solid rgba(255, 255, 255, 0.12)",
-          background: "rgba(0, 0, 0, 0.1)",
+          p: 2,
+          minHeight: 64,
+          borderBottom: "1px solid #e5e7eb",
         }}
       >
         {open && (
@@ -95,12 +156,11 @@ export const PublicSidebar = ({ open, onToggle }: PublicSidebarProps) => {
               sx={{
                 width: 40,
                 height: 40,
-                borderRadius: "10px",
-                background: "rgba(255, 255, 255, 0.2)",
+                borderRadius: "8px",
+                background: "#B71C1C",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
               }}
             >
               <SchoolIcon sx={{ color: "#fff", fontSize: 24 }} />
@@ -110,9 +170,8 @@ export const PublicSidebar = ({ open, onToggle }: PublicSidebarProps) => {
                 variant="h6"
                 sx={{
                   fontWeight: 700,
-                  color: "#fff",
-                  whiteSpace: "nowrap",
-                  fontSize: "1.1rem",
+                  color: "#111827",
+                  fontSize: "1rem",
                   lineHeight: 1.2,
                 }}
               >
@@ -121,7 +180,7 @@ export const PublicSidebar = ({ open, onToggle }: PublicSidebarProps) => {
               <Typography
                 variant="caption"
                 sx={{
-                  color: "rgba(255, 255, 255, 0.7)",
+                  color: "#6b7280",
                   fontSize: "0.7rem",
                   display: "block",
                 }}
@@ -136,12 +195,11 @@ export const PublicSidebar = ({ open, onToggle }: PublicSidebarProps) => {
             sx={{
               width: 40,
               height: 40,
-              borderRadius: "10px",
-              background: "rgba(255, 255, 255, 0.2)",
+              borderRadius: "8px",
+              background: "#B71C1C",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
             }}
           >
             <SchoolIcon sx={{ color: "#fff", fontSize: 24 }} />
@@ -151,13 +209,12 @@ export const PublicSidebar = ({ open, onToggle }: PublicSidebarProps) => {
           <IconButton
             onClick={onToggle}
             sx={{
-              color: "#fff",
-              bgcolor: "rgba(255, 255, 255, 0.1)",
+              color: "#6b7280",
               "&:hover": {
-                bgcolor: "rgba(255, 255, 255, 0.2)",
+                bgcolor: "#f3f4f6",
               },
-              width: 36,
-              height: 36,
+              width: 32,
+              height: 32,
             }}
           >
             <ChevronLeftIcon fontSize="small" />
@@ -166,43 +223,33 @@ export const PublicSidebar = ({ open, onToggle }: PublicSidebarProps) => {
       </Box>
 
       {/* Menu Items */}
-      <Box sx={{ flex: 1, overflowY: "auto", overflowX: "hidden", pt: 2 }} className="custom-scrollbar">
-        <List sx={{ px: 1, pt: 0.5 }}>
-          {menuItems.map((item) => {
+      <Box
+        sx={{
+          flex: 1,
+          overflowY: "auto",
+          overflowX: "hidden",
+          pt: 1,
+        }}
+        className="custom-scrollbar"
+      >
+        <List sx={{ px: 1, pt: 0 }}>
+          {menuItems.map((item, index) => {
             const active = isActive(item.path);
+            const uniqueKey = `${item.title}-${index}`;
             const MenuItemContent = (
               <ListItem disablePadding sx={{ mb: 0.5 }}>
                 <ListItemButton
                   onClick={() => handleNavigate(item.path)}
                   sx={{
-                    borderRadius: "12px",
+                    borderRadius: "8px",
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
-                    px: open ? 2.5 : 1.5,
-                    py: 1.25,
-                    bgcolor: active
-                      ? "rgba(255, 255, 255, 0.2)"
-                      : "transparent",
-                    position: "relative",
-                    "&::before": active
-                      ? {
-                          content: '""',
-                          position: "absolute",
-                          left: 0,
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          width: 4,
-                          height: "60%",
-                          bgcolor: "#fff",
-                          borderRadius: "0 4px 4px 0",
-                        }
-                      : {},
+                    px: open ? 2 : 1.5,
+                    py: 1,
+                    bgcolor: active ? "#B71C1C" : "transparent",
+                    color: active ? "#fff" : "#374151",
                     "&:hover": {
-                      bgcolor: active
-                        ? "rgba(255, 255, 255, 0.25)"
-                        : "rgba(255, 255, 255, 0.1)",
-                      transform: "translateX(2px)",
-                      transition: "all 0.2s ease",
+                      bgcolor: active ? "#8B0000" : "#f3f4f6",
                     },
                     transition: "all 0.2s ease",
                   }}
@@ -212,7 +259,7 @@ export const PublicSidebar = ({ open, onToggle }: PublicSidebarProps) => {
                       minWidth: 0,
                       mr: open ? 2 : "auto",
                       justifyContent: "center",
-                      color: active ? "#fff" : "rgba(255, 255, 255, 0.8)",
+                      color: active ? "#fff" : "#6b7280",
                     }}
                   >
                     {item.icon}
@@ -223,8 +270,8 @@ export const PublicSidebar = ({ open, onToggle }: PublicSidebarProps) => {
                       sx={{
                         "& .MuiListItemText-primary": {
                           fontWeight: active ? 600 : 500,
-                          fontSize: "0.9rem",
-                          color: "#fff",
+                          fontSize: "0.875rem",
+                          color: active ? "#fff" : "#374151",
                         },
                       }}
                     />
@@ -235,16 +282,63 @@ export const PublicSidebar = ({ open, onToggle }: PublicSidebarProps) => {
 
             if (!open) {
               return (
-                <Tooltip key={item.path} title={item.title} placement="right">
+                <Tooltip key={uniqueKey} title={item.title} placement="right">
                   {MenuItemContent}
                 </Tooltip>
               );
             }
 
-            return <Box key={item.path}>{MenuItemContent}</Box>;
+            return <Box key={uniqueKey}>{MenuItemContent}</Box>;
           })}
         </List>
       </Box>
+
+      {/* Footer */}
+      {open && (
+        <Box
+          sx={{
+            borderTop: "1px solid #e5e7eb",
+            p: 2,
+            bgcolor: "#f9fafb",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              mb: 1,
+            }}
+          >
+            <SchoolIcon sx={{ color: "#B71C1C", fontSize: 32 }} />
+          </Box>
+          <Typography
+            variant="caption"
+            sx={{
+              display: "block",
+              textAlign: "center",
+              color: "#6b7280",
+              fontSize: "0.7rem",
+              lineHeight: 1.4,
+              mb: 0.5,
+            }}
+          >
+            HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{
+              display: "block",
+              textAlign: "center",
+              color: "#9ca3af",
+              fontSize: "0.65rem",
+              lineHeight: 1.4,
+            }}
+          >
+            CỔNG THÔNG TIN QUẢN LÝ ĐÀO TẠO
+          </Typography>
+        </Box>
+      )}
     </Box>
   );
 
@@ -288,7 +382,7 @@ export const PublicSidebar = ({ open, onToggle }: PublicSidebarProps) => {
             duration: theme.transitions.duration.enteringScreen,
           }),
           overflowX: "hidden",
-          boxShadow: "4px 0 20px rgba(0, 0, 0, 0.1)",
+          boxShadow: "2px 0 8px rgba(0, 0, 0, 0.1)",
         },
       }}
     >
@@ -296,4 +390,3 @@ export const PublicSidebar = ({ open, onToggle }: PublicSidebarProps) => {
     </Drawer>
   );
 };
-
