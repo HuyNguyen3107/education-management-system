@@ -14,7 +14,10 @@ import {
   Divider,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { usePublicNotifications } from "../queries/public-notifications.queries";
+import {
+  usePublicNotifications,
+  useMarkNotificationAsSeen,
+} from "../queries/public-notifications.queries";
 import { useEffect, useState } from "react";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
@@ -60,6 +63,7 @@ export const PublicAdminNotificationsPage = () => {
   }, []);
 
   const { data: notifications, isLoading } = usePublicNotifications(userId);
+  const { mutate: markAsSeen } = useMarkNotificationAsSeen();
 
   // Format date as DD/MM/YYYY HH:MM
   const formatDateTime = (dateString: string | null) => {
@@ -78,6 +82,10 @@ export const PublicAdminNotificationsPage = () => {
   };
 
   const handleViewNotification = (id: string) => {
+    const notification = notifications?.find((n) => n.id === id);
+    if (notification && !notification.seenDate) {
+      markAsSeen(id);
+    }
     navigate(`/public/home/notification/${id}`);
   };
 

@@ -128,13 +128,19 @@ export const PublicSidebar = ({ open, onToggle }: PublicSidebarProps) => {
     // For home page, check if pathname starts with /public/home (but not admin-notifications)
     if (path === ROUTE_PATHS.PUBLIC_HOME) {
       return (
-        location.pathname.startsWith("/public/home") &&
-        !location.pathname.includes("/admin-notifications")
+        location.pathname === "/public/home" ||
+        location.pathname === "/public/home/" ||
+        (location.pathname.startsWith("/public/home") &&
+          !location.pathname.includes("/admin-notifications") &&
+          !location.pathname.includes("/notification/"))
       );
     }
     // For admin notifications, check exact match or starts with
     if (path === ROUTE_PATHS.PUBLIC_ADMIN_NOTIFICATIONS) {
-      return location.pathname.startsWith("/public/home/admin-notifications");
+      return (
+        location.pathname.startsWith("/public/home/admin-notifications") ||
+        location.pathname.includes("/home/notification/")
+      );
     }
     return location.pathname === path;
   };

@@ -16,4 +16,12 @@ export const publicNotificationsService = {
     );
     return response.data;
   },
+
+  markAsSeen: async (id: string): Promise<void> => {
+    await http.put(API_PATHS.NOTIFICATIONS.MARK_AS_SEEN(id));
+  },
+
+  updateResponse: async (id: string, response: string): Promise<void> => {
+    await http.put(API_PATHS.NOTIFICATIONS.UPDATE_RESPONSE(id), { response });
+  },
 };

@@ -6,20 +6,52 @@ import {
   Button,
   CircularProgress,
   Divider,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
-import { usePublicNotificationById } from "../queries/public-notifications.queries";
+import {
+  usePublicNotificationById,
+  useUpdateNotificationResponse,
+} from "../queries/public-notifications.queries";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { RichTextEditor } from "@/components/RichTextEditor";
+import { useState, useEffect } from "react";
+import SendIcon from "@mui/icons-material/Send";
 
 export const PublicNotificationDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [responseContent, setResponseContent] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const {
     data: notification,
     isLoading,
     isError,
   } = usePublicNotificationById(id || "", !!id);
+
+  const { mutate: updateResponse, isPending: isUpdating } =
+    useUpdateNotificationResponse();
+
+  useEffect(() => {
+    if (notification?.response) {
+      setResponseContent(notification.response);
+    }
+  }, [notification]);
+
+  const handleUpdateResponse = () => {
+    if (id && responseContent) {
+      updateResponse(
+        { id, response: responseContent },
+        {
+          onSuccess: () => {
+            setShowSuccess(true);
+          },
+        }
+      );
+    }
+  };
 
   // Format date as DD/MM/YYYY HH:MM
   const formatDateTime = (dateString: string | null) => {
@@ -155,7 +187,59 @@ export const PublicNotificationDetailPage = () => {
           }}
           dangerouslySetInnerHTML={{ __html: notification.content }}
         />
+
+        <Divider sx={{ my: 4 }} />
+
+        {/* Response Section */}
+        <Box>
+          <Typography
+            variant="h6"
+            sx={{ mb: 2, fontWeight: 600, color: "#1a1a1a" }}
+          >
+            Phản hồi của bạn
+          </Typography>
+          <RichTextEditor
+            value={responseContent}
+            onChange={setResponseContent}
+            placeholder="Nhập nội dung phản hồi..."
+            minHeight={200}
+          />
+          <Box display="flex" justifyContent="flex-end" mt={2}>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={
+                isUpdating ? <CircularProgress size={20} /> : <SendIcon />
+              }
+              onClick={handleUpdateResponse}
+              disabled={isUpdating || !responseContent.trim()}
+              sx={{
+                bgcolor: "#B71C1C",
+                "&:hover": {
+                  bgcolor: "#D32F2F",
+                },
+              }}
+            >
+              Gửi phản hồi
+            </Button>
+          </Box>
+        </Box>
       </Paper>
+
+      <Snackbar
+        open={showSuccess}
+        autoHideDuration={6000}
+        onClose={() => setShowSuccess(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert
+          onClose={() => setShowSuccess(false)}
+          severity="success"
+          sx={{ width: "100%" }}
+        >
+          Gửi phản hồi thành công!
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
