@@ -1,6 +1,6 @@
 import { Box, CssBaseline } from "@mui/material";
 import { useState } from "react";
-import { Header } from "@/features/dashboard/components/Header/Header";
+import { LecturerHeader } from "@/features/lecturer-dashboard/components/LecturerHeader";
 import { LecturerSidebar } from "../components/LecturerSidebar";
 import { Outlet } from "react-router-dom";
 
@@ -16,7 +16,10 @@ export const LecturerLayout = () => {
   return (
     <Box sx={{ display: "flex", bgcolor: "#f9fafb", minHeight: "100vh" }}>
       <CssBaseline />
-      <Header onMenuClick={handleSidebarToggle} sidebarOpen={sidebarOpen} />
+      <LecturerHeader
+        onMenuClick={handleSidebarToggle}
+        sidebarOpen={sidebarOpen}
+      />
       <LecturerSidebar open={sidebarOpen} onToggle={handleSidebarToggle} />
       <Box
         component="main"

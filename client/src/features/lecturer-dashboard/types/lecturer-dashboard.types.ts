@@ -59,3 +59,13 @@ export interface ScoreComponent {
 export interface UpdateGradeRequest {
   scores: StudentScores;
 }
+
+export interface AdministrativeClass {
+  id: string;
+  classCode: string;
+  teacherId: string;
+  majorId: string;
+  specializationId: string;
+  createdAt: string;
+  updatedAt: string;
+}

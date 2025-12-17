@@ -89,5 +89,8 @@ export const API_PATHS = {
     UPDATE_GRADE: (classId: string, studentId: string) =>
       `/lecturer/classes/${classId}/students/${studentId}/grade`,
     SCHEDULE: "/lecturer/schedule",
+    ADMIN_CLASSES: "/lecturer/admin-classes",
+    ADMIN_CLASS_STUDENTS: (classId: string) =>
+      `/lecturer/admin-classes/${classId}/students`,
   },
 } as const;

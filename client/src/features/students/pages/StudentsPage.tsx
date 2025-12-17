@@ -44,6 +44,7 @@ import {
   getStatusColor,
   getStatusLabel,
 } from "../../users/constants/user-status.constants";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 interface StudentWithUserData extends Student {
   user?: User;
@@ -65,6 +66,11 @@ export const StudentsPage = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState<StudentWithUserData | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  usePageMeta(
+    "Quản lý sinh viên",
+    "Quản lý thông tin sinh viên và mã sinh viên trong hệ thống."
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => {

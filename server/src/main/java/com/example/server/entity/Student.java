@@ -19,6 +19,9 @@ public class Student {
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
+    @Column(name = "class_id")
+    private UUID classId;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -68,6 +71,14 @@ public class Student {
 
     public void setUserId(UUID userId) {
         this.userId = userId;
+    }
+
+    public UUID getClassId() {
+        return classId;
+    }
+
+    public void setClassId(UUID classId) {
+        this.classId = classId;
     }
 
     public LocalDateTime getCreatedAt() {

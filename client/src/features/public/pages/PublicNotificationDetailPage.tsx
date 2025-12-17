@@ -18,6 +18,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { RichTextEditor } from "@/components/RichTextEditor";
 import { useState, useEffect } from "react";
 import SendIcon from "@mui/icons-material/Send";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 export const PublicNotificationDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -33,6 +34,11 @@ export const PublicNotificationDetailPage = () => {
 
   const { mutate: updateResponse, isPending: isUpdating } =
     useUpdateNotificationResponse();
+
+  usePageMeta(
+    "Chi tiết thông báo",
+    "Xem chi tiết thông báo từ ban quản trị và gửi phản hồi của bạn."
+  );
 
   useEffect(() => {
     if (notification?.response) {

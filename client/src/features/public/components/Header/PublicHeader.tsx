@@ -7,11 +7,12 @@ import {
   Avatar,
   Menu,
   MenuItem,
-  Divider,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useState } from "react";
+import { useAuthStore } from "@/store/auth.store";
+import { useLogoutMutation } from "@/features/auth/mutations/auth.mutations";
 
 interface PublicHeaderProps {
   onMenuClick?: () => void;
@@ -27,6 +28,12 @@ export const PublicHeader = ({
 }: PublicHeaderProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const logoutMutation = useLogoutMutation();
+
+  const userDisplayName = user?.name || "Khách";
+  const userEmail = user?.email || "";
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -34,6 +41,13 @@ export const PublicHeader = ({
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    handleClose();
+    if (isAuthenticated()) {
+      logoutMutation.mutate();
+    }
   };
 
   return (
@@ -92,7 +106,7 @@ export const PublicHeader = ({
             }}
           >
             <Typography variant="body2" sx={{ color: "#fff", fontWeight: 600 }}>
-              NMH
+              {userDisplayName.charAt(0).toUpperCase()}
             </Typography>
           </Avatar>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
@@ -105,7 +119,7 @@ export const PublicHeader = ({
                 fontSize: "0.9rem",
               }}
             >
-              Nguyễn Mạnh Huy
+              {userDisplayName}
             </Typography>
             <Typography
               variant="caption"
@@ -115,7 +129,7 @@ export const PublicHeader = ({
                 display: "block",
               }}
             >
-              B21DCVT231
+              {userEmail}
             </Typography>
           </Box>
           <KeyboardArrowDownIcon
@@ -144,19 +158,15 @@ export const PublicHeader = ({
           PaperProps={{
             sx: {
               mt: 1,
-              minWidth: 200,
+              minWidth: 160,
               boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
             },
           }}
         >
-          <MenuItem onClick={handleClose}>
-            <Typography variant="body2">Thông tin cá nhân</Typography>
-          </MenuItem>
-          <MenuItem onClick={handleClose}>
-            <Typography variant="body2">Cài đặt</Typography>
-          </MenuItem>
-          <Divider />
-          <MenuItem onClick={handleClose}>
+          <MenuItem
+            onClick={handleLogout}
+            disabled={!isAuthenticated() || logoutMutation.isPending}
+          >
             <Typography variant="body2" color="error">
               Đăng xuất
             </Typography>

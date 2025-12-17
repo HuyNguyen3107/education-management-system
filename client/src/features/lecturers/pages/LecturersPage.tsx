@@ -44,6 +44,7 @@ import {
   getStatusColor,
   getStatusLabel,
 } from "../../users/constants/user-status.constants";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 interface LecturerWithUserData extends Lecturer {
   user?: User;
@@ -68,6 +69,11 @@ export const LecturersPage = () => {
   const [lecturerToDelete, setLecturerToDelete] =
     useState<LecturerWithUserData | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  usePageMeta(
+    "Quản lý giảng viên",
+    "Quản lý thông tin giảng viên và tài khoản giảng viên trong hệ thống."
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => {

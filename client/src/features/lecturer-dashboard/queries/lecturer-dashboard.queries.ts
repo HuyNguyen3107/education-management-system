@@ -53,3 +53,18 @@ export const useLecturerSchedule = () => {
     queryFn: lecturerServices.getSchedule,
   });
 };
+
+export const useLecturerAdministrativeClasses = () => {
+  return useQuery({
+    queryKey: ["lecturer", "admin-classes"],
+    queryFn: lecturerServices.getAdministrativeClasses,
+  });
+};
+
+export const useLecturerAdministrativeClassStudents = (classId: string) => {
+  return useQuery({
+    queryKey: ["lecturer", "admin-classes", classId, "students"],
+    queryFn: () => lecturerServices.getAdministrativeClassStudents(classId),
+    enabled: !!classId,
+  });
+};

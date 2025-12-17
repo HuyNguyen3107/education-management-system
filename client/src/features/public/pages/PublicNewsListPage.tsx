@@ -16,6 +16,7 @@ import { usePublicNews } from "../queries/public-news.queries";
 import { useNavigate } from "react-router-dom";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 export const PublicNewsListPage = () => {
   const navigate = useNavigate();
@@ -33,6 +34,11 @@ export const PublicNewsListPage = () => {
     ? newsData.length
     : newsData?.totalElements || 0;
   const totalPages = Array.isArray(newsData) ? 1 : newsData?.totalPages || 1;
+
+  usePageMeta(
+    "Danh sách tin tức",
+    "Xem đầy đủ danh sách tin tức và thông báo từ hệ thống."
+  );
 
   // Format date as DD/MM/YYYY
   const formatDate = (dateString: string) => {

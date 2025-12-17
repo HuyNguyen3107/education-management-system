@@ -4,7 +4,14 @@ import com.example.server.dto.AspirationRegisterRequestDto;
 import com.example.server.dto.AspirationRegisterResponseDto;
 import com.example.server.dto.SubjectResponseDto;
 import com.example.server.entity.*;
-import com.example.server.repository.*;
+import com.example.server.repository.AspirationRegisterRepository;
+import com.example.server.repository.CreditClassRepository;
+import com.example.server.repository.StudentCreditClassRepository;
+import com.example.server.repository.StudentMajorRepository;
+import com.example.server.repository.StudentRepository;
+import com.example.server.repository.SubjectRepository;
+import com.example.server.repository.TimeRegisterRepository;
+import com.example.server.repository.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +40,9 @@ public class AspirationRegisterService {
     private UserRepository userRepository;
 
     @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
     private StudentMajorRepository studentMajorRepository;
 
     @Autowired
@@ -46,6 +56,18 @@ public class AspirationRegisterService {
 
     private static final String DATE_FORMAT = "dd/MM/yyyy";
 
+    public List<AspirationRegisterResponseDto> getAll() {
+        return aspirationRegisterRepository.findAll().stream()
+                .map(AspirationRegisterResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public AspirationRegisterResponseDto getById(UUID id) {
+        AspirationRegister aspiration = aspirationRegisterRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Aspiration not found"));
+        return new AspirationRegisterResponseDto(aspiration);
+    }
+
     public List<AspirationRegisterResponseDto> getAspirationsByStudentId(UUID studentId) {
         return aspirationRegisterRepository.findByStudentId(studentId).stream()
                 .map(AspirationRegisterResponseDto::new)
@@ -53,8 +75,14 @@ public class AspirationRegisterService {
     }
 
     public AspirationRegisterResponseDto createAspiration(AspirationRegisterRequestDto dto) {
-        // Validate student exists
-        if (!userRepository.existsById(dto.getStudentId())) {
+        // Validate that the provided ID belongs to an existing student.
+        // Support both use-cases:
+        // - Admin pages send Student.id  -> check in StudentRepository
+        // - Student self-service pages send User.id -> check in UserRepository
+        boolean existsInStudentTable = studentRepository.existsById(dto.getStudentId());
+        boolean existsInUserTable = userRepository.existsById(dto.getStudentId());
+
+        if (!existsInStudentTable && !existsInUserTable) {
             throw new RuntimeException("Student not found");
         }
 
@@ -66,6 +94,19 @@ public class AspirationRegisterService {
 
         AspirationRegister saved = aspirationRegisterRepository.save(aspiration);
         return new AspirationRegisterResponseDto(saved);
+    }
+
+    public AspirationRegisterResponseDto updateAspiration(UUID id, AspirationRegisterRequestDto dto) {
+        AspirationRegister aspiration = aspirationRegisterRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Aspiration not found"));
+
+        aspiration.setSubjectCode(dto.getSubjectCode());
+        aspiration.setStudentId(dto.getStudentId());
+        aspiration.setReason(dto.getReason());
+        aspiration.setSemester(dto.getSemester());
+
+        AspirationRegister updated = aspirationRegisterRepository.save(aspiration);
+        return new AspirationRegisterResponseDto(updated);
     }
 
     public void deleteAspiration(UUID id) {

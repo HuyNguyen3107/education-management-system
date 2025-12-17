@@ -8,7 +8,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Button,
   FormControl,
   Select,
   MenuItem,
@@ -16,7 +15,6 @@ import {
   CircularProgress,
   Alert,
 } from "@mui/material";
-import PrintIcon from "@mui/icons-material/Print";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useState, useMemo } from "react";
@@ -187,10 +185,6 @@ export const StudentWeeklySchedulePage = () => {
             {format(weekDays[6], "dd/MM/yyyy")}]
           </Typography>
         </Box>
-
-        <Button variant="outlined" color="error" startIcon={<PrintIcon />}>
-          In
-        </Button>
       </Box>
 
       <TableContainer component={Paper} sx={{ maxHeight: "80vh" }}>

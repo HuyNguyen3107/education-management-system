@@ -330,7 +330,7 @@ export const PublicSidebar = ({ open, onToggle }: PublicSidebarProps) => {
               mb: 0.5,
             }}
           >
-            HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG
+            HỆ THỐNG QUẢN LÝ ĐÀO TẠO
           </Typography>
           <Typography
             variant="caption"

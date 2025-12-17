@@ -37,6 +37,7 @@ import { TuitionFormDialog } from "../components/TuitionFormDialog";
 import { TuitionDeleteDialog } from "../components/TuitionDeleteDialog";
 import type { Tuition } from "../types/tuition.types";
 import { toast } from "react-toastify";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 export const TuitionsPage = () => {
   const [page, setPage] = useState(0);
@@ -55,6 +56,11 @@ export const TuitionsPage = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [tuitionToDelete, setTuitionToDelete] = useState<Tuition | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  usePageMeta(
+    "Quản lý học phí",
+    "Quản lý mức học phí theo năm học và học kỳ trong hệ thống."
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => {

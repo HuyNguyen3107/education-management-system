@@ -13,9 +13,15 @@ import {
 import { usePublicPrerequisiteSubjects } from "../queries/public-prerequisite-subject.queries";
 import { type PrerequisiteSubjectPublic } from "../types/public-prerequisite-subject.types";
 import { useEffect, useState } from "react";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 export const PublicPrerequisiteSubjectsPage = () => {
   const [userId, setUserId] = useState<string | undefined>(undefined);
+
+  usePageMeta(
+    "Tra cứu môn học tiên quyết",
+    "Tra cứu danh sách môn học tiên quyết theo chương trình đào tạo của sinh viên."
+  );
 
   useEffect(() => {
     // Try to get user info from localStorage

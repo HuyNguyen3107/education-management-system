@@ -59,8 +59,8 @@ export const LoginPage = () => {
   } = useLoginForm();
 
   usePageMeta(
-    "Đăng nhập - Học viện Công nghệ Bưu chính Viễn thông",
-    "Đăng nhập vào cổng thông tin quản lý đào tạo của Học viện Công nghệ Bưu chính Viễn thông để quản lý lịch học, điểm và thông tin học tập."
+    "Đăng nhập - Hệ thống quản lý đào tạo",
+    "Đăng nhập vào cổng thông tin quản lý đào tạo để quản lý lịch học, điểm và thông tin học tập."
   );
 
   return (
@@ -72,10 +72,10 @@ export const LoginPage = () => {
               <School className={styles.logoIcon} />
             </Box>
             <Typography variant="h4" className={styles.schoolName}>
-              HỌC VIỆN CÔNG NGHỆ
+              HỆ THỐNG
             </Typography>
             <Typography variant="h4" className={styles.schoolName}>
-              BƯU CHÍNH VIỄN THÔNG
+              QUẢN LÝ ĐÀO TẠO
             </Typography>
             <Typography variant="h6" className={styles.systemName}>
               CỔNG THÔNG TIN QUẢN LÝ ĐÀO TẠO
