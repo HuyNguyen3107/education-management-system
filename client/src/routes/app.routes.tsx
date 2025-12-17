@@ -38,12 +38,49 @@ import { StudentTuitionViewingPage } from "@/features/student-tuitions/pages/Stu
 import { StudentWeeklySchedulePage } from "@/features/student-credit-classes/pages/StudentWeeklySchedulePage";
 import { StudentExamSchedulePage } from "@/features/student-credit-classes/pages/StudentExamSchedulePage";
 import { StudentGradePage } from "@/features/student-credit-classes/pages/StudentGradePage";
+import { LecturerLayout } from "@/features/lecturer-dashboard/layouts/LecturerLayout";
+import { LecturerDashboardPage } from "@/features/lecturer-dashboard/pages/LecturerDashboardPage";
+import { LecturerProfilePage } from "@/features/lecturer-dashboard/pages/LecturerProfilePage";
+import { LecturerClassesPage } from "@/features/lecturer-dashboard/pages/LecturerClassesPage";
+import { LecturerClassDetailPage } from "@/features/lecturer-dashboard/pages/LecturerClassDetailPage";
+import { LecturerSchedulePage } from "@/features/lecturer-dashboard/pages/LecturerSchedulePage";
 
 export const AppRoutes = () => {
   const routes = useRoutes([
     {
       path: ROUTE_PATHS.HOME,
       element: <Navigate to={ROUTE_PATHS.LOGIN} replace />,
+    },
+    {
+      path: "/lecturer",
+      element: <AuthGuard />,
+      children: [
+        {
+          element: <LecturerLayout />,
+          children: [
+            {
+              index: true,
+              element: <LecturerDashboardPage />,
+            },
+            {
+              path: "profile",
+              element: <LecturerProfilePage />,
+            },
+            {
+              path: "classes",
+              element: <LecturerClassesPage />,
+            },
+            {
+              path: "classes/:id/students",
+              element: <LecturerClassDetailPage />,
+            },
+            {
+              path: "schedule",
+              element: <LecturerSchedulePage />,
+            },
+          ],
+        },
+      ],
     },
     {
       path: "/public",

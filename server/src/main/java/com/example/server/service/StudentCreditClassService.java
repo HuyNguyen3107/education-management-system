@@ -6,19 +6,16 @@ import com.example.server.repository.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.stereotype.Service;
 
+@Service
 public class StudentCreditClassService {
 
     private final StudentCreditClassRepository studentCreditClassRepository;
@@ -114,20 +111,33 @@ public class StudentCreditClassService {
     private TimeRegister findActiveRegistrationPeriod() {
         List<TimeRegister> periods = timeRegisterRepository.findByTypeRegister("subject_registration");
         LocalDate now = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         for (TimeRegister p : periods) {
-            try {
-                LocalDate start = LocalDate.parse(p.getOpenTime(), formatter);
-                LocalDate end = LocalDate.parse(p.getEndTime(), formatter);
+            LocalDate start = parseDate(p.getOpenTime());
+            LocalDate end = parseDate(p.getEndTime());
+
+            if (start != null && end != null) {
                 if (!now.isBefore(start) && !now.isAfter(end)) {
                     return p;
                 }
-            } catch (Exception e) {
-                continue;
             }
         }
         return null;
+    }
+
+    private LocalDate parseDate(String dateStr) {
+        if (dateStr == null || dateStr.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        } catch (Exception e) {
+            try {
+                return LocalDate.parse(dateStr);
+            } catch (Exception ex) {
+                return null;
+            }
+        }
     }
 
     public List<Map<String, Object>> getStudentExamSchedule(UUID studentId) {
@@ -320,6 +330,18 @@ public class StudentCreditClassService {
 
     public StudentCreditClassResponseDto createStudentCreditClass(
             CreateStudentCreditClassDto createStudentCreditClassDto) {
+
+        // Check if credit class exists
+        CreditClass creditClass = creditClassRepository.findById(createStudentCreditClassDto.getCreditClassId())
+                .orElseThrow(() -> new RuntimeException("Credit class not found"));
+
+        // Check capacity
+        int currentEnrollment = studentCreditClassRepository
+                .findByCreditClassId(createStudentCreditClassDto.getCreditClassId()).size();
+        if (currentEnrollment >= creditClass.getQuantity()) {
+            throw new RuntimeException("Lớp học phần đã đầy");
+        }
+
         // Check if this student-creditClass combination already exists
         if (studentCreditClassRepository.findByStudentIdAndCreditClassId(
                 createStudentCreditClassDto.getStudentId(),

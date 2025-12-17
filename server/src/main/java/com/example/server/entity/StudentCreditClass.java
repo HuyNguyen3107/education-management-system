@@ -21,11 +21,11 @@ public class StudentCreditClass {
     @Column(name = "credit_class_id", nullable = false)
     private UUID creditClassId;
 
-    @Column(name = "scores", columnDefinition = "jsonb")
+    @Column(name = "scores")
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode scores;
 
-    @Column(name = "exam_schedule", columnDefinition = "jsonb")
+    @Column(name = "exam_schedule")
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode examSchedule;
 

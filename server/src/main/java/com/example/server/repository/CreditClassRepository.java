@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface CreditClassRepository extends JpaRepository<CreditClass, UUID> {
     List<CreditClass> findBySubjectCodeInAndSemester(List<String> subjectCodes, String semester);
+
+    List<CreditClass> findByTeacherId(UUID teacherId);
 }

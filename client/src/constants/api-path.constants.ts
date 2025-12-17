@@ -81,4 +81,13 @@ export const API_PATHS = {
     UPDATE: (id: string) => `/prerequisite-subjects/${id}`,
     DELETE: (id: string) => `/prerequisite-subjects/${id}`,
   },
+  LECTURER: {
+    PROFILE: "/lecturer/profile",
+    CLASSES: "/lecturer/classes",
+    CLASS_STUDENTS: (classId: string) =>
+      `/lecturer/classes/${classId}/students`,
+    UPDATE_GRADE: (classId: string, studentId: string) =>
+      `/lecturer/classes/${classId}/students/${studentId}/grade`,
+    SCHEDULE: "/lecturer/schedule",
+  },
 } as const;
