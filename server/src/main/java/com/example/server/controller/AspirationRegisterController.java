@@ -21,6 +21,16 @@ public class AspirationRegisterController {
         this.aspirationRegisterService = aspirationRegisterService;
     }
 
+    @GetMapping
+    public List<AspirationRegisterResponseDto> getAll() {
+        return aspirationRegisterService.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public AspirationRegisterResponseDto getById(@PathVariable UUID id) {
+        return aspirationRegisterService.getById(id);
+    }
+
     @GetMapping("/student/{studentId}")
     public List<AspirationRegisterResponseDto> getByStudentId(@PathVariable UUID studentId) {
         return aspirationRegisterService.getAspirationsByStudentId(studentId);
@@ -36,6 +46,13 @@ public class AspirationRegisterController {
     public AspirationRegisterResponseDto create(
             @Valid @RequestBody AspirationRegisterRequestDto request) {
         return aspirationRegisterService.createAspiration(request);
+    }
+
+    @PutMapping("/{id}")
+    public AspirationRegisterResponseDto update(
+            @PathVariable UUID id,
+            @Valid @RequestBody AspirationRegisterRequestDto request) {
+        return aspirationRegisterService.updateAspiration(id, request);
     }
 
     @DeleteMapping("/{id}")

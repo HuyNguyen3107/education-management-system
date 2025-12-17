@@ -14,8 +14,6 @@ import {
   IconButton,
   Modal,
 } from "@mui/material";
-import PrintIcon from "@mui/icons-material/Print";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import ListIcon from "@mui/icons-material/List";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
@@ -122,18 +120,7 @@ export const StudentGradePage = () => {
         XEM ĐIỂM
       </Typography>
 
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2, gap: 1 }}>
-        <Button variant="outlined" color="error" startIcon={<PrintIcon />}>
-          In
-        </Button>
-        <Button
-          variant="outlined"
-          color="error"
-          startIcon={<FileDownloadIcon />}
-        >
-          Xuất Excel
-        </Button>
-      </Box>
+      {/* Các chức năng in/xuất file đã được lược bỏ để đơn giản giao diện */}
 
       <TableContainer component={Paper}>
         <Table size="small">

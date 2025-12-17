@@ -24,6 +24,7 @@ import {
   Class as ClassIcon,
   Schedule as ScheduleIcon,
   School as SchoolIcon,
+  Groups as GroupsIcon,
 } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -84,6 +85,11 @@ export const LecturerSidebar = ({ open, onToggle }: SidebarProps) => {
           title: "Lớp học phần",
           path: "/lecturer/classes",
           icon: <ClassIcon />,
+        },
+        {
+          title: "Lớp chủ nhiệm",
+          path: "/lecturer/admin-classes",
+          icon: <GroupsIcon />,
         },
       ],
     },

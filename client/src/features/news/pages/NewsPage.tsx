@@ -35,6 +35,7 @@ import { NewsDeleteDialog } from "../components/NewsDeleteDialog";
 import { NewsDetailDialog } from "../components/NewsDetailDialog";
 import type { News, CreateNewsRequest } from "../types/news.types";
 import { toast } from "react-toastify";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 // Helper function to strip HTML tags for preview
 const stripHtml = (html: string) => {
@@ -88,6 +89,11 @@ export const NewsPage = () => {
   const updateMutation = useUpdateNews();
   const deleteMutation = useDeleteNews();
   const deleteBatchMutation = useDeleteNewsBatch();
+
+  usePageMeta(
+    "Quản lý tin tức",
+    "Tạo, chỉnh sửa và xóa tin tức hiển thị trên cổng thông tin."
+  );
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked && newsList.length > 0) {

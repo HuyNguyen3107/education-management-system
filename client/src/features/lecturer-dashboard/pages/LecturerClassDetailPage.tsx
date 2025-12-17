@@ -15,6 +15,9 @@ import {
   DialogContent,
   DialogActions,
   Grid,
+  Stack,
+  Chip,
+  CircularProgress,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -22,8 +25,13 @@ import {
   useUpdateStudentGrade,
 } from "../queries/lecturer-dashboard.queries";
 import { usePageMeta } from "@/hooks/usePageMeta";
-import { useState } from "react";
-import { ArrowBack as ArrowBackIcon } from "@mui/icons-material";
+import { useState, useMemo } from "react";
+import {
+  ArrowBack as ArrowBackIcon,
+  CheckCircle,
+  Cancel,
+  Group as GroupIcon,
+} from "@mui/icons-material";
 import type { LecturerStudent } from "../types/lecturer-dashboard.types";
 
 export const LecturerClassDetailPage = () => {
@@ -44,8 +52,26 @@ export const LecturerClassDetailPage = () => {
     final: 0,
   });
 
+  const stats = useMemo(() => {
+    if (!students || students.length === 0)
+      return { passed: 0, failed: 0, passRate: 0 };
+    let passed = 0;
+    students.forEach((s) => {
+      if (s.scores?.passed) passed++;
+    });
+    return {
+      passed,
+      failed: students.length - passed,
+      passRate: Math.round((passed / students.length) * 100),
+    };
+  }, [students]);
+
   if (isLoading) {
-    return <Typography>Loading...</Typography>;
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   const handleOpenGradeDialog = (student: LecturerStudent) => {
@@ -134,17 +160,133 @@ export const LecturerClassDetailPage = () => {
 
   return (
     <Box>
-      <Button
-        startIcon={<ArrowBackIcon />}
-        onClick={() => navigate("/lecturer/classes")}
-        sx={{ mb: 2 }}
-      >
-        Quay lại
-      </Button>
+      <Box sx={{ mb: 3 }}>
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate("/lecturer/classes")}
+          sx={{ mb: 2 }}
+        >
+          Quay lại danh sách lớp
+        </Button>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            flexWrap: "wrap",
+            gap: 2,
+          }}
+        >
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 700 }}>
+              Chi tiết lớp học & Điểm số
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Quản lý danh sách sinh viên và nhập điểm
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
 
-      <Typography variant="h5" sx={{ mb: 3, fontWeight: 700 }}>
-        Danh sách sinh viên
-      </Typography>
+      {/* Stats Cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Paper
+            sx={{
+              p: 2,
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
+              border: "1px solid #e5e7eb",
+              borderRadius: 3,
+            }}
+            elevation={0}
+          >
+            <Box
+              sx={{
+                p: 1.5,
+                borderRadius: "50%",
+                bgcolor: "rgba(25, 118, 210, 0.1)",
+                color: "primary.main",
+              }}
+            >
+              <GroupIcon />
+            </Box>
+            <Box>
+              <Typography variant="body2" color="text.secondary">
+                Tổng sinh viên
+              </Typography>
+              <Typography variant="h6" fontWeight={700}>
+                {students?.length || 0}
+              </Typography>
+            </Box>
+          </Paper>
+        </Grid>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Paper
+            sx={{
+              p: 2,
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
+              border: "1px solid #e5e7eb",
+              borderRadius: 3,
+            }}
+            elevation={0}
+          >
+            <Box
+              sx={{
+                p: 1.5,
+                borderRadius: "50%",
+                bgcolor: "rgba(46, 125, 50, 0.1)",
+                color: "success.main",
+              }}
+            >
+              <CheckCircle color="success" />
+            </Box>
+            <Box>
+              <Typography variant="body2" color="text.secondary">
+                Đạt (Pass)
+              </Typography>
+              <Typography variant="h6" fontWeight={700}>
+                {stats.passed} ({stats.passRate}%)
+              </Typography>
+            </Box>
+          </Paper>
+        </Grid>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Paper
+            sx={{
+              p: 2,
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
+              border: "1px solid #e5e7eb",
+              borderRadius: 3,
+            }}
+            elevation={0}
+          >
+            <Box
+              sx={{
+                p: 1.5,
+                borderRadius: "50%",
+                bgcolor: "rgba(211, 47, 47, 0.1)",
+                color: "error.main",
+              }}
+            >
+              <Cancel color="error" />
+            </Box>
+            <Box>
+              <Typography variant="body2" color="text.secondary">
+                Chưa đạt (Fail)
+              </Typography>
+              <Typography variant="h6" fontWeight={700}>
+                {stats.failed}
+              </Typography>
+            </Box>
+          </Paper>
+        </Grid>
+      </Grid>
 
       <TableContainer
         component={Paper}
@@ -188,23 +330,19 @@ export const LecturerClassDetailPage = () => {
                   </TableCell>
                   <TableCell align="center">
                     {scores.letter && (
-                      <Typography
-                        sx={{
-                          fontWeight: 700,
-                          color:
-                            scores.letter === "F"
-                              ? "error.main"
-                              : "success.main",
-                        }}
-                      >
-                        {scores.letter}
-                      </Typography>
+                      <Chip
+                        label={scores.letter}
+                        color={scores.letter === "F" ? "error" : "success"}
+                        size="small"
+                        variant={scores.letter === "F" ? "filled" : "outlined"}
+                        sx={{ fontWeight: 700, minWidth: 40 }}
+                      />
                     )}
                   </TableCell>
                   <TableCell align="center">
                     <Button
                       size="small"
-                      variant="outlined"
+                      variant="text"
                       onClick={() => handleOpenGradeDialog(student)}
                     >
                       Nhập điểm

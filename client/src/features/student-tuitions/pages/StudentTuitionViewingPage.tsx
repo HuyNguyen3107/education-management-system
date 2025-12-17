@@ -8,15 +8,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Button,
   FormControl,
   Select,
   MenuItem,
   CircularProgress,
   Alert,
 } from "@mui/material";
-import PrintIcon from "@mui/icons-material/Print";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { useState, useMemo } from "react";
 import { useAuthStore } from "@/store/auth.store";
 import { usePageMeta } from "@/hooks/usePageMeta";
@@ -108,7 +105,7 @@ export const StudentTuitionViewingPage = () => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "flex-start",
           mb: 2,
           alignItems: "center",
         }}
@@ -127,19 +124,6 @@ export const StudentTuitionViewingPage = () => {
             ))}
           </Select>
         </FormControl>
-
-        <Box sx={{ display: "flex", gap: 1 }}>
-          <Button variant="outlined" color="error" startIcon={<PrintIcon />}>
-            In
-          </Button>
-          <Button
-            variant="outlined"
-            color="error"
-            startIcon={<FileDownloadIcon />}
-          >
-            Xuất Excel
-          </Button>
-        </Box>
       </Box>
 
       <TableContainer component={Paper}>

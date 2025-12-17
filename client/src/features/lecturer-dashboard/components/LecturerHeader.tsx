@@ -8,19 +8,15 @@ import {
   Stack,
   Menu,
   MenuItem,
-  Divider,
   ListItemIcon,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
-import PersonIcon from "@mui/icons-material/Person";
 import { useAuthStore } from "@/store/auth.store";
 import { useLogoutMutation } from "@/features/auth/mutations/auth.mutations";
-import { useNavigate } from "react-router-dom";
-import { ROUTE_PATHS } from "@/constants/route-path.constants";
 import { useState } from "react";
 
-interface HeaderProps {
+interface LecturerHeaderProps {
   onMenuClick?: () => void;
   sidebarOpen?: boolean;
 }
@@ -28,10 +24,12 @@ interface HeaderProps {
 const drawerWidth = 280;
 const drawerWidthCollapsed = 72;
 
-export const Header = ({ onMenuClick, sidebarOpen = true }: HeaderProps) => {
+export const LecturerHeader = ({
+  onMenuClick,
+  sidebarOpen = true,
+}: LecturerHeaderProps) => {
   const user = useAuthStore((state) => state.user);
   const logoutMutation = useLogoutMutation();
-  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -43,17 +41,12 @@ export const Header = ({ onMenuClick, sidebarOpen = true }: HeaderProps) => {
     setAnchorEl(null);
   };
 
-  const handleProfile = () => {
-    handleClose();
-    navigate(ROUTE_PATHS.PROFILE);
-  };
-
   const handleLogout = () => {
     handleClose();
     logoutMutation.mutate();
   };
 
-  const userDisplayName = user?.fullName || user?.name || "User";
+  const userDisplayName = user?.fullName || user?.name || "Giảng viên";
   const userEmail = user?.email || "";
 
   return (
@@ -97,7 +90,7 @@ export const Header = ({ onMenuClick, sidebarOpen = true }: HeaderProps) => {
               display: { xs: "none", md: "block" },
             }}
           >
-            Tổng quan
+            Tổng quan giảng viên
           </Typography>
         </Box>
 
@@ -149,7 +142,7 @@ export const Header = ({ onMenuClick, sidebarOpen = true }: HeaderProps) => {
               elevation: 3,
               sx: {
                 mt: 1.5,
-                minWidth: 200,
+                minWidth: 180,
                 borderRadius: 2,
                 overflow: "visible",
                 filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.1))",
@@ -168,13 +161,6 @@ export const Header = ({ onMenuClick, sidebarOpen = true }: HeaderProps) => {
               },
             }}
           >
-            <MenuItem onClick={handleProfile}>
-              <ListItemIcon>
-                <PersonIcon fontSize="small" />
-              </ListItemIcon>
-              Thông tin cá nhân
-            </MenuItem>
-            <Divider />
             <MenuItem onClick={handleLogout} disabled={logoutMutation.isPending}>
               <ListItemIcon>
                 <LogoutIcon fontSize="small" />
@@ -187,3 +173,5 @@ export const Header = ({ onMenuClick, sidebarOpen = true }: HeaderProps) => {
     </AppBar>
   );
 };
+
+

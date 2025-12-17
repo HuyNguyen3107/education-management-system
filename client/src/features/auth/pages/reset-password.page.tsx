@@ -43,7 +43,7 @@ export const ResetPasswordPage = () => {
   } = useResetPasswordForm();
 
   usePageMeta(
-    "Đặt lại mật khẩu - Học viện Công nghệ Bưu chính Viễn thông",
+    "Đặt lại mật khẩu - Hệ thống quản lý đào tạo",
     "Tạo mật khẩu mới cho tài khoản của bạn"
   );
 
@@ -94,10 +94,10 @@ export const ResetPasswordPage = () => {
         <Box className={styles.logoSection}>
           <School className={styles.logoIcon} />
           <Typography variant="h4" className={styles.schoolName}>
-            HỌC VIỆN CÔNG NGHỆ BƯU CHÍNH VIỄN THÔNG
+            HỆ THỐNG QUẢN LÝ ĐÀO TẠO
           </Typography>
           <Typography variant="h6" className={styles.systemName}>
-            CỔNG THÔNG TIN QUẢN LÝ ĐÀO TẠO
+            CỔNG THÔNG TIN ĐIỆN TỬ
           </Typography>
         </Box>
         <Box className={styles.illustrationSection}>

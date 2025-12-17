@@ -22,19 +22,22 @@ public class LecturerService {
     private final StudentCreditClassRepository studentCreditClassRepository;
     private final StudentRepository studentRepository;
     private final SubjectRepository subjectRepository;
+    private final ClassesRepository classesRepository;
 
     public LecturerService(UserRepository userRepository,
             TeacherRepository teacherRepository,
             CreditClassRepository creditClassRepository,
             StudentCreditClassRepository studentCreditClassRepository,
             StudentRepository studentRepository,
-            SubjectRepository subjectRepository) {
+            SubjectRepository subjectRepository,
+            ClassesRepository classesRepository) {
         this.userRepository = userRepository;
         this.teacherRepository = teacherRepository;
         this.creditClassRepository = creditClassRepository;
         this.studentCreditClassRepository = studentCreditClassRepository;
         this.studentRepository = studentRepository;
         this.subjectRepository = subjectRepository;
+        this.classesRepository = classesRepository;
     }
 
     public List<CreditClassResponseDto> getAssignedClasses(String email) {
@@ -132,5 +135,37 @@ public class LecturerService {
         dto.setDateOfBirth(user.getDateOfBirth());
 
         return dto;
+    }
+
+    public List<ClassesResponseDto> getAdministrativeClasses(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        Teacher teacher = teacherRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new NotFoundException("Teacher profile not found for user"));
+
+        List<Classes> classes = classesRepository.findByTeacherId(teacher.getId());
+
+        return classes.stream().map(ClassesResponseDto::new).collect(Collectors.toList());
+    }
+
+    public List<LecturerStudentResponseDto> getAdministrativeClassStudents(UUID classId) {
+        if (!classesRepository.existsById(classId)) {
+            throw new NotFoundException("Administrative Class not found");
+        }
+
+        List<Student> students = studentRepository.findByClassId(classId);
+
+        return students.stream().map(student -> {
+            LecturerStudentResponseDto dto = new LecturerStudentResponseDto();
+            dto.setStudentId(student.getId());
+            dto.setStudentCode(student.getStudentCode());
+            dto.setScores(null); // No scores for admin class listing
+
+            // Fetch name from User entity via Student.userId
+            userRepository.findById(student.getUserId()).ifPresent(u -> dto.setStudentName(u.getName()));
+
+            return dto;
+        }).collect(Collectors.toList());
     }
 }

@@ -42,6 +42,7 @@ import {
   getStatusColor,
   getStatusLabel,
 } from "../constants/user-status.constants";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 export const UsersPage = () => {
   const [page, setPage] = useState(0);
@@ -59,6 +60,11 @@ export const UsersPage = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  usePageMeta(
+    "Quản lý người dùng",
+    "Quản lý tài khoản người dùng trong hệ thống quản lý đào tạo."
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => {

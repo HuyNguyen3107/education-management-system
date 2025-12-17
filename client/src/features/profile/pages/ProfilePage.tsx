@@ -16,6 +16,7 @@ import { useUpdateUser } from "@/features/users/queries/user.queries";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
 import PersonIcon from "@mui/icons-material/Person";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const GENDER_OPTIONS = [
   { value: "Nam", label: "Nam" },
@@ -29,6 +30,11 @@ export const ProfilePage = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
   const updateUserMutation = useUpdateUser();
   const [error, setError] = useState<string | null>(null);
+
+  usePageMeta(
+    "Thông tin cá nhân",
+    "Xem và cập nhật thông tin tài khoản người dùng trong hệ thống."
+  );
 
   const {
     control,

@@ -21,6 +21,7 @@ import {
 import { useEffect, useState } from "react";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 // Helper function to get userId from localStorage
 const getUserIdFromLocalStorage = (): string => {
@@ -41,6 +42,11 @@ const getUserIdFromLocalStorage = (): string => {
 export const PublicAdminNotificationsPage = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string>("");
+
+  usePageMeta(
+    "Thông báo từ ban quản trị",
+    "Danh sách thông báo được gửi từ ban quản trị tới tài khoản của bạn."
+  );
 
   // Get userId from localStorage on component mount and listen for changes
   useEffect(() => {

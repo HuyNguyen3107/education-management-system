@@ -15,6 +15,7 @@ import { usePublicNews } from "../queries/public-news.queries";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 export const PublicHomePage = () => {
   const navigate = useNavigate();
@@ -24,17 +25,15 @@ export const PublicHomePage = () => {
     sort: "createdAt,desc",
   });
 
+  usePageMeta(
+    "Trang chủ - Cổng thông tin đào tạo",
+    "Trang chủ hiển thị các tin tức và thông báo mới nhất dành cho sinh viên."
+  );
+
   const newsList = Array.isArray(newsData) ? newsData : newsData?.content || [];
   const totalElements = Array.isArray(newsData)
     ? newsData.length
     : newsData?.totalElements || 0;
-
-  // Update total news count in localStorage for footer stats
-  useEffect(() => {
-    if (totalElements > 0) {
-      localStorage.setItem("totalNews", totalElements.toString());
-    }
-  }, [totalElements]);
 
   // Format date as DD/MM/YYYY
   const formatDate = (dateString: string) => {
@@ -67,7 +66,7 @@ export const PublicHomePage = () => {
   return (
     <Container maxWidth="xl" sx={{ width: "100%", pb: 4 }}>
       <Box>
-        {/* Thông báo Section */}
+        {/* Tin tức Section */}
         <Paper
           elevation={2}
           sx={{
@@ -86,7 +85,7 @@ export const PublicHomePage = () => {
             <Box display="flex" alignItems="center" gap={1}>
               <CampaignIcon sx={{ fontSize: 28, color: "#B71C1C" }} />
               <Typography variant="h5" fontWeight={700} color="#333">
-                Thông báo
+                Tin tức
               </Typography>
             </Box>
             <Box
@@ -179,7 +178,7 @@ export const PublicHomePage = () => {
                                 fontWeight={700}
                                 sx={{ mb: 1, color: "#1a1a1a" }}
                               >
-                                THÔNG BÁO
+                                TIN TỨC
                               </Typography>
                             </Box>
 
@@ -241,7 +240,7 @@ export const PublicHomePage = () => {
                       color="text.secondary"
                       sx={{ p: 2, textAlign: "center" }}
                     >
-                      Chưa có thông báo nổi bật
+                      Chưa có tin tức nổi bật
                     </Typography>
                   )}
                 </Box>
@@ -342,7 +341,7 @@ export const PublicHomePage = () => {
                       color="text.secondary"
                       sx={{ p: 2 }}
                     >
-                      Chưa có thông báo mới
+                      Chưa có tin tức mới
                     </Typography>
                   )}
                 </Box>

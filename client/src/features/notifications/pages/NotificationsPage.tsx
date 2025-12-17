@@ -42,6 +42,7 @@ import { NotificationDeleteDialog } from "../components/NotificationDeleteDialog
 import { NotificationDetailDialog } from "../components/NotificationDetailDialog";
 import type { NotificationWithUser } from "../types/notification.types";
 import { toast } from "react-toastify";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 // Helper function to strip HTML tags for preview
 const stripHtml = (html: string) => {
@@ -73,6 +74,11 @@ export const NotificationsPage = () => {
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [selectedDetailData, setSelectedDetailData] =
     useState<NotificationWithUser | null>(null);
+
+  usePageMeta(
+    "Quản lý thông báo",
+    "Tạo, gửi và quản lý thông báo tới người dùng trong hệ thống."
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => {

@@ -9,14 +9,22 @@ import {
   TableHead,
   TableRow,
   Chip,
+  Tabs,
+  Tab,
+  CircularProgress,
 } from "@mui/material";
 import { useLecturerSchedule } from "../queries/lecturer-dashboard.queries";
 import { usePageMeta } from "@/hooks/usePageMeta";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import {
+  AccessTime as AccessTimeIcon,
+  Room as RoomIcon,
+} from "@mui/icons-material";
 
 export const LecturerSchedulePage = () => {
   usePageMeta("Lịch dạy");
   const { data: classes, isLoading } = useLecturerSchedule();
+  const [selectedDay, setSelectedDay] = useState("ALL");
 
   const scheduleData = useMemo(() => {
     if (!classes) return [];
@@ -43,14 +51,13 @@ export const LecturerSchedulePage = () => {
             className: cls.name,
             subjectCode: cls.subjectCode,
             group: cls.group,
-            room: sch.room || cls.room, // Use specific room if avail, else class room
+            room: sch.room || cls.room,
           });
         });
       }
     });
 
     // Sort by Day of Week then Start Period
-    // dayOfWeek map: "2" -> 2, "CN" -> 8
     const dayMap: Record<string, number> = {
       "2": 2,
       "3": 3,
@@ -70,15 +77,59 @@ export const LecturerSchedulePage = () => {
     });
   }, [classes]);
 
+  const filteredDataRobust = useMemo(() => {
+    if (selectedDay === "ALL") return scheduleData;
+    if (selectedDay === "CN")
+      return scheduleData.filter(
+        (item) => item.dayOfWeek === "CN" || item.dayOfWeek === "8"
+      );
+    return scheduleData.filter((item) => item.dayOfWeek === selectedDay);
+  }, [scheduleData, selectedDay]);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setSelectedDay(newValue);
+  };
+
   if (isLoading) {
-    return <Typography>Loading...</Typography>;
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
   }
+
+  const days = [
+    { value: "ALL", label: "Tất cả" },
+    { value: "2", label: "Thứ 2" },
+    { value: "3", label: "Thứ 3" },
+    { value: "4", label: "Thứ 4" },
+    { value: "5", label: "Thứ 5" },
+    { value: "6", label: "Thứ 6" },
+    { value: "7", label: "Thứ 7" },
+    { value: "CN", label: "Chủ nhật" },
+  ];
 
   return (
     <Box>
       <Typography variant="h5" sx={{ mb: 3, fontWeight: 700 }}>
         Lịch giảng dạy
       </Typography>
+
+      <Paper sx={{ mb: 3 }} elevation={0} variant="outlined">
+        <Tabs
+          value={selectedDay}
+          onChange={handleChange}
+          variant="scrollable"
+          scrollButtons="auto"
+          indicatorColor="primary"
+          textColor="primary"
+          sx={{ px: 2 }}
+        >
+          {days.map((day) => (
+            <Tab key={day.value} value={day.value} label={day.label} />
+          ))}
+        </Tabs>
+      </Paper>
 
       <TableContainer
         component={Paper}
@@ -100,7 +151,7 @@ export const LecturerSchedulePage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {scheduleData.map((item, index) => (
+            {filteredDataRobust.map((item, index) => (
               <TableRow key={index} hover>
                 <TableCell>
                   <Chip
@@ -119,8 +170,11 @@ export const LecturerSchedulePage = () => {
                   />
                 </TableCell>
                 <TableCell>
-                  {item.startPeriod} -{" "}
-                  {item.startPeriod + item.numberOfPeriods - 1}
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <AccessTimeIcon fontSize="small" color="action" />
+                    {item.startPeriod} -{" "}
+                    {item.startPeriod + item.numberOfPeriods - 1}
+                  </Box>
                 </TableCell>
                 <TableCell sx={{ fontWeight: 500 }}>
                   {item.className}
@@ -133,16 +187,21 @@ export const LecturerSchedulePage = () => {
                   </Typography>
                 </TableCell>
                 <TableCell>{item.group}</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>{item.room}</TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <RoomIcon fontSize="small" color="action" />
+                    <b>{item.room}</b>
+                  </Box>
+                </TableCell>
                 <TableCell>
                   {item.startDate} - {item.endDate}
                 </TableCell>
               </TableRow>
             ))}
-            {scheduleData.length === 0 && (
+            {filteredDataRobust.length === 0 && (
               <TableRow>
                 <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
-                  Chưa có lịch dạy nào.
+                  Không có lịch dạy cho ngày này.
                 </TableCell>
               </TableRow>
             )}

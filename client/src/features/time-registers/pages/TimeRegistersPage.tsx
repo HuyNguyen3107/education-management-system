@@ -38,6 +38,7 @@ import { TimeRegisterFormDialog } from "../components/TimeRegisterFormDialog";
 import { TimeRegisterDeleteDialog } from "../components/TimeRegisterDeleteDialog";
 import type { TimeRegister } from "../types/time-register.types";
 import { toast } from "react-toastify";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 export const TimeRegistersPage = () => {
   const [page, setPage] = useState(0);
@@ -59,6 +60,11 @@ export const TimeRegistersPage = () => {
   const [timeRegisterToDelete, setTimeRegisterToDelete] =
     useState<TimeRegister | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  usePageMeta(
+    "Quản lý thời gian đăng ký",
+    "Cấu hình và quản lý các khoảng thời gian mở và đóng đăng ký học phần."
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => {

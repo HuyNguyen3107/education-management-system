@@ -8,7 +8,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Button,
   FormControl,
   Select,
   MenuItem,
@@ -17,8 +16,6 @@ import {
   TextField,
   InputAdornment,
 } from "@mui/material";
-import PrintIcon from "@mui/icons-material/Print";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import SearchIcon from "@mui/icons-material/Search";
 import { useState, useMemo } from "react";
 import { useAuthStore } from "@/store/auth.store";
@@ -98,18 +95,7 @@ export const StudentExamSchedulePage = () => {
           </FormControl>
         </Box>
 
-        <Box sx={{ display: "flex", gap: 1 }}>
-          <Button variant="outlined" color="error" startIcon={<PrintIcon />}>
-            In
-          </Button>
-          <Button
-            variant="outlined"
-            color="error"
-            startIcon={<FileDownloadIcon />}
-          >
-            Xuất Excel
-          </Button>
-        </Box>
+        {/* Các chức năng in/xuất file đã được lược bỏ để đơn giản giao diện */}
       </Box>
 
       <TableContainer component={Paper}>

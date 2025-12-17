@@ -24,8 +24,6 @@ import { useTrainingProgram } from "../queries/student.queries";
 import { useMajors } from "@/features/majors/queries/major.queries";
 import { useSpecializations } from "@/features/specializations/queries/specialization.queries";
 import { usePageMeta } from "@/hooks/usePageMeta";
-import PrintIcon from "@mui/icons-material/Print";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import ListIcon from "@mui/icons-material/List";
 import CheckIcon from "@mui/icons-material/Check";
 import { useMemo, Fragment, useState } from "react";
@@ -207,7 +205,7 @@ export const TrainingProgramPage = () => {
           p: 2,
           mb: 2,
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "flex-start",
           alignItems: "center",
         }}
       >
@@ -216,22 +214,6 @@ export const TrainingProgramPage = () => {
             <MenuItem value="default">CTĐT kế hoạch</MenuItem>
           </Select>
         </FormControl>
-        <Box>
-          <Button
-            variant="outlined"
-            startIcon={<PrintIcon />}
-            sx={{ mr: 1, color: "#d32f2f", borderColor: "#d32f2f" }}
-          >
-            In
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<FileDownloadIcon />}
-            sx={{ color: "#d32f2f", borderColor: "#d32f2f" }}
-          >
-            Xuất Excel
-          </Button>
-        </Box>
       </Paper>
 
       <TableContainer component={Paper}>

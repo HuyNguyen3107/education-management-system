@@ -39,7 +39,7 @@ export const ForgotPasswordPage = () => {
   } = useForgotPasswordForm();
 
   usePageMeta(
-    "Quên mật khẩu - Học viện Công nghệ Bưu chính Viễn thông",
+    "Quên mật khẩu - Hệ thống quản lý đào tạo",
     "Khôi phục mật khẩu tài khoản của bạn"
   );
 
@@ -52,10 +52,10 @@ export const ForgotPasswordPage = () => {
               <EmailIcon className={styles.logoIcon} />
             </Box>
             <Typography variant="h4" className={styles.schoolName}>
-              HỌC VIỆN CÔNG NGHỆ
+              HỆ THỐNG
             </Typography>
             <Typography variant="h4" className={styles.schoolName}>
-              BƯU CHÍNH VIỄN THÔNG
+              QUẢN LÝ ĐÀO TẠO
             </Typography>
             <Typography variant="h6" className={styles.systemName}>
               KHÔI PHỤC MẬT KHẨU

@@ -11,12 +11,18 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import { usePublicNewsById } from "../queries/public-news.queries";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 export const PublicNewsDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const { data: news, isLoading, isError } = usePublicNewsById(id || "", !!id);
+
+  usePageMeta(
+    "Chi tiết tin tức",
+    "Xem nội dung chi tiết của tin tức hoặc thông báo được chọn."
+  );
 
   // Format date as DD/MM/YYYY
   const formatDate = (dateString: string) => {

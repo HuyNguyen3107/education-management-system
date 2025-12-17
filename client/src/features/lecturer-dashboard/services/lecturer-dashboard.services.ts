@@ -5,6 +5,7 @@ import type {
   LecturerClass,
   LecturerStudent,
   UpdateGradeRequest,
+  AdministrativeClass,
 } from "../types/lecturer-dashboard.types";
 
 export const lecturerServices = {
@@ -40,6 +41,18 @@ export const lecturerServices = {
   getSchedule: async () => {
     const response = await http.get<LecturerClass[]>(
       API_PATHS.LECTURER.SCHEDULE
+    );
+    return response.data;
+  },
+  getAdministrativeClasses: async () => {
+    const response = await http.get<AdministrativeClass[]>(
+      API_PATHS.LECTURER.ADMIN_CLASSES
+    );
+    return response.data;
+  },
+  getAdministrativeClassStudents: async (classId: string) => {
+    const response = await http.get<LecturerStudent[]>(
+      API_PATHS.LECTURER.ADMIN_CLASS_STUDENTS(classId)
     );
     return response.data;
   },

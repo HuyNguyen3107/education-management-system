@@ -4,6 +4,7 @@ import com.example.server.dto.CreditClassResponseDto;
 import com.example.server.dto.LecturerProfileDto;
 import com.example.server.dto.LecturerStudentResponseDto;
 import com.example.server.dto.UpdateGradeRequestDto;
+import com.example.server.dto.ClassesResponseDto;
 import com.example.server.service.LecturerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -64,5 +65,16 @@ public class LecturerController {
         // Schedule is derived from assigned classes
         String email = getCurrentUserEmail();
         return ResponseEntity.ok(lecturerService.getAssignedClasses(email));
+    }
+
+    @GetMapping("/admin-classes")
+    public ResponseEntity<List<ClassesResponseDto>> getAdministrativeClasses() {
+        String email = getCurrentUserEmail();
+        return ResponseEntity.ok(lecturerService.getAdministrativeClasses(email));
+    }
+
+    @GetMapping("/admin-classes/{classId}/students")
+    public ResponseEntity<List<LecturerStudentResponseDto>> getAdministrativeClassStudents(@PathVariable UUID classId) {
+        return ResponseEntity.ok(lecturerService.getAdministrativeClassStudents(classId));
     }
 }
