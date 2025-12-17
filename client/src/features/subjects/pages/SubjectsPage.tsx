@@ -84,10 +84,13 @@ export const SubjectsPage = () => {
   }, [majors]);
 
   const specializationMap = useMemo(() => {
-    return specializations.reduce((acc, spec) => {
-      acc[spec.id] = spec.name;
-      return acc;
-    }, {} as Record<string, string>);
+    return specializations.reduce(
+      (acc: { [x: string]: any }, spec: { id: string | number; name: any }) => {
+        acc[spec.id] = spec.name;
+        return acc;
+      },
+      {} as Record<string, string>
+    );
   }, [specializations]);
 
   // Get unique semesters for filter
@@ -117,7 +120,9 @@ export const SubjectsPage = () => {
     }
 
     if (selectedSemester) {
-      result = result.filter((subject) => subject.semester === selectedSemester);
+      result = result.filter(
+        (subject) => subject.semester === selectedSemester
+      );
     }
 
     return result;
@@ -195,16 +200,20 @@ export const SubjectsPage = () => {
 
   // Calculate total periods for a subject
   const getTotalPeriods = (ingredients: Subject["ingredientSecretion"]) => {
-    if (!ingredients || ingredients.length === 0) return 0;
-    return ingredients.reduce((sum, item) => sum + (item.periods || 0), 0);
+    // Backend data may sometimes send this as null or a non-array value
+    if (!Array.isArray(ingredients) || ingredients.length === 0) return 0;
+    return ingredients.reduce((sum, item) => sum + (item?.periods ?? 0), 0);
   };
 
   // Format ingredient secretion for display
-  const formatIngredientSecretion = (ingredients: Subject["ingredientSecretion"]) => {
-    if (!ingredients || ingredients.length === 0) return "Chưa có";
-    const nonZero = ingredients.filter((i) => i.periods > 0);
+  const formatIngredientSecretion = (
+    ingredients: Subject["ingredientSecretion"]
+  ) => {
+    if (!Array.isArray(ingredients) || ingredients.length === 0)
+      return "Chưa có";
+    const nonZero = ingredients.filter((i) => (i?.periods ?? 0) > 0);
     if (nonZero.length === 0) return "Chưa có";
-    return nonZero.map((i) => `${i.name}: ${i.periods}`).join(", ");
+    return nonZero.map((i) => `${i?.name}: ${i?.periods ?? 0}`).join(", ");
   };
 
   return (
@@ -372,7 +381,9 @@ export const SubjectsPage = () => {
                               whiteSpace: "nowrap",
                             }}
                           >
-                            {formatIngredientSecretion(subject.ingredientSecretion)}
+                            {formatIngredientSecretion(
+                              subject.ingredientSecretion
+                            )}
                           </Typography>
                         </Button>
                       </Tooltip>

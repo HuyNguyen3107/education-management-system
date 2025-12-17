@@ -112,11 +112,12 @@ export const StudentCreditClassFormDialog = ({
   );
 
   // Calculate average score
+  const safeScores = Array.isArray(scores) ? scores : [];
   const totalPercentage =
-    scores?.reduce((acc, curr) => acc + (curr.percentage || 0), 0) || 0;
+    safeScores.reduce((acc, curr) => acc + (curr.percentage || 0), 0) || 0;
   const averageScore =
-    scores && scores.length > 0 && totalPercentage > 0
-      ? scores.reduce(
+    safeScores.length > 0 && totalPercentage > 0
+      ? safeScores.reduce(
           (acc, curr) =>
             acc +
             ((curr.score || 0) * (curr.percentage || 0)) / totalPercentage,

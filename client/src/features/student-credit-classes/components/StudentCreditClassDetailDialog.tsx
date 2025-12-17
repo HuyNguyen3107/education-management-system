@@ -16,7 +16,11 @@ import {
   Chip,
   Divider,
 } from "@mui/material";
-import type { StudentCreditClass, ScoreItem, ExamScheduleItem } from "../types/student-credit-class.types";
+import type {
+  StudentCreditClass,
+  ScoreItem,
+  ExamScheduleItem,
+} from "../types/student-credit-class.types";
 
 interface StudentCreditClassDetailDialogProps {
   open: boolean;
@@ -37,15 +41,23 @@ export const StudentCreditClassDetailDialog = ({
 
   // Calculate average score
   const calculateAvgScore = (scores?: ScoreItem[]) => {
-    if (!scores || scores.length === 0) return null;
-    const totalWeight = scores.reduce((sum, s) => sum + s.percentage, 0);
+    if (!Array.isArray(scores) || scores.length === 0) return null;
+    const totalWeight = scores.reduce(
+      (sum, s) => sum + (s?.percentage ?? 0),
+      0
+    );
     if (totalWeight === 0) return null;
-    const weightedSum = scores.reduce((sum, s) => sum + (s.score * s.percentage), 0);
+    const weightedSum = scores.reduce(
+      (sum, s) => sum + (s?.score ?? 0) * (s?.percentage ?? 0),
+      0
+    );
     return weightedSum / totalWeight;
   };
 
   const avgScore = calculateAvgScore(data.scores);
-  const totalPercentage = data.scores?.reduce((sum, s) => sum + s.percentage, 0) || 0;
+  const totalPercentage = Array.isArray(data.scores)
+    ? data.scores.reduce((sum, s) => sum + (s?.percentage ?? 0), 0)
+    : 0;
 
   // Format date
   const formatDate = (dateStr: string) => {
@@ -73,7 +85,14 @@ export const StudentCreditClassDetailDialog = ({
       <DialogContent sx={{ p: 0 }}>
         {/* Scores Section */}
         <Box sx={{ p: 3 }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2,
+            }}
+          >
             <Typography variant="h6" fontWeight={600}>
               Điểm thành phần
             </Typography>
@@ -91,8 +110,12 @@ export const StudentCreditClassDetailDialog = ({
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: "#f5f5f5" }}>
-                    <TableCell sx={{ fontWeight: 600, width: 60 }}>STT</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Tên thành phần</TableCell>
+                    <TableCell sx={{ fontWeight: 600, width: 60 }}>
+                      STT
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>
+                      Tên thành phần
+                    </TableCell>
                     <TableCell sx={{ fontWeight: 600 }} align="center">
                       Trọng số (%)
                     </TableCell>
@@ -110,7 +133,9 @@ export const StudentCreditClassDetailDialog = ({
                       <TableCell align="center">
                         <Typography
                           fontWeight={600}
-                          color={score.score >= 5 ? "success.main" : "error.main"}
+                          color={
+                            score.score >= 5 ? "success.main" : "error.main"
+                          }
                         >
                           {score.score.toFixed(1)}
                         </Typography>
@@ -125,7 +150,14 @@ export const StudentCreditClassDetailDialog = ({
                       {totalPercentage}%
                     </TableCell>
                     <TableCell align="center">
-                      <Typography fontWeight={700} color={avgScore && avgScore >= 5 ? "success.main" : "error.main"}>
+                      <Typography
+                        fontWeight={700}
+                        color={
+                          avgScore && avgScore >= 5
+                            ? "success.main"
+                            : "error.main"
+                        }
+                      >
                         {avgScore?.toFixed(2) || "-"}
                       </Typography>
                     </TableCell>
@@ -153,7 +185,9 @@ export const StudentCreditClassDetailDialog = ({
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ bgcolor: "#f5f5f5" }}>
-                    <TableCell sx={{ fontWeight: 600, width: 60 }}>STT</TableCell>
+                    <TableCell sx={{ fontWeight: 600, width: 60 }}>
+                      STT
+                    </TableCell>
                     <TableCell sx={{ fontWeight: 600 }}>Mã MH</TableCell>
                     <TableCell sx={{ fontWeight: 600 }}>Tên môn học</TableCell>
                     <TableCell sx={{ fontWeight: 600 }} align="center">
@@ -166,7 +200,9 @@ export const StudentCreditClassDetailDialog = ({
                     </TableCell>
                     <TableCell sx={{ fontWeight: 600 }}>Phòng thi</TableCell>
                     <TableCell sx={{ fontWeight: 600 }}>Cơ sở</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Hình thức thi</TableCell>
+                    <TableCell sx={{ fontWeight: 600 }}>
+                      Hình thức thi
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -179,7 +215,10 @@ export const StudentCreditClassDetailDialog = ({
                     return (
                       <>
                         {showExamTypeHeader && (
-                          <TableRow key={`header-${index}`} sx={{ bgcolor: "#fff3e0" }}>
+                          <TableRow
+                            key={`header-${index}`}
+                            sx={{ bgcolor: "#fff3e0" }}
+                          >
                             <TableCell colSpan={10}>
                               <Typography fontWeight={600} color="warning.dark">
                                 Kỳ thi: {exam.examType}
@@ -190,7 +229,12 @@ export const StudentCreditClassDetailDialog = ({
                         <TableRow key={index} hover>
                           <TableCell>{index + 1}</TableCell>
                           <TableCell>
-                            <Chip label={exam.subjectCode} size="small" color="primary" variant="outlined" />
+                            <Chip
+                              label={exam.subjectCode}
+                              size="small"
+                              color="primary"
+                              variant="outlined"
+                            />
                           </TableCell>
                           <TableCell>{exam.subjectName}</TableCell>
                           <TableCell align="center">{exam.quantity}</TableCell>
@@ -198,7 +242,11 @@ export const StudentCreditClassDetailDialog = ({
                           <TableCell>{exam.startTime || "-"}</TableCell>
                           <TableCell align="center">{exam.duration}</TableCell>
                           <TableCell>
-                            <Chip label={exam.room || "-"} size="small" variant="outlined" />
+                            <Chip
+                              label={exam.room || "-"}
+                              size="small"
+                              variant="outlined"
+                            />
                           </TableCell>
                           <TableCell>{exam.campus || "-"}</TableCell>
                           <TableCell>
@@ -236,4 +284,3 @@ export const StudentCreditClassDetailDialog = ({
     </Dialog>
   );
 };
-

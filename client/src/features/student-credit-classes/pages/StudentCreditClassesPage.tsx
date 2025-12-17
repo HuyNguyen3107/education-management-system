@@ -38,7 +38,12 @@ import { useState, useEffect, useMemo } from "react";
 import { StudentCreditClassFormDialog } from "../components/StudentCreditClassFormDialog";
 import { StudentCreditClassDeleteDialog } from "../components/StudentCreditClassDeleteDialog";
 import { StudentCreditClassDetailDialog } from "../components/StudentCreditClassDetailDialog";
-import type { StudentCreditClass, CreateStudentCreditClassRequest, ScoreItem, ExamScheduleItem } from "../types/student-credit-class.types";
+import type {
+  StudentCreditClass,
+  CreateStudentCreditClassRequest,
+  ScoreItem,
+  ExamScheduleItem,
+} from "../types/student-credit-class.types";
 import { toast } from "react-toastify";
 import { usePageMeta } from "@/hooks/usePageMeta";
 
@@ -47,16 +52,20 @@ export const StudentCreditClassesPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedStudentId, setSelectedStudentId] = useState<string>("");
-  const [selectedCreditClassId, setSelectedCreditClassId] = useState<string>("");
+  const [selectedCreditClassId, setSelectedCreditClassId] =
+    useState<string>("");
 
   const [formOpen, setFormOpen] = useState(false);
-  const [editingStudentCreditClass, setEditingStudentCreditClass] = useState<StudentCreditClass | null>(null);
+  const [editingStudentCreditClass, setEditingStudentCreditClass] =
+    useState<StudentCreditClass | null>(null);
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [studentCreditClassToDelete, setStudentCreditClassToDelete] = useState<StudentCreditClass | null>(null);
+  const [studentCreditClassToDelete, setStudentCreditClassToDelete] =
+    useState<StudentCreditClass | null>(null);
 
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
-  const [selectedDetailData, setSelectedDetailData] = useState<StudentCreditClass | null>(null);
+  const [selectedDetailData, setSelectedDetailData] =
+    useState<StudentCreditClass | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -65,7 +74,11 @@ export const StudentCreditClassesPage = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const { data: studentCreditClassesData, isLoading, isError } = useStudentCreditClasses();
+  const {
+    data: studentCreditClassesData,
+    isLoading,
+    isError,
+  } = useStudentCreditClasses();
   const { data: students = [] } = useStudents();
   const { data: creditClasses = [] } = useCreditClasses();
 
@@ -76,7 +89,10 @@ export const StudentCreditClassesPage = () => {
   // Create lookup maps
   const studentMap = useMemo(() => {
     return students.reduce((acc, student) => {
-      acc[student.id] = { code: student.studentCode, name: student.studentCode };
+      acc[student.id] = {
+        code: student.studentCode,
+        name: student.studentCode,
+      };
       return acc;
     }, {} as Record<string, { code: string; name: string }>);
   }, [students]);
@@ -87,11 +103,9 @@ export const StudentCreditClassesPage = () => {
         name: cc.name,
         subjectCode: cc.subjectCode,
         semester: cc.semester,
-        schedule: cc.schedule,
-        room: cc.room,
       };
       return acc;
-    }, {} as Record<string, { name: string; subjectCode: string; semester: string; schedule: string; room?: string }>);
+    }, {} as Record<string, { name: string; subjectCode: string; semester: string }>);
   }, [creditClasses]);
 
   // Filter student credit classes
@@ -100,11 +114,20 @@ export const StudentCreditClassesPage = () => {
 
     if (debouncedSearch) {
       const searchLower = debouncedSearch.toLowerCase();
-      result = result.filter((scc) =>
-        studentMap[scc.studentId]?.code?.toLowerCase().includes(searchLower) ||
-        studentMap[scc.studentId]?.name?.toLowerCase().includes(searchLower) ||
-        creditClassMap[scc.creditClassId]?.name.toLowerCase().includes(searchLower) ||
-        creditClassMap[scc.creditClassId]?.subjectCode.toLowerCase().includes(searchLower)
+      result = result.filter(
+        (scc) =>
+          studentMap[scc.studentId]?.code
+            ?.toLowerCase()
+            .includes(searchLower) ||
+          studentMap[scc.studentId]?.name
+            ?.toLowerCase()
+            .includes(searchLower) ||
+          creditClassMap[scc.creditClassId]?.name
+            .toLowerCase()
+            .includes(searchLower) ||
+          creditClassMap[scc.creditClassId]?.subjectCode
+            .toLowerCase()
+            .includes(searchLower)
       );
     }
 
@@ -113,11 +136,20 @@ export const StudentCreditClassesPage = () => {
     }
 
     if (selectedCreditClassId) {
-      result = result.filter((scc) => scc.creditClassId === selectedCreditClassId);
+      result = result.filter(
+        (scc) => scc.creditClassId === selectedCreditClassId
+      );
     }
 
     return result;
-  }, [studentCreditClassesData, debouncedSearch, selectedStudentId, selectedCreditClassId, studentMap, creditClassMap]);
+  }, [
+    studentCreditClassesData,
+    debouncedSearch,
+    selectedStudentId,
+    selectedCreditClassId,
+    studentMap,
+    creditClassMap,
+  ]);
 
   const handleStudentFilterChange = (event: SelectChangeEvent) => {
     setSelectedStudentId(event.target.value);
@@ -191,23 +223,35 @@ export const StudentCreditClassesPage = () => {
 
   // Calculate average score
   const calculateAvgScore = (scores?: ScoreItem[]) => {
-    if (!scores || scores.length === 0) return null;
-    const totalWeight = scores.reduce((sum, s) => sum + s.percentage, 0);
+    // Backend data may sometimes send this as null or a non-array value
+    if (!Array.isArray(scores) || scores.length === 0) return null;
+    const totalWeight = scores.reduce(
+      (sum, s) => sum + (s?.percentage ?? 0),
+      0
+    );
     if (totalWeight === 0) return null;
-    const weightedSum = scores.reduce((sum, s) => sum + (s.score * s.percentage), 0);
+    const weightedSum = scores.reduce(
+      (sum, s) => sum + (s?.score ?? 0) * (s?.percentage ?? 0),
+      0
+    );
     return (weightedSum / totalWeight).toFixed(2);
   };
 
   // Format scores for display
   const formatScores = (scores?: ScoreItem[]) => {
-    if (!scores || scores.length === 0) return "Chưa có điểm";
-    return scores.map((s) => `${s.name}: ${s.score} (${s.percentage}%)`).join(", ");
+    if (!Array.isArray(scores) || scores.length === 0) return "Chưa có điểm";
+    return scores
+      .map((s) => `${s?.name}: ${s?.score ?? 0} (${s?.percentage ?? 0}%)`)
+      .join(", ");
   };
 
   // Format exam schedule for display
   const formatExamSchedule = (examSchedule?: ExamScheduleItem[]) => {
-    if (!examSchedule || examSchedule.length === 0) return "Chưa có lịch thi";
-    return examSchedule.map((e) => `${e.examType}: ${e.examDate} ${e.startTime} - ${e.room}`).join("; ");
+    if (!Array.isArray(examSchedule) || examSchedule.length === 0)
+      return "Chưa có lịch thi";
+    return examSchedule
+      .map((e) => `${e?.examType}: ${e?.examDate} ${e?.startTime} - ${e?.room}`)
+      .join("; ");
   };
 
   return (
@@ -368,7 +412,9 @@ export const StudentCreditClassesPage = () => {
                         {avgScore ? (
                           <Chip
                             label={avgScore}
-                            color={parseFloat(avgScore) >= 5 ? "success" : "error"}
+                            color={
+                              parseFloat(avgScore) >= 5 ? "success" : "error"
+                            }
                             size="small"
                           />
                         ) : (
