@@ -42,10 +42,19 @@ export const useStudentByUserId = (userId: string) => {
   });
 };
 
+export const useTrainingProgram = (userId: string) => {
+  return useQuery({
+    queryKey: [...studentQueryKeys.all, "training-program", userId],
+    queryFn: () => studentService.getTrainingProgram(userId),
+    enabled: !!userId,
+  });
+};
+
 export const useCreateStudent = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateStudentRequest) => studentService.createStudent(data),
+    mutationFn: (data: CreateStudentRequest) =>
+      studentService.createStudent(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: studentQueryKeys.all });
     },
@@ -72,4 +81,3 @@ export const useDeleteStudent = () => {
     },
   });
 };
-

@@ -2,6 +2,7 @@ package com.example.server.controller;
 
 import com.example.server.dto.CreateStudentDto;
 import com.example.server.dto.StudentResponseDto;
+import com.example.server.dto.TrainingProgramDto;
 import com.example.server.dto.UpdateStudentDto;
 import com.example.server.service.StudentService;
 import jakarta.validation.Valid;
@@ -20,44 +21,40 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
-    
-     // Lấy tất cả sinh viên
-     
+    // Lấy tất cả sinh viên
+
     @GetMapping
     public ResponseEntity<List<StudentResponseDto>> getAllStudents() {
         List<StudentResponseDto> students = studentService.getAllStudents();
         return ResponseEntity.ok(students);
     }
 
-    
-     // Lấy sinh viên theo ID
-     
+    // Lấy sinh viên theo ID
+
     @GetMapping("/{id}")
     public ResponseEntity<StudentResponseDto> getStudentById(@PathVariable UUID id) {
         StudentResponseDto student = studentService.getStudentById(id);
         return ResponseEntity.ok(student);
     }
 
-    
-     // Lấy sinh viên theo mã sinh viên
-     
+    // Lấy sinh viên theo mã sinh viên
+
     @GetMapping("/code/{studentCode}")
     public ResponseEntity<StudentResponseDto> getStudentByCode(@PathVariable String studentCode) {
         StudentResponseDto student = studentService.getStudentByCode(studentCode);
         return ResponseEntity.ok(student);
     }
 
-     // Lấy sinh viên theo user_id
-     
+    // Lấy sinh viên theo user_id
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<StudentResponseDto> getStudentByUserId(@PathVariable UUID userId) {
         StudentResponseDto student = studentService.getStudentByUserId(userId);
         return ResponseEntity.ok(student);
     }
 
-    
-     // Tạo sinh viên mới
-     
+    // Tạo sinh viên mới
+
     @PostMapping
     public ResponseEntity<StudentResponseDto> createStudent(
             @Valid @RequestBody CreateStudentDto dto) {
@@ -65,9 +62,8 @@ public class StudentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    
-     // Cập nhật sinh viên
-     
+    // Cập nhật sinh viên
+
     @PutMapping("/{id}")
     public ResponseEntity<StudentResponseDto> updateStudent(
             @PathVariable UUID id,
@@ -76,10 +72,17 @@ public class StudentController {
         return ResponseEntity.ok(updated);
     }
 
-   //Xóa sinh viên
+    // Xóa sinh viên
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStudent(@PathVariable UUID id) {
         studentService.deleteStudent(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Lấy chương trình đào tạo theo userId
+    @GetMapping("/training-program/{userId}")
+    public ResponseEntity<List<TrainingProgramDto>> getTrainingProgram(@PathVariable UUID userId) {
+        List<TrainingProgramDto> program = studentService.getTrainingProgram(userId);
+        return ResponseEntity.ok(program);
     }
 }

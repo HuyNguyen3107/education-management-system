@@ -5,6 +5,7 @@ import { DashboardLayout } from "@/features/dashboard/layouts/DashboardLayout";
 import { DashboardPage } from "@/features/dashboard/pages/DashboardPage";
 import { UsersPage } from "@/features/users/pages/UsersPage";
 import { StudentsPage } from "@/features/students/pages/StudentsPage";
+import { TrainingProgramPage } from "@/features/students/pages/TrainingProgramPage";
 import { LecturersPage } from "@/features/lecturers/pages/LecturersPage";
 import { NewsPage } from "@/features/news/pages/NewsPage";
 import { MajorsPage } from "@/features/majors/pages/MajorsPage";
@@ -18,6 +19,7 @@ import { AspirationRegistersPage } from "@/features/aspiration-registers/pages/A
 import { NotificationsPage } from "@/features/notifications/pages/NotificationsPage";
 import { TuitionsPage } from "@/features/tuitions/pages/TuitionsPage";
 import { StudentTuitionsPage } from "@/features/student-tuitions/pages/StudentTuitionsPage";
+import { StudentMajorsPage } from "@/features/student-majors/pages/StudentMajorsPage";
 import { TimeRegistersPage } from "@/features/time-registers/pages/TimeRegistersPage";
 import { PrerequisiteSubjectsPage } from "@/features/prerequisite-subjects/pages/PrerequisiteSubjectsPage";
 import { ProfilePage } from "@/features/profile/pages/ProfilePage";
@@ -29,12 +31,56 @@ import { PublicNewsDetailPage } from "@/features/public/pages/PublicNewsDetailPa
 import { PublicNewsListPage } from "@/features/public/pages/PublicNewsListPage";
 import { PublicAdminNotificationsPage } from "@/features/public/pages/PublicAdminNotificationsPage";
 import { PublicNotificationDetailPage } from "@/features/public/pages/PublicNotificationDetailPage";
+import { PublicPrerequisiteSubjectsPage } from "@/features/public/pages/PublicPrerequisiteSubjectsPage";
+import { StudentWishlistRegistrationPage } from "@/features/aspiration-registers/pages/StudentWishlistRegistrationPage";
+import { StudentSubjectRegistrationPage } from "@/features/student-credit-classes/pages/StudentSubjectRegistrationPage";
+import { StudentTuitionViewingPage } from "@/features/student-tuitions/pages/StudentTuitionViewingPage";
+import { StudentWeeklySchedulePage } from "@/features/student-credit-classes/pages/StudentWeeklySchedulePage";
+import { StudentExamSchedulePage } from "@/features/student-credit-classes/pages/StudentExamSchedulePage";
+import { StudentGradePage } from "@/features/student-credit-classes/pages/StudentGradePage";
+import { LecturerLayout } from "@/features/lecturer-dashboard/layouts/LecturerLayout";
+import { LecturerDashboardPage } from "@/features/lecturer-dashboard/pages/LecturerDashboardPage";
+import { LecturerProfilePage } from "@/features/lecturer-dashboard/pages/LecturerProfilePage";
+import { LecturerClassesPage } from "@/features/lecturer-dashboard/pages/LecturerClassesPage";
+import { LecturerClassDetailPage } from "@/features/lecturer-dashboard/pages/LecturerClassDetailPage";
+import { LecturerSchedulePage } from "@/features/lecturer-dashboard/pages/LecturerSchedulePage";
 
 export const AppRoutes = () => {
   const routes = useRoutes([
     {
       path: ROUTE_PATHS.HOME,
       element: <Navigate to={ROUTE_PATHS.LOGIN} replace />,
+    },
+    {
+      path: "/lecturer",
+      element: <AuthGuard />,
+      children: [
+        {
+          element: <LecturerLayout />,
+          children: [
+            {
+              index: true,
+              element: <LecturerDashboardPage />,
+            },
+            {
+              path: "profile",
+              element: <LecturerProfilePage />,
+            },
+            {
+              path: "classes",
+              element: <LecturerClassesPage />,
+            },
+            {
+              path: "classes/:id/students",
+              element: <LecturerClassDetailPage />,
+            },
+            {
+              path: "schedule",
+              element: <LecturerSchedulePage />,
+            },
+          ],
+        },
+      ],
     },
     {
       path: "/public",
@@ -59,6 +105,38 @@ export const AppRoutes = () => {
         {
           path: "home/:id",
           element: <PublicNewsDetailPage />,
+        },
+        {
+          path: "training-program",
+          element: <TrainingProgramPage />,
+        },
+        {
+          path: "prerequisite-subjects",
+          element: <PublicPrerequisiteSubjectsPage />,
+        },
+        {
+          path: "wishlist-registration",
+          element: <StudentWishlistRegistrationPage />,
+        },
+        {
+          path: "subject-registration",
+          element: <StudentSubjectRegistrationPage />,
+        },
+        {
+          path: "tuition-viewing",
+          element: <StudentTuitionViewingPage />,
+        },
+        {
+          path: "weekly-schedule",
+          element: <StudentWeeklySchedulePage />,
+        },
+        {
+          path: "exam-schedule",
+          element: <StudentExamSchedulePage />,
+        },
+        {
+          path: "grade-viewing",
+          element: <StudentGradePage />,
         },
       ],
     },
@@ -136,6 +214,10 @@ export const AppRoutes = () => {
             {
               path: "student-tuitions",
               element: <StudentTuitionsPage />,
+            },
+            {
+              path: "student-majors",
+              element: <StudentMajorsPage />,
             },
             {
               path: "time-registers",

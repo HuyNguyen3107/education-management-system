@@ -24,6 +24,9 @@ public class StudentTuition {
     @Column
     private Double endow;
 
+    @Column
+    private Double paid;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt;
@@ -58,6 +61,14 @@ public class StudentTuition {
 
     public void setEndow(Double endow) {
         this.endow = endow;
+    }
+
+    public Double getPaid() {
+        return paid;
+    }
+
+    public void setPaid(Double paid) {
+        this.paid = paid;
     }
 
     public OffsetDateTime getCreatedAt() {

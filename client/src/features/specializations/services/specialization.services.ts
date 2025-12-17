@@ -10,6 +10,7 @@ export const specializationService = {
     page?: number;
     size?: number;
     keyword?: string;
+    majorId?: string;
   }) => {
     const response = await http.get<any>("/specializations", { params });
     // Handle both array (no pagination) and paginated response
@@ -27,6 +28,25 @@ export const specializationService = {
       };
     }
     return response.data;
+  },
+
+  getAllSpecializations: async (): Promise<Specialization[]> => {
+    const response = await http.get<Specialization[]>("/specializations", {
+      params: { page: 0, size: 10000 },
+    });
+    if (Array.isArray(response.data)) {
+      return response.data;
+    }
+    return response.data.content || [];
+  },
+
+  getSpecializationsByMajorId: async (
+    majorId: string
+  ): Promise<Specialization[]> => {
+    const response = await http.get<Specialization[]>("/specializations", {
+      params: { majorId },
+    });
+    return Array.isArray(response.data) ? response.data : [];
   },
 
   getSpecialization: async (id: string): Promise<Specialization> => {

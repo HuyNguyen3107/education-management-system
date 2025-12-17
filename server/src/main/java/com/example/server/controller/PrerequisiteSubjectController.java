@@ -1,6 +1,7 @@
 package com.example.server.controller;
 
 import com.example.server.dto.CreatePrerequisiteSubjectDto;
+import com.example.server.dto.PrerequisiteSubjectPublicDto;
 import com.example.server.dto.PrerequisiteSubjectResponseDto;
 import com.example.server.dto.UpdatePrerequisiteSubjectDto;
 import com.example.server.service.PrerequisiteSubjectService;
@@ -74,7 +75,8 @@ public class PrerequisiteSubjectController {
     @GetMapping("/register-code/{registerCode}")
     public ResponseEntity<List<PrerequisiteSubjectResponseDto>> getPrerequisitesByRegisterCode(
             @PathVariable String registerCode) {
-        List<PrerequisiteSubjectResponseDto> prerequisites = prerequisiteSubjectService.getPrerequisitesByRegisterCode(registerCode);
+        List<PrerequisiteSubjectResponseDto> prerequisites = prerequisiteSubjectService
+                .getPrerequisitesByRegisterCode(registerCode);
         return ResponseEntity.ok(prerequisites);
     }
 
@@ -84,7 +86,8 @@ public class PrerequisiteSubjectController {
     @GetMapping("/prerequisite-code/{prerequisiteCode}")
     public ResponseEntity<List<PrerequisiteSubjectResponseDto>> getByPrerequisiteCode(
             @PathVariable String prerequisiteCode) {
-        List<PrerequisiteSubjectResponseDto> subjects = prerequisiteSubjectService.getByPrerequisiteCode(prerequisiteCode);
+        List<PrerequisiteSubjectResponseDto> subjects = prerequisiteSubjectService
+                .getByPrerequisiteCode(prerequisiteCode);
         return ResponseEntity.ok(subjects);
     }
 
@@ -95,7 +98,18 @@ public class PrerequisiteSubjectController {
     public ResponseEntity<List<PrerequisiteSubjectResponseDto>> searchByBothCodes(
             @RequestParam String registerCode,
             @RequestParam String prerequisiteCode) {
-        List<PrerequisiteSubjectResponseDto> results = prerequisiteSubjectService.searchByBothCodes(registerCode, prerequisiteCode);
+        List<PrerequisiteSubjectResponseDto> results = prerequisiteSubjectService.searchByBothCodes(registerCode,
+                prerequisiteCode);
         return ResponseEntity.ok(results);
+    }
+
+    /**
+     * Lấy danh sách public (kèm tên môn), có thể lọc theo userId
+     */
+    @GetMapping("/public")
+    public ResponseEntity<List<PrerequisiteSubjectPublicDto>> getPublicPrerequisiteSubjects(
+            @RequestParam(required = false) UUID userId) {
+        List<PrerequisiteSubjectPublicDto> list = prerequisiteSubjectService.getPublicPrerequisiteSubjects(userId);
+        return ResponseEntity.ok(list);
     }
 }

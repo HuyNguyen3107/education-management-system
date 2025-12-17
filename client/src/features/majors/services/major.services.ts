@@ -1,8 +1,16 @@
 import { http } from "@/libs/http.libs";
-import type { Major, PageResponse, MajorSearchParams, CreateMajorRequest, UpdateMajorRequest } from "../types/major.types";
+import type {
+  Major,
+  PageResponse,
+  MajorSearchParams,
+  CreateMajorRequest,
+  UpdateMajorRequest,
+} from "../types/major.types";
 
 export const majorService = {
-  getMajors: async (params?: MajorSearchParams): Promise<PageResponse<Major>> => {
+  getMajors: async (
+    params?: MajorSearchParams
+  ): Promise<PageResponse<Major>> => {
     const response = await http.get<any>("/majors", { params });
     if (Array.isArray(response.data)) {
       return {
@@ -18,6 +26,16 @@ export const majorService = {
       };
     }
     return response.data;
+  },
+
+  getAllMajors: async (): Promise<Major[]> => {
+    const response = await http.get<Major[]>("/majors", {
+      params: { page: 0, size: 10000 },
+    });
+    if (Array.isArray(response.data)) {
+      return response.data;
+    }
+    return response.data.content || [];
   },
 
   getMajor: async (id: string): Promise<Major> => {
@@ -37,5 +55,5 @@ export const majorService = {
 
   deleteMajor: async (id: string): Promise<void> => {
     await http.delete(`/majors/${id}`);
-  }
+  },
 };

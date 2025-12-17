@@ -33,10 +33,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { useState, useEffect, useMemo } from "react";
 import { CreditClassFormDialog } from "../components/CreditClassFormDialog";
 import { CreditClassDeleteDialog } from "../components/CreditClassDeleteDialog";
 import { CreditClassDetailDialog } from "../components/CreditClassDetailDialog";
+import { ScheduleItemDetailDialog } from "../components/ScheduleItemDetailDialog";
 import type {
   CreditClass,
   CreateCreditClassRequest,
@@ -88,6 +90,13 @@ export const CreditClassesPage = () => {
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [selectedDetailData, setSelectedDetailData] =
     useState<CreditClass | null>(null);
+
+  const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
+  const [selectedScheduleItems, setSelectedScheduleItems] = useState<
+    ScheduleItem[]
+  >([]);
+  const [selectedCreditClassName, setSelectedCreditClassName] =
+    useState<string>("");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -178,6 +187,12 @@ export const CreditClassesPage = () => {
   const handleViewDetail = (cc: CreditClass) => {
     setSelectedDetailData(cc);
     setDetailDialogOpen(true);
+  };
+
+  const handleViewSchedule = (cc: CreditClass) => {
+    setSelectedScheduleItems(cc.schedule || []);
+    setSelectedCreditClassName(cc.name);
+    setScheduleDialogOpen(true);
   };
 
   const handleFormSubmit = (data: CreateCreditClassRequest) => {
@@ -354,21 +369,48 @@ export const CreditClassesPage = () => {
                     </TableCell>
                     <TableCell>{cc.room || "-"}</TableCell>
                     <TableCell>
-                      <Tooltip title="Xem chi tiết lịch học">
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            maxWidth: 180,
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => handleViewDetail(cc)}
-                        >
-                          {formatScheduleDisplay(cc.schedule || [])}
-                        </Typography>
-                      </Tooltip>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                        }}
+                      >
+                        <Tooltip title="Xem chi tiết lịch học">
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              maxWidth: 150,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                              cursor: "pointer",
+                              flex: 1,
+                            }}
+                            onClick={() => handleViewDetail(cc)}
+                          >
+                            {formatScheduleDisplay(cc.schedule || [])}
+                          </Typography>
+                        </Tooltip>
+                        {cc.schedule && cc.schedule.length > 0 && (
+                          <Tooltip title="Xem chi tiết tiết thành phần">
+                            <IconButton
+                              size="small"
+                              color="primary"
+                              onClick={() => handleViewSchedule(cc)}
+                              sx={{
+                                ml: 0.5,
+                                "&:hover": {
+                                  bgcolor: "primary.light",
+                                  color: "white",
+                                },
+                              }}
+                            >
+                              <CalendarTodayIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                      </Box>
                     </TableCell>
                     <TableCell>
                       <Chip
@@ -439,6 +481,13 @@ export const CreditClassesPage = () => {
             ? lecturerMap[selectedDetailData.teacherId]
             : undefined
         }
+      />
+
+      <ScheduleItemDetailDialog
+        open={scheduleDialogOpen}
+        onClose={() => setScheduleDialogOpen(false)}
+        scheduleItems={selectedScheduleItems}
+        creditClassName={selectedCreditClassName}
       />
     </Box>
   );

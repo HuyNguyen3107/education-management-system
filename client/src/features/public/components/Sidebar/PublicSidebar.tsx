@@ -25,7 +25,7 @@ import {
   Receipt as ReceiptIcon,
   CalendarToday as CalendarTodayIcon,
   CalendarMonth as CalendarMonthIcon,
-  Event as EventIcon,
+  EventNote as EventNoteIcon,
   Grade as GradeIcon,
   School as SchoolIcon,
 } from "@mui/icons-material";
@@ -59,52 +59,42 @@ const menuItems: MenuItem[] = [
   },
   {
     title: "Xem chương trình đào tạo",
-    path: "#",
+    path: ROUTE_PATHS.PUBLIC_TRAINING_PROGRAM,
     icon: <MenuBookIcon />,
   },
   {
     title: "Xem môn học tiên quyết",
-    path: "#",
+    path: ROUTE_PATHS.PUBLIC_PREREQUISITE_SUBJECTS,
     icon: <SubjectIcon />,
   },
   {
     title: "Đăng ký môn học",
-    path: "#",
+    path: ROUTE_PATHS.PUBLIC_SUBJECT_REGISTRATION,
     icon: <AssignmentIcon />,
   },
   {
     title: "Đăng ký môn nguyện vọng",
-    path: "#",
+    path: ROUTE_PATHS.PUBLIC_WISHLIST_REGISTRATION,
     icon: <HowToRegIcon />,
   },
   {
     title: "Xem học phí",
-    path: "#",
+    path: ROUTE_PATHS.PUBLIC_TUITION_VIEWING,
     icon: <AccountBalanceWalletIcon />,
   },
   {
-    title: "Hóa đơn điện tử",
-    path: "#",
-    icon: <ReceiptIcon />,
-  },
-  {
     title: "Thời khóa biểu dạng tuần",
-    path: "#",
+    path: ROUTE_PATHS.PUBLIC_WEEKLY_SCHEDULE,
     icon: <CalendarTodayIcon />,
   },
   {
-    title: "Thời khóa biểu dạng học kỳ",
-    path: "#",
-    icon: <CalendarMonthIcon />,
-  },
-  {
     title: "Xem lịch thi",
-    path: "#",
-    icon: <EventIcon />,
+    path: ROUTE_PATHS.PUBLIC_EXAM_SCHEDULE,
+    icon: <EventNoteIcon />,
   },
   {
     title: "Xem điểm",
-    path: "#",
+    path: ROUTE_PATHS.PUBLIC_GRADE_VIEWING,
     icon: <GradeIcon />,
   },
 ];

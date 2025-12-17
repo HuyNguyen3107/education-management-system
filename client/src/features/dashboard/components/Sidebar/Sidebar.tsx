@@ -62,117 +62,124 @@ interface MenuGroup {
   items: MenuItem[];
 }
 
-const menuGroups: MenuGroup[] = [
-  {
-    title: "Trang chủ",
-    items: [
-      {
-        title: "Tổng quan",
-        path: ROUTE_PATHS.DASHBOARD,
-        icon: <DashboardIcon />,
-      },
-    ],
-  },
-  {
-    title: "Quản lý",
-    items: [
-      {
-        title: "Người dùng",
-        path: ROUTE_PATHS.USERS,
-        icon: <PeopleIcon />,
-      },
-      {
-        title: "Sinh viên",
-        path: ROUTE_PATHS.STUDENTS,
-        icon: <PersonIcon />,
-      },
-      {
-        title: "Giảng viên",
-        path: ROUTE_PATHS.LECTURERS,
-        icon: <PersonOutlineIcon />,
-      },
-      {
-        title: "Ngành học",
-        path: ROUTE_PATHS.MAJORS,
-        icon: <SchoolIcon />,
-      },
-      {
-        title: "Khoa",
-        path: ROUTE_PATHS.DEPARTMENTS,
-        icon: <BusinessIcon />,
-      },
-      {
-        title: "Chuyên ngành",
-        path: ROUTE_PATHS.SPECIALIZATIONS,
-        icon: <CategoryIcon />,
-      },
-      {
-        title: "Lớp học",
-        path: ROUTE_PATHS.CLASSES,
-        icon: <ClassIcon />,
-      },
-      {
-        title: "Lớp tín chỉ",
-        path: ROUTE_PATHS.CREDIT_CLASSES,
-        icon: <CreditScoreIcon />,
-      },
-      {
-        title: "ĐK lớp tín chỉ",
-        path: ROUTE_PATHS.STUDENT_CREDIT_CLASSES,
-        icon: <AssignmentIcon />,
-      },
-      {
-        title: "Môn học",
-        path: ROUTE_PATHS.SUBJECTS,
-        icon: <MenuBookIcon />,
-      },
-      {
-        title: "Nguyện vọng đăng ký",
-        path: ROUTE_PATHS.ASPIRATION_REGISTERS,
-        icon: <HowToRegIcon />,
-      },
-      {
-        title: "Tin tức",
-        path: ROUTE_PATHS.NEWS,
-        icon: <ArticleIcon />,
-      },
-      {
-        title: "Thông báo",
-        path: ROUTE_PATHS.NOTIFICATIONS,
-        icon: <NotificationsIcon />,
-      },
-      {
-        title: "Học phí",
-        path: ROUTE_PATHS.TUITIONS,
-        icon: <AttachMoneyIcon />,
-      },
-      {
-        title: "Học phí sinh viên",
-        path: ROUTE_PATHS.STUDENT_TUITIONS,
-        icon: <ReceiptIcon />,
-      },
-      {
-        title: "Thời gian đăng ký",
-        path: ROUTE_PATHS.TIME_REGISTERS,
-        icon: <ScheduleIcon />,
-      },
-      {
-        title: "Môn học tiên quyết",
-        path: ROUTE_PATHS.PREREQUISITE_SUBJECTS,
-        icon: <BookOutlinedIcon />,
-      },
-    ],
-  },
-];
-
 export const Sidebar = ({ open, onToggle }: SidebarProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const location = useLocation();
   const navigate = useNavigate();
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
-    "Quản lý": true,
-  });
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    {
+      "Quản lý": true,
+    }
+  );
+
+  const menuGroups: MenuGroup[] = [
+    {
+      title: "Trang chủ",
+      items: [
+        {
+          title: "Tổng quan",
+          path: ROUTE_PATHS.DASHBOARD,
+          icon: <DashboardIcon />,
+        },
+      ],
+    },
+    {
+      title: "Quản lý",
+      items: [
+        {
+          title: "Người dùng",
+          path: ROUTE_PATHS.USERS,
+          icon: <PeopleIcon />,
+        },
+        {
+          title: "Sinh viên",
+          path: ROUTE_PATHS.STUDENTS,
+          icon: <PersonIcon />,
+        },
+        {
+          title: "Giảng viên",
+          path: ROUTE_PATHS.LECTURERS,
+          icon: <PersonOutlineIcon />,
+        },
+        {
+          title: "Ngành học",
+          path: ROUTE_PATHS.MAJORS,
+          icon: <SchoolIcon />,
+        },
+        {
+          title: "Khoa",
+          path: ROUTE_PATHS.DEPARTMENTS,
+          icon: <BusinessIcon />,
+        },
+        {
+          title: "Chuyên ngành",
+          path: ROUTE_PATHS.SPECIALIZATIONS,
+          icon: <CategoryIcon />,
+        },
+        {
+          title: "Lớp học",
+          path: ROUTE_PATHS.CLASSES,
+          icon: <ClassIcon />,
+        },
+        {
+          title: "Lớp tín chỉ",
+          path: ROUTE_PATHS.CREDIT_CLASSES,
+          icon: <CreditScoreIcon />,
+        },
+        {
+          title: "ĐK lớp tín chỉ",
+          path: ROUTE_PATHS.STUDENT_CREDIT_CLASSES,
+          icon: <AssignmentIcon />,
+        },
+        {
+          title: "Môn học",
+          path: ROUTE_PATHS.SUBJECTS,
+          icon: <MenuBookIcon />,
+        },
+        {
+          title: "Nguyện vọng đăng ký",
+          path: ROUTE_PATHS.ASPIRATION_REGISTERS,
+          icon: <HowToRegIcon />,
+        },
+        {
+          title: "Tin tức",
+          path: ROUTE_PATHS.NEWS,
+          icon: <ArticleIcon />,
+        },
+        {
+          title: "Thông báo",
+          path: ROUTE_PATHS.NOTIFICATIONS,
+          icon: <NotificationsIcon />,
+        },
+        {
+          title: "Học phí",
+          path: ROUTE_PATHS.TUITIONS,
+          icon: <AttachMoneyIcon />,
+        },
+        {
+          title: "Học phí sinh viên",
+          path: ROUTE_PATHS.STUDENT_TUITIONS,
+          icon: <ReceiptIcon />,
+        },
+        {
+          title: "Gán ngành/chuyên ngành",
+          path: ROUTE_PATHS.STUDENT_MAJORS,
+          icon: <SchoolIcon />,
+        },
+        {
+          title: "Thời gian đăng ký",
+          path: ROUTE_PATHS.TIME_REGISTERS,
+          icon: <ScheduleIcon />,
+        },
+        {
+          title: "Môn học tiên quyết",
+          path: ROUTE_PATHS.PREREQUISITE_SUBJECTS,
+          icon: <BookOutlinedIcon />,
+        },
+      ],
+    },
+  ];
 
   const handleNavigate = (path: string) => {
     navigate(path);
@@ -295,7 +302,10 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
       </Box>
 
       {/* Menu Items */}
-      <Box sx={{ flex: 1, overflowY: "auto", overflowX: "hidden", pt: 2 }} className="custom-scrollbar">
+      <Box
+        sx={{ flex: 1, overflowY: "auto", overflowX: "hidden", pt: 2 }}
+        className="custom-scrollbar"
+      >
         {menuGroups.map((group, groupIndex) => (
           <Box key={group.title}>
             {open && (
@@ -436,7 +446,11 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
 
                   if (!open) {
                     return (
-                      <Tooltip key={item.path} title={item.title} placement="right">
+                      <Tooltip
+                        key={item.path}
+                        title={item.title}
+                        placement="right"
+                      >
                         {MenuItemContent}
                       </Tooltip>
                     );

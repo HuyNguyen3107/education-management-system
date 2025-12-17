@@ -16,6 +16,7 @@ public class SubjectResponseDto {
     private Float numberOfCredit;
     private JsonNode ingredientSecretion;
     private String semester;
+    private Boolean isStudied; // New field
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -32,8 +33,15 @@ public class SubjectResponseDto {
         this.numberOfCredit = subject.getNumberOfCredit();
         this.ingredientSecretion = subject.getIngredientSecretion();
         this.semester = subject.getSemester();
+        this.isStudied = false; // Default
         this.createdAt = subject.getCreatedAt();
         this.updatedAt = subject.getUpdatedAt();
+    }
+
+    // Constructor with isStudied
+    public SubjectResponseDto(Subject subject, Boolean isStudied) {
+        this(subject);
+        this.isStudied = isStudied;
     }
 
     // Getters and Setters
@@ -99,6 +107,14 @@ public class SubjectResponseDto {
 
     public void setSemester(String semester) {
         this.semester = semester;
+    }
+
+    public Boolean getIsStudied() {
+        return isStudied;
+    }
+
+    public void setIsStudied(Boolean isStudied) {
+        this.isStudied = isStudied;
     }
 
     public LocalDateTime getCreatedAt() {

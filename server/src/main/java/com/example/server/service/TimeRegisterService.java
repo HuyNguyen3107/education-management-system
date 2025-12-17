@@ -40,6 +40,7 @@ public class TimeRegisterService {
      * Tạo thời gian đăng ký mới
      */
     public TimeRegisterResponseDto createTimeRegister(CreateTimeRegisterDto dto) {
+        validateTypeRegister(dto.getTypeRegister());
         TimeRegister timeRegister = new TimeRegister();
         timeRegister.setTypeSemester(dto.getTypeSemester());
         timeRegister.setTypeRegister(dto.getTypeRegister());
@@ -61,6 +62,7 @@ public class TimeRegisterService {
             timeRegister.setTypeSemester(dto.getTypeSemester());
         }
         if (dto.getTypeRegister() != null && !dto.getTypeRegister().trim().isEmpty()) {
+            validateTypeRegister(dto.getTypeRegister());
             timeRegister.setTypeRegister(dto.getTypeRegister());
         }
         if (dto.getOpenTime() != null && !dto.getOpenTime().trim().isEmpty()) {
@@ -72,6 +74,13 @@ public class TimeRegisterService {
 
         TimeRegister updated = timeRegisterRepository.save(timeRegister);
         return new TimeRegisterResponseDto(updated);
+    }
+
+    private void validateTypeRegister(String type) {
+        if (type != null && !type.equals("subject_registration") && !type.equals("wishlist_registration")) {
+            throw new RuntimeException(
+                    "Loại đăng ký không hợp lệ. Chỉ chấp nhận 'subject_registration' hoặc 'wishlist_registration'");
+        }
     }
 
     /**

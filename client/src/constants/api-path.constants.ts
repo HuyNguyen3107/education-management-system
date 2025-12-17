@@ -29,6 +29,8 @@ export const API_PATHS = {
     GET_BY_ID: (id: string) => `/students/${id}`,
     GET_BY_CODE: (code: string) => `/students/code/${code}`,
     GET_BY_USER_ID: (userId: string) => `/students/user/${userId}`,
+    GET_TRAINING_PROGRAM: (userId: string) =>
+      `/students/training-program/${userId}`,
     CREATE: "/students",
     UPDATE: (id: string) => `/students/${id}`,
     DELETE: (id: string) => `/students/${id}`,
@@ -78,5 +80,14 @@ export const API_PATHS = {
     CREATE: "/prerequisite-subjects",
     UPDATE: (id: string) => `/prerequisite-subjects/${id}`,
     DELETE: (id: string) => `/prerequisite-subjects/${id}`,
+  },
+  LECTURER: {
+    PROFILE: "/lecturer/profile",
+    CLASSES: "/lecturer/classes",
+    CLASS_STUDENTS: (classId: string) =>
+      `/lecturer/classes/${classId}/students`,
+    UPDATE_GRADE: (classId: string, studentId: string) =>
+      `/lecturer/classes/${classId}/students/${studentId}/grade`,
+    SCHEDULE: "/lecturer/schedule",
   },
 } as const;
