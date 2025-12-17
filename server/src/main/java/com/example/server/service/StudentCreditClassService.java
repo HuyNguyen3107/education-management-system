@@ -166,7 +166,7 @@ public class StudentCreditClassService {
                 continue;
 
             String subjectName = subjectRepository.findBySubjectCode(cc.getSubjectCode())
-                    .map(Subject::getName).orElse("Unknown");
+                    .map(Subject::getName).orElse("Không xác định");
 
             for (JsonNode exam : exams) {
                 Map<String, Object> map = new HashMap<>();
@@ -312,7 +312,7 @@ public class StudentCreditClassService {
 
     public StudentCreditClassResponseDto getStudentCreditClassById(UUID id) {
         StudentCreditClass studentCreditClass = studentCreditClassRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("StudentCreditClass not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đăng ký lớp tín chỉ với ID: " + id));
         return new StudentCreditClassResponseDto(studentCreditClass);
     }
 
@@ -333,7 +333,7 @@ public class StudentCreditClassService {
 
         // Check if credit class exists
         CreditClass creditClass = creditClassRepository.findById(createStudentCreditClassDto.getCreditClassId())
-                .orElseThrow(() -> new RuntimeException("Credit class not found"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy lớp tín chỉ"));
 
         // Check capacity
         int currentEnrollment = studentCreditClassRepository
@@ -346,7 +346,7 @@ public class StudentCreditClassService {
         if (studentCreditClassRepository.findByStudentIdAndCreditClassId(
                 createStudentCreditClassDto.getStudentId(),
                 createStudentCreditClassDto.getCreditClassId()).isPresent()) {
-            throw new RuntimeException("This student is already enrolled in this credit class");
+            throw new RuntimeException("Sinh viên đã đăng ký lớp học phần này");
         }
 
         StudentCreditClass studentCreditClass = new StudentCreditClass();
@@ -362,7 +362,7 @@ public class StudentCreditClassService {
     public StudentCreditClassResponseDto updateStudentCreditClass(UUID id,
             UpdateStudentCreditClassDto updateStudentCreditClassDto) {
         StudentCreditClass studentCreditClass = studentCreditClassRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("StudentCreditClass not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đăng ký lớp tín chỉ với ID: " + id));
 
         if (updateStudentCreditClassDto.getStudentId() != null) {
             studentCreditClass.setStudentId(updateStudentCreditClassDto.getStudentId());
@@ -382,7 +382,7 @@ public class StudentCreditClassService {
                 studentCreditClassRepository.findByStudentIdAndCreditClassId(checkStudentId, checkCreditClassId)
                         .ifPresent(existingStudentCreditClass -> {
                             if (!existingStudentCreditClass.getId().equals(id)) {
-                                throw new RuntimeException("This student is already enrolled in this credit class");
+                                throw new RuntimeException("Sinh viên đã đăng ký lớp học phần này");
                             }
                         });
             }
@@ -403,7 +403,7 @@ public class StudentCreditClassService {
 
     public void deleteStudentCreditClass(UUID id) {
         if (!studentCreditClassRepository.existsById(id)) {
-            throw new RuntimeException("StudentCreditClass not found with id: " + id);
+            throw new RuntimeException("Không tìm thấy đăng ký lớp tín chỉ với ID: " + id);
         }
         studentCreditClassRepository.deleteById(id);
     }

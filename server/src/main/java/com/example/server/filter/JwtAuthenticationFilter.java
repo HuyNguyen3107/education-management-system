@@ -45,7 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             email = jwtService.extractUsername(jwt);
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Invalid or expired token");
+            response.getWriter().write("Token không hợp lệ hoặc đã hết hạn");
             return;
         }
 

@@ -10,7 +10,6 @@ export const ROUTE_PATHS = {
   DEPARTMENTS: "/dashboard/departments",
   SPECIALIZATIONS: "/dashboard/specializations",
   CLASSES: "/dashboard/classes",
-  ROLES: "/dashboard/roles",
   CREDIT_CLASSES: "/dashboard/credit-classes",
   STUDENT_CREDIT_CLASSES: "/dashboard/student-credit-classes",
   SUBJECTS: "/dashboard/subjects",
@@ -34,4 +33,5 @@ export const ROUTE_PATHS = {
   PUBLIC_WEEKLY_SCHEDULE: "/public/weekly-schedule",
   PUBLIC_EXAM_SCHEDULE: "/public/exam-schedule",
   PUBLIC_GRADE_VIEWING: "/public/grade-viewing",
+  LECTURER_HOME: "/lecturer",
 } as const;

@@ -28,7 +28,7 @@ public class UserRoleService {
 
     public UserRoleResponseDto getUserRoleById(UUID id) {
         UserRole userRole = userRoleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("UserRole not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phân quyền người dùng với ID: " + id));
         return new UserRoleResponseDto(userRole);
     }
 
@@ -47,7 +47,7 @@ public class UserRoleService {
     public UserRoleResponseDto createUserRole(CreateUserRoleDto createUserRoleDto) {
         // Check if this user-role combination already exists
         if (userRoleRepository.findByUserIdAndRoleId(createUserRoleDto.getUserId(), createUserRoleDto.getRoleId()).isPresent()) {
-            throw new RuntimeException("This user already has this role");
+            throw new RuntimeException("Người dùng này đã được gán vai trò này");
         }
 
         UserRole userRole = new UserRole();
@@ -60,7 +60,7 @@ public class UserRoleService {
 
     public UserRoleResponseDto updateUserRole(UUID id, UpdateUserRoleDto updateUserRoleDto) {
         UserRole userRole = userRoleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("UserRole not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phân quyền người dùng với ID: " + id));
 
         if (updateUserRoleDto.getUserId() != null) {
             userRole.setUserId(updateUserRoleDto.getUserId());
@@ -74,7 +74,7 @@ public class UserRoleService {
                 
                 userRoleRepository.findByUserIdAndRoleId(checkUserId, checkRoleId).ifPresent(existingUserRole -> {
                     if (!existingUserRole.getId().equals(id)) {
-                        throw new RuntimeException("This user already has this role");
+                        throw new RuntimeException("Người dùng này đã được gán vai trò này");
                     }
                 });
             }
@@ -87,7 +87,7 @@ public class UserRoleService {
 
     public void deleteUserRole(UUID id) {
         if (!userRoleRepository.existsById(id)) {
-            throw new RuntimeException("UserRole not found with id: " + id);
+            throw new RuntimeException("Không tìm thấy phân quyền người dùng với ID: " + id);
         }
         userRoleRepository.deleteById(id);
     }

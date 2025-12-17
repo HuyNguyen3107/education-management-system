@@ -11,6 +11,7 @@ export interface LoginResponse {
   name: string;
   phone: string;
   dateOfBirth: string;
+  role: "ADMIN" | "LECTURER" | "STUDENT";
   online: boolean;
   createdAt: string;
   updatedAt: string;
@@ -22,6 +23,7 @@ export interface User {
   name: string;
   phone: string;
   dateOfBirth: string;
+  role: "ADMIN" | "LECTURER" | "STUDENT";
   online: boolean;
   createdAt: string;
   updatedAt: string;

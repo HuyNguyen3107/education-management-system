@@ -31,7 +31,7 @@ public class UserService {
 
     public UserResponseDto createUser(CreateUserDto dto) {
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email đã tồn tại trong hệ thống");
         }
 
         User user = new User();
@@ -51,11 +51,11 @@ public class UserService {
 
     public UserResponseDto updateUser(UUID id, UpdateUserDto dto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
 
         if (dto.getEmail() != null && !dto.getEmail().equals(user.getEmail())) {
              if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Email đã tồn tại trong hệ thống");
             }
             user.setEmail(dto.getEmail());
         }
@@ -78,14 +78,14 @@ public class UserService {
 
     public void deleteUser(UUID id) {
         if (!userRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng");
         }
         userRepository.deleteById(id);
     }
     
     public UserResponseDto changeStatus(UUID id, String status) {
          User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng"));
          user.setStatus(status);
          return new UserResponseDto(userRepository.save(user));
     }

@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import {
   Dashboard as DashboardIcon,
+  Home as HomeIcon,
   Menu as MenuIcon,
   ChevronLeft as ChevronLeftIcon,
   People as PeopleIcon,
@@ -37,7 +38,6 @@ import {
   Assignment as AssignmentIcon,
   ExpandLess,
   ExpandMore,
-  Security as SecurityIcon,
 } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -70,6 +70,7 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
   const navigate = useNavigate();
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
     {
+      "Trang chủ": true,
       "Quản lý": true,
     }
   );
@@ -83,6 +84,16 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           path: ROUTE_PATHS.DASHBOARD,
           icon: <DashboardIcon />,
         },
+        {
+          title: "Trang công khai",
+          path: ROUTE_PATHS.PUBLIC_HOME,
+          icon: <HomeIcon />,
+        },
+        {
+          title: "Bảng điều khiển giảng viên",
+          path: ROUTE_PATHS.LECTURER_HOME,
+          icon: <PersonOutlineIcon />,
+        },
       ],
     },
     {
@@ -92,11 +103,6 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           title: "Người dùng",
           path: ROUTE_PATHS.USERS,
           icon: <PeopleIcon />,
-        },
-        {
-          title: "Vai trò",
-          path: ROUTE_PATHS.ROLES,
-          icon: <SecurityIcon />,
         },
         {
           title: "Sinh viên",

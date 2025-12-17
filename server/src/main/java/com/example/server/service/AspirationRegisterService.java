@@ -64,7 +64,7 @@ public class AspirationRegisterService {
 
     public AspirationRegisterResponseDto getById(UUID id) {
         AspirationRegister aspiration = aspirationRegisterRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Aspiration not found"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy nguyện vọng"));
         return new AspirationRegisterResponseDto(aspiration);
     }
 
@@ -83,7 +83,7 @@ public class AspirationRegisterService {
         boolean existsInUserTable = userRepository.existsById(dto.getStudentId());
 
         if (!existsInStudentTable && !existsInUserTable) {
-            throw new RuntimeException("Student not found");
+            throw new RuntimeException("Không tìm thấy sinh viên");
         }
 
         AspirationRegister aspiration = new AspirationRegister();
@@ -98,7 +98,7 @@ public class AspirationRegisterService {
 
     public AspirationRegisterResponseDto updateAspiration(UUID id, AspirationRegisterRequestDto dto) {
         AspirationRegister aspiration = aspirationRegisterRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Aspiration not found"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy nguyện vọng"));
 
         aspiration.setSubjectCode(dto.getSubjectCode());
         aspiration.setStudentId(dto.getStudentId());
@@ -111,7 +111,7 @@ public class AspirationRegisterService {
 
     public void deleteAspiration(UUID id) {
         if (!aspirationRegisterRepository.existsById(id)) {
-            throw new RuntimeException("Aspiration not found");
+            throw new RuntimeException("Không tìm thấy nguyện vọng");
         }
         aspirationRegisterRepository.deleteById(id);
     }

@@ -40,6 +40,7 @@ import { UserFormDialog } from "../components/UserFormDialog";
 import { UserDeleteDialog } from "../components/UserDeleteDialog";
 import { UserRoleDialog } from "../components/UserRoleDialog";
 import type { User, CreateUserRequest, Role, UserRole } from "../types/user.types";
+import { SUPER_ADMIN_EMAIL } from "../constants/super-admin.constants";
 import { toast } from "react-toastify";
 import {
   ALL_STATUSES,
@@ -126,6 +127,7 @@ export const UsersPage = () => {
   };
 
   const handleAddUser = () => {
+    // Không cho tạo thêm user với email super admin
     setEditingUser(null);
     setFormOpen(true);
   };
@@ -137,6 +139,10 @@ export const UsersPage = () => {
   };
 
   const handleDeleteUser = (user: User) => {
+    if (user.email === SUPER_ADMIN_EMAIL) {
+      toast.error("Không thể xóa tài khoản super admin");
+      return;
+    }
     setUserToDelete(user);
     setDeleteError(null);
     setDeleteDialogOpen(true);
@@ -144,6 +150,10 @@ export const UsersPage = () => {
   };
 
   const handleAssignRoles = (user: User) => {
+    if (user.email === SUPER_ADMIN_EMAIL) {
+      toast.error("Tài khoản super admin luôn là ADMIN và không thể thay đổi vai trò");
+      return;
+    }
     setSelectedUser(user);
     setRoleDialogOpen(true);
     handleCloseMenu();
@@ -192,7 +202,11 @@ export const UsersPage = () => {
   };
 
   if (isError) {
-    return <Typography color="error">Error loading users</Typography>;
+    return (
+      <Typography color="error">
+        Không thể tải danh sách người dùng. Vui lòng thử lại sau.
+      </Typography>
+    );
   }
 
   return (
@@ -338,6 +352,14 @@ export const UsersPage = () => {
                     <TableCell>
                       <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                         {user.fullName}
+                        {user.email === SUPER_ADMIN_EMAIL && (
+                          <Chip
+                            label="Super Admin"
+                            size="small"
+                            color="primary"
+                            sx={{ ml: 1 }}
+                          />
+                        )}
                       </Typography>
                     </TableCell>
                     <TableCell>{user.email}</TableCell>

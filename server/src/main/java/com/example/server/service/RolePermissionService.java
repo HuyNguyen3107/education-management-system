@@ -28,7 +28,7 @@ public class RolePermissionService {
 
     public RolePermissionResponseDto getRolePermissionById(UUID id) {
         RolePermission rolePermission = rolePermissionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("RolePermission not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phân quyền vai trò với ID: " + id));
         return new RolePermissionResponseDto(rolePermission);
     }
 
@@ -49,7 +49,7 @@ public class RolePermissionService {
         if (rolePermissionRepository.findByRoleIdAndPermissionId(
                 createRolePermissionDto.getRoleId(), 
                 createRolePermissionDto.getPermissionId()).isPresent()) {
-            throw new RuntimeException("This role already has this permission");
+            throw new RuntimeException("Vai trò này đã được gán quyền này");
         }
 
         RolePermission rolePermission = new RolePermission();
@@ -62,7 +62,7 @@ public class RolePermissionService {
 
     public RolePermissionResponseDto updateRolePermission(UUID id, UpdateRolePermissionDto updateRolePermissionDto) {
         RolePermission rolePermission = rolePermissionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("RolePermission not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phân quyền vai trò với ID: " + id));
 
         if (updateRolePermissionDto.getRoleId() != null) {
             rolePermission.setRoleId(updateRolePermissionDto.getRoleId());
@@ -76,7 +76,7 @@ public class RolePermissionService {
                 
                 rolePermissionRepository.findByRoleIdAndPermissionId(checkRoleId, checkPermissionId).ifPresent(existingRolePermission -> {
                     if (!existingRolePermission.getId().equals(id)) {
-                        throw new RuntimeException("This role already has this permission");
+                        throw new RuntimeException("Vai trò này đã được gán quyền này");
                     }
                 });
             }
@@ -89,7 +89,7 @@ public class RolePermissionService {
 
     public void deleteRolePermission(UUID id) {
         if (!rolePermissionRepository.existsById(id)) {
-            throw new RuntimeException("RolePermission not found with id: " + id);
+            throw new RuntimeException("Không tìm thấy phân quyền vai trò với ID: " + id);
         }
         rolePermissionRepository.deleteById(id);
     }
