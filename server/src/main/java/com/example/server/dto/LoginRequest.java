@@ -6,12 +6,12 @@ import jakarta.validation.constraints.Size;
 
 public class LoginRequest {
 
-    @NotBlank(message = "Email cannot be blank")
-    @Email(message = "Invalid email format")
+    @NotBlank(message = "Email không được để trống")
+    @Email(message = "Định dạng email không hợp lệ")
     private String email;
 
-    @NotBlank(message = "Password cannot be blank")
-    @Size(min = 6, max = 50, message = "Password must be between 6 and 50 characters")
+    @NotBlank(message = "Mật khẩu không được để trống")
+    @Size(min = 6, max = 50, message = "Mật khẩu phải từ 6 đến 50 ký tự")
     private String password;
 
     public LoginRequest() {

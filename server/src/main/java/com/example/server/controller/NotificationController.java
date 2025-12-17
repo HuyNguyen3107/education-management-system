@@ -42,8 +42,24 @@ public class NotificationController {
         }
     }
 
+    // ================= GET BY ID =================
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<?> getById(@PathVariable UUID id) {
+        try {
+            NotificationResponseDto notification = service.getById(id);
+            return ResponseEntity.ok(notification);
+
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body("Lỗi hệ thống: " + e.getMessage());
+        }
+    }
+
     // ================= GET ALL FOR USER =================
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<?> getAll(@PathVariable UUID userId) {
         try {
             List<NotificationResponseDto> list = service.getAllByUser(userId);

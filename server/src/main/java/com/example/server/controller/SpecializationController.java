@@ -5,13 +5,14 @@ import com.example.server.dto.SpecializationResponseDto;
 import com.example.server.service.SpecializationService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/specializations")
+@CrossOrigin(origins = "*")
 public class SpecializationController {
 
     private final SpecializationService specializationService;
@@ -21,8 +22,20 @@ public class SpecializationController {
     }
 
     @GetMapping
-    public List<SpecializationResponseDto> getAll() {
-        return specializationService.getAll();
+    public ResponseEntity<?> getAll(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) UUID majorId
+    ) {
+        if (majorId != null) {
+            return ResponseEntity.ok(specializationService.getByMajorId(majorId));
+        }
+        // If page is 0 and size is large, return all (for dropdowns)
+        if (size >= 10000) {
+            return ResponseEntity.ok(specializationService.getAll());
+        }
+        return ResponseEntity.ok(specializationService.getSpecializations(page, size, keyword));
     }
 
     @GetMapping("/{id}")

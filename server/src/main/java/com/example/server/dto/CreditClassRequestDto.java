@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 
 public class CreditClassRequestDto {
@@ -27,8 +28,8 @@ public class CreditClassRequestDto {
     // room có thể null
     private String room;
 
-    @NotBlank(message = "Lịch học không được để trống.")
-    private String schedule;
+    // schedule có thể null
+    private List<ScheduleItemDto> schedule;
 
     @NotBlank(message = "Học kỳ không được để trống.")
     private String semester;
@@ -81,11 +82,11 @@ public class CreditClassRequestDto {
         this.room = room;
     }
 
-    public String getSchedule() {
+    public List<ScheduleItemDto> getSchedule() {
         return schedule;
     }
 
-    public void setSchedule(String schedule) {
+    public void setSchedule(List<ScheduleItemDto> schedule) {
         this.schedule = schedule;
     }
 

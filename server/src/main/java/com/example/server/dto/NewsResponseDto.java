@@ -13,6 +13,10 @@ public class NewsResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    // Default constructor
+    public NewsResponseDto() {
+    }
+
     // Constructor từ News entity
     public NewsResponseDto(News news) {
         this.id = news.getId();

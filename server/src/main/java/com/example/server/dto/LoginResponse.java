@@ -13,6 +13,7 @@ public class LoginResponse {
     private String status;
     private String academicYear;
     private String educationLevel;
+    private String role;
     private boolean online;
     private String createdAt;
     private String updatedAt;
@@ -24,6 +25,7 @@ public class LoginResponse {
             String name, String phone, String dateOfBirth,
             String gender, String address, String status,
             String academicYear, String educationLevel,
+            String role,
             boolean online, String createdAt, String updatedAt) {
         this.token = token;
         this.message = message;
@@ -37,6 +39,7 @@ public class LoginResponse {
         this.status = status;
         this.academicYear = academicYear;
         this.educationLevel = educationLevel;
+        this.role = role;
         this.online = online;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -137,6 +140,14 @@ public class LoginResponse {
 
     public void setEducationLevel(String educationLevel) {
         this.educationLevel = educationLevel;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public boolean isOnline() {

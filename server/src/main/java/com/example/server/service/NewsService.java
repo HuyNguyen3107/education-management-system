@@ -6,6 +6,8 @@ import com.example.server.dto.UpdateNewsDto;
 import com.example.server.entity.News;
 import com.example.server.repository.NewsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,12 +21,16 @@ public class NewsService {
     private NewsRepository newsRepository;
 
     /**
-     * Lấy tất cả tin tức
+     * Lấy danh sách tin tức (có phân trang và tìm kiếm)
      */
-    public List<NewsResponseDto> getAllNews() {
-        return newsRepository.findAll().stream()
-                .map(NewsResponseDto::new)
-                .collect(Collectors.toList());
+    public Page<NewsResponseDto> getNews(String keyword, Pageable pageable) {
+        Page<News> newsPage;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            newsPage = newsRepository.findByTitleContainingIgnoreCase(keyword.trim(), pageable);
+        } else {
+            newsPage = newsRepository.findAll(pageable);
+        }
+        return newsPage.map(NewsResponseDto::new);
     }
 
     /**
@@ -78,11 +84,13 @@ public class NewsService {
     }
 
     /**
-     * Tìm kiếm tin tức theo keyword trong title
+     * Xóa nhiều tin tức
      */
-    public List<NewsResponseDto> searchNews(String keyword) {
-        return newsRepository.findByTitleContainingIgnoreCase(keyword).stream()
-                .map(NewsResponseDto::new)
-                .collect(Collectors.toList());
+    public void deleteNewsBatch(List<UUID> ids) {
+        List<News> newsList = newsRepository.findAllById(ids);
+        if (newsList.isEmpty()) {
+            return;
+        }
+        newsRepository.deleteAll(newsList);
     }
 }

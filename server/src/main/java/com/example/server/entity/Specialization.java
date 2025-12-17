@@ -21,6 +21,10 @@ public class Specialization {
     @Column(name = "major_id", nullable = false)
     private UUID majorId;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "major_id", insertable = false, updatable = false)
+    private Major major;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private OffsetDateTime createdAt;
@@ -51,6 +55,14 @@ public class Specialization {
 
     public void setMajorId(UUID majorId) {
         this.majorId = majorId;
+    }
+
+    public Major getMajor() {
+        return major;
+    }
+
+    public void setMajor(Major major) {
+        this.major = major;
     }
 
     public OffsetDateTime getCreatedAt() {

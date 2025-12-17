@@ -47,6 +47,13 @@ public class NotificationService {
         return toResponse(notificationRepo.save(n));
     }
 
+    // =============== GET BY ID ===============
+    public NotificationResponseDto getById(UUID id) {
+        Notification n = notificationRepo.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Không tìm thấy thông báo"));
+        return toResponse(n);
+    }
+
     // =============== GET ALL BY USER ===============
     public List<NotificationResponseDto> getAllByUser(UUID userId) {
 

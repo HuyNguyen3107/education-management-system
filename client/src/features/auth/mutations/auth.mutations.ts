@@ -17,8 +17,9 @@ import { useNavigate } from "react-router-dom";
 import { ROUTE_PATHS } from "@/constants/route-path.constants";
 import {
   showSuccessToast,
-  showErrorToast,
   showWarningToast,
+  showApiErrorToast,
+  getErrorMessage,
 } from "@/libs/toast.libs";
 
 // Login Mutation
@@ -32,16 +33,24 @@ export const useLoginMutation = () => {
       const { token, message, ...user } = response;
       setAuth(token, user);
       showSuccessToast(message || "Đăng nhập thành công");
-      navigate(ROUTE_PATHS.DASHBOARD);
+
+      // Điều hướng theo vai trò sau khi đăng nhập
+      if (user.role === "STUDENT") {
+        navigate(ROUTE_PATHS.PUBLIC_HOME);
+      } else if (user.role === "LECTURER") {
+        navigate(ROUTE_PATHS.LECTURER_HOME);
+      } else {
+        // Mặc định: ADMIN hoặc role khác
+        navigate(ROUTE_PATHS.DASHBOARD);
+      }
     },
     onError: (error: any) => {
       console.log(error);
 
-      const errorMessage =
-        error.response?.data ||
-        error.message ||
-        "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.";
-      showErrorToast(errorMessage);
+      showApiErrorToast(
+        error,
+        "Đăng nhập thất bại. Vui lòng kiểm tra lại tên đăng nhập và mật khẩu."
+      );
     },
   });
 };
@@ -60,9 +69,7 @@ export const useLogoutMutation = () => {
       navigate(ROUTE_PATHS.LOGIN);
     },
     onError: (error: any) => {
-      const errorMessage =
-        error.response?.data?.message || error.message || "Đăng xuất thất bại";
-      showErrorToast(errorMessage);
+      showApiErrorToast(error, "Đăng xuất thất bại. Vui lòng thử lại.");
     },
   });
 };
@@ -78,11 +85,10 @@ export const usePasswordResetRequestMutation = () => {
       );
     },
     onError: (error: any) => {
-      const errorMessage =
-        error.response?.data ||
-        error.message ||
-        "Không thể gửi yêu cầu đặt lại mật khẩu. Vui lòng thử lại.";
-      showErrorToast(errorMessage);
+      showApiErrorToast(
+        error,
+        "Không thể gửi yêu cầu đặt lại mật khẩu. Vui lòng thử lại."
+      );
     },
   });
 };
@@ -92,10 +98,10 @@ export const useValidateTokenMutation = () => {
   return useMutation({
     mutationFn: (token: string) => validateToken(token),
     onError: (error: any) => {
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "Token không hợp lệ hoặc đã hết hạn";
+      const errorMessage = getErrorMessage(
+        error,
+        "Token không hợp lệ hoặc đã hết hạn."
+      );
       showWarningToast(errorMessage);
     },
   });
@@ -117,11 +123,10 @@ export const useSubmitNewPasswordMutation = () => {
       }, 2000);
     },
     onError: (error: any) => {
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "Không thể đặt lại mật khẩu. Vui lòng thử lại.";
-      showErrorToast(errorMessage);
+      showApiErrorToast(
+        error,
+        "Không thể đặt lại mật khẩu. Vui lòng thử lại."
+      );
     },
   });
 };

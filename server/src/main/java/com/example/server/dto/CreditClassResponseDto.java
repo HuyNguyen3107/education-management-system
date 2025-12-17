@@ -1,6 +1,7 @@
 package com.example.server.dto;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public class CreditClassResponseDto {
@@ -12,10 +13,20 @@ public class CreditClassResponseDto {
     private String name;
     private Integer quantity;
     private String room;
-    private String schedule;
+    private List<ScheduleItemDto> schedule;
     private String semester;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
+
+    private Integer enrolledCount;
+
+    public Integer getEnrolledCount() {
+        return enrolledCount;
+    }
+
+    public void setEnrolledCount(Integer enrolledCount) {
+        this.enrolledCount = enrolledCount;
+    }
 
     public UUID getId() {
         return id;
@@ -73,11 +84,11 @@ public class CreditClassResponseDto {
         this.room = room;
     }
 
-    public String getSchedule() {
+    public List<ScheduleItemDto> getSchedule() {
         return schedule;
     }
 
-    public void setSchedule(String schedule) {
+    public void setSchedule(List<ScheduleItemDto> schedule) {
         this.schedule = schedule;
     }
 

@@ -19,12 +19,12 @@ public class ServerApplication {
   public String hello(@RequestParam(value = "name", defaultValue = "World") String name) {
 
     System.out.println("Saying hello to " + name);
-    return String.format("Hello %s!", name);
+    return String.format("Xin chào %s!", name);
   }
 
   @GetMapping("/")
   public String home() {
-    return "Welcome to the Education Management System!";
+    return "Chào mừng đến với hệ thống quản lý đào tạo!";
   }
 
 }

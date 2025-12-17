@@ -4,6 +4,7 @@ import com.example.server.dto.DepartmentRequestDto;
 import com.example.server.dto.DepartmentResponseDto;
 import com.example.server.service.DepartmentService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +22,13 @@ public class DepartmentController {
     }
 
     @GetMapping
-    public List<DepartmentResponseDto> getAll() {
-        return departmentService.getAll();
+    public Page<DepartmentResponseDto> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) UUID majorId
+    ) {
+        return departmentService.getDepartments(page, size, keyword, majorId);
     }
 
     @GetMapping("/{id}")

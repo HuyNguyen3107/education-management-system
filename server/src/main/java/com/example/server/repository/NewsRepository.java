@@ -1,6 +1,8 @@
 package com.example.server.repository;
 
 import com.example.server.entity.News;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +13,5 @@ import java.util.UUID;
 public interface NewsRepository extends JpaRepository<News, UUID> {
     
     // Tìm tin tức theo title (chứa keyword)
-    List<News> findByTitleContainingIgnoreCase(String keyword);
+    Page<News> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
 }
