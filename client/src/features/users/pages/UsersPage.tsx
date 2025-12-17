@@ -26,16 +26,21 @@ import {
   useCreateUser,
   useUpdateUser,
   useDeleteUser,
+  useGetAllRoles,
+  useGetAllUserRoles,
 } from "../queries/user.queries";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import SecurityIcon from "@mui/icons-material/Security";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { UserFormDialog } from "../components/UserFormDialog";
 import { UserDeleteDialog } from "../components/UserDeleteDialog";
-import type { User, CreateUserRequest } from "../types/user.types";
+import { UserRoleDialog } from "../components/UserRoleDialog";
+import type { User, CreateUserRequest, Role, UserRole } from "../types/user.types";
+import { SUPER_ADMIN_EMAIL } from "../constants/super-admin.constants";
 import { toast } from "react-toastify";
 import {
   ALL_STATUSES,
@@ -60,6 +65,7 @@ export const UsersPage = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [roleDialogOpen, setRoleDialogOpen] = useState(false);
 
   usePageMeta(
     "Quản lý người dùng",
@@ -86,6 +92,25 @@ export const UsersPage = () => {
     sort: "createdAt,desc",
   });
 
+  const { data: allRoles } = useGetAllRoles();
+  const { data: allUserRoles } = useGetAllUserRoles();
+
+  const userRoleNameMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    if (!allUserRoles || !allRoles) return map;
+
+    allUserRoles.forEach((ur: UserRole) => {
+      const role = allRoles.find((r: Role) => r.id === ur.roleId);
+      if (role?.name) {
+        map[ur.userId] = role.name;
+      } else if (ur.roleName) {
+        map[ur.userId] = ur.roleName;
+      }
+    });
+
+    return map;
+  }, [allUserRoles, allRoles]);
+
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
@@ -102,6 +127,7 @@ export const UsersPage = () => {
   };
 
   const handleAddUser = () => {
+    // Không cho tạo thêm user với email super admin
     setEditingUser(null);
     setFormOpen(true);
   };
@@ -113,9 +139,23 @@ export const UsersPage = () => {
   };
 
   const handleDeleteUser = (user: User) => {
+    if (user.email === SUPER_ADMIN_EMAIL) {
+      toast.error("Không thể xóa tài khoản super admin");
+      return;
+    }
     setUserToDelete(user);
     setDeleteError(null);
     setDeleteDialogOpen(true);
+    handleCloseMenu();
+  };
+
+  const handleAssignRoles = (user: User) => {
+    if (user.email === SUPER_ADMIN_EMAIL) {
+      toast.error("Tài khoản super admin luôn là ADMIN và không thể thay đổi vai trò");
+      return;
+    }
+    setSelectedUser(user);
+    setRoleDialogOpen(true);
     handleCloseMenu();
   };
 
@@ -159,11 +199,14 @@ export const UsersPage = () => {
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
-    setSelectedUser(null);
   };
 
   if (isError) {
-    return <Typography color="error">Error loading users</Typography>;
+    return (
+      <Typography color="error">
+        Không thể tải danh sách người dùng. Vui lòng thử lại sau.
+      </Typography>
+    );
   }
 
   return (
@@ -275,6 +318,9 @@ export const UsersPage = () => {
                   Giới tính
                 </TableCell>
                 <TableCell sx={{ fontWeight: 600, color: "#4b5563" }}>
+                  Vai trò
+                </TableCell>
+                <TableCell sx={{ fontWeight: 600, color: "#4b5563" }}>
                   Trạng thái
                 </TableCell>
                 <TableCell
@@ -306,11 +352,22 @@ export const UsersPage = () => {
                     <TableCell>
                       <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                         {user.fullName}
+                        {user.email === SUPER_ADMIN_EMAIL && (
+                          <Chip
+                            label="Super Admin"
+                            size="small"
+                            color="primary"
+                            sx={{ ml: 1 }}
+                          />
+                        )}
                       </Typography>
                     </TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.phone}</TableCell>
                     <TableCell>{user.gender}</TableCell>
+                    <TableCell>
+                      {userRoleNameMap[user.id] || "—"}
+                    </TableCell>
                     <TableCell>
                       <Chip
                         label={getStatusLabel(user.status)}
@@ -351,6 +408,11 @@ export const UsersPage = () => {
         open={Boolean(anchorEl)}
         onClose={handleCloseMenu}
       >
+        <MenuItem
+          onClick={() => selectedUser && handleAssignRoles(selectedUser)}
+        >
+          <SecurityIcon fontSize="small" sx={{ mr: 1 }} /> Gán vai trò
+        </MenuItem>
         <MenuItem onClick={() => selectedUser && handleEditUser(selectedUser)}>
           <EditIcon fontSize="small" sx={{ mr: 1 }} /> Chỉnh sửa
         </MenuItem>
@@ -377,6 +439,15 @@ export const UsersPage = () => {
         onConfirm={handleConfirmDelete}
         isLoading={deleteUserMutation.isPending}
         error={deleteError}
+      />
+
+      <UserRoleDialog
+        open={roleDialogOpen}
+        userId={selectedUser?.id ?? null}
+        onClose={() => {
+          setRoleDialogOpen(false);
+          setSelectedUser(null);
+        }}
       />
     </Box>
   );

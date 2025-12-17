@@ -42,10 +42,10 @@ public class LecturerService {
 
     public List<CreditClassResponseDto> getAssignedClasses(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
 
         Teacher teacher = teacherRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new NotFoundException("Teacher profile not found for user"));
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy hồ sơ giảng viên cho người dùng"));
 
         List<CreditClass> classes = creditClassRepository.findByTeacherId(teacher.getId());
 
@@ -84,7 +84,7 @@ public class LecturerService {
     public List<LecturerStudentResponseDto> getStudentsInClass(UUID classId) {
         // Verify class exists
         if (!creditClassRepository.existsById(classId)) {
-            throw new NotFoundException("Class not found");
+            throw new NotFoundException("Không tìm thấy lớp học phần");
         }
 
         List<StudentCreditClass> enrollments = studentCreditClassRepository.findByCreditClassId(classId);
@@ -110,7 +110,7 @@ public class LecturerService {
 
     public void updateGrade(UUID classId, UUID studentId, JsonNode scores) {
         StudentCreditClass enrollment = studentCreditClassRepository.findByStudentIdAndCreditClassId(studentId, classId)
-                .orElseThrow(() -> new NotFoundException("Student not enrolled in this class"));
+                .orElseThrow(() -> new NotFoundException("Sinh viên chưa đăng ký lớp học phần này"));
 
         enrollment.setScores(scores);
         studentCreditClassRepository.save(enrollment);
@@ -118,10 +118,10 @@ public class LecturerService {
 
     public LecturerProfileDto getProfile(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
 
         Teacher teacher = teacherRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new NotFoundException("Teacher profile not found for user"));
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy hồ sơ giảng viên cho người dùng"));
 
         LecturerProfileDto dto = new LecturerProfileDto();
         dto.setId(teacher.getId());
@@ -139,10 +139,10 @@ public class LecturerService {
 
     public List<ClassesResponseDto> getAdministrativeClasses(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
 
         Teacher teacher = teacherRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new NotFoundException("Teacher profile not found for user"));
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy hồ sơ giảng viên cho người dùng"));
 
         List<Classes> classes = classesRepository.findByTeacherId(teacher.getId());
 
@@ -151,7 +151,7 @@ public class LecturerService {
 
     public List<LecturerStudentResponseDto> getAdministrativeClassStudents(UUID classId) {
         if (!classesRepository.existsById(classId)) {
-            throw new NotFoundException("Administrative Class not found");
+            throw new NotFoundException("Không tìm thấy lớp chủ nhiệm");
         }
 
         List<Student> students = studentRepository.findByClassId(classId);

@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import {
   Dashboard as DashboardIcon,
+  Home as HomeIcon,
   Menu as MenuIcon,
   ChevronLeft as ChevronLeftIcon,
   People as PeopleIcon,
@@ -69,6 +70,7 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
   const navigate = useNavigate();
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
     {
+      "Trang chủ": true,
       "Quản lý": true,
     }
   );
@@ -81,6 +83,16 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           title: "Tổng quan",
           path: ROUTE_PATHS.DASHBOARD,
           icon: <DashboardIcon />,
+        },
+        {
+          title: "Trang công khai",
+          path: ROUTE_PATHS.PUBLIC_HOME,
+          icon: <HomeIcon />,
+        },
+        {
+          title: "Bảng điều khiển giảng viên",
+          path: ROUTE_PATHS.LECTURER_HOME,
+          icon: <PersonOutlineIcon />,
         },
       ],
     },

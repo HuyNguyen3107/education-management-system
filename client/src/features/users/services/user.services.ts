@@ -29,6 +29,8 @@ interface IRoleService {
 interface IUserRoleService {
   getAllUserRoles(): Promise<UserRole[]>;
   getUserRolesByUserId(userId: string): Promise<UserRole[]>;
+  addRoleToUser(userId: string, roleId: string): Promise<UserRole>;
+  removeUserRole(userRoleId: string): Promise<void>;
 }
 
 // User Service Implementation
@@ -105,6 +107,18 @@ class UserRoleService implements IUserRoleService {
       API_PATHS.USER_ROLES.GET_BY_USER_ID(userId)
     );
     return response.data;
+  }
+
+  async addRoleToUser(userId: string, roleId: string): Promise<UserRole> {
+    const response = await http.post<UserRole>(API_PATHS.USER_ROLES.GET_ALL, {
+      userId,
+      roleId,
+    });
+    return response.data;
+  }
+
+  async removeUserRole(userRoleId: string): Promise<void> {
+    await http.delete(`${API_PATHS.USER_ROLES.GET_ALL}/${userRoleId}`);
   }
 }
 

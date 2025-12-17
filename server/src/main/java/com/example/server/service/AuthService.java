@@ -5,6 +5,8 @@ import com.example.server.dto.LoginResponse;
 import com.example.server.entity.BlacklistToken;
 import com.example.server.entity.User;
 import com.example.server.repository.BlacklistTokenRepository;
+import com.example.server.repository.RoleRepository;
+import com.example.server.repository.UserRoleRepository;
 import com.example.server.repository.UserRepository;
 import com.example.server.security.JwtService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,14 +18,20 @@ public class AuthService {
     private final UserRepository userRepository;
     private final BlacklistTokenRepository blacklistTokenRepository;
     private final JwtService jwtService;
+    private final UserRoleRepository userRoleRepository;
+    private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public AuthService(UserRepository userRepository,
             BlacklistTokenRepository blacklistTokenRepository,
-            JwtService jwtService) {
+            JwtService jwtService,
+            UserRoleRepository userRoleRepository,
+            RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.blacklistTokenRepository = blacklistTokenRepository;
         this.jwtService = jwtService;
+        this.userRoleRepository = userRoleRepository;
+        this.roleRepository = roleRepository;
     }
 
     public LoginResponse login(LoginRequest request) {
@@ -63,6 +71,13 @@ public class AuthService {
         user.setOnline(true);
         userRepository.save(user);
 
+        // ✅ Lấy vai trò chính của người dùng (nếu có)
+        String roleName = userRoleRepository.findByUserId(user.getId()).stream()
+                .findFirst()
+                .flatMap(userRole -> roleRepository.findById(userRole.getRoleId()))
+                .map(role -> role.getName())
+                .orElse(null);
+
         // ✅ Ẩn mật khẩu trước khi trả về
         user.setPasswordHash(null);
 
@@ -80,6 +95,7 @@ public class AuthService {
                 user.getStatus(),
                 user.getAcademicYear(),
                 user.getEducationLevel(),
+                roleName,
                 user.isOnline(),
                 user.getCreatedAt().toString(),
                 user.getUpdatedAt().toString());

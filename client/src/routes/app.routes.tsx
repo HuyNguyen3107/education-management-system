@@ -25,6 +25,7 @@ import { PrerequisiteSubjectsPage } from "@/features/prerequisite-subjects/pages
 import { ProfilePage } from "@/features/profile/pages/ProfilePage";
 import { GuestGuard } from "@/components/guards/GuestGuard";
 import { AuthGuard } from "@/components/guards/AuthGuard";
+import { PublicGuard } from "@/components/guards/PublicGuard";
 import { PublicLayout } from "@/features/public/layouts/PublicLayout";
 import { PublicHomePage } from "@/features/public/pages/PublicHomePage";
 import { PublicNewsDetailPage } from "@/features/public/pages/PublicNewsDetailPage";
@@ -94,59 +95,64 @@ export const AppRoutes = () => {
     },
     {
       path: "/public",
-      element: <PublicLayout />,
+      element: <PublicGuard />,
       children: [
         {
-          path: "home",
-          element: <PublicHomePage />,
-        },
-        {
-          path: "home/all",
-          element: <PublicNewsListPage />,
-        },
-        {
-          path: "home/admin-notifications",
-          element: <PublicAdminNotificationsPage />,
-        },
-        {
-          path: "home/notification/:id",
-          element: <PublicNotificationDetailPage />,
-        },
-        {
-          path: "home/:id",
-          element: <PublicNewsDetailPage />,
-        },
-        {
-          path: "training-program",
-          element: <TrainingProgramPage />,
-        },
-        {
-          path: "prerequisite-subjects",
-          element: <PublicPrerequisiteSubjectsPage />,
-        },
-        {
-          path: "wishlist-registration",
-          element: <StudentWishlistRegistrationPage />,
-        },
-        {
-          path: "subject-registration",
-          element: <StudentSubjectRegistrationPage />,
-        },
-        {
-          path: "tuition-viewing",
-          element: <StudentTuitionViewingPage />,
-        },
-        {
-          path: "weekly-schedule",
-          element: <StudentWeeklySchedulePage />,
-        },
-        {
-          path: "exam-schedule",
-          element: <StudentExamSchedulePage />,
-        },
-        {
-          path: "grade-viewing",
-          element: <StudentGradePage />,
+          element: <PublicLayout />,
+          children: [
+            {
+              path: "home",
+              element: <PublicHomePage />,
+            },
+            {
+              path: "home/all",
+              element: <PublicNewsListPage />,
+            },
+            {
+              path: "home/admin-notifications",
+              element: <PublicAdminNotificationsPage />,
+            },
+            {
+              path: "home/notification/:id",
+              element: <PublicNotificationDetailPage />,
+            },
+            {
+              path: "home/:id",
+              element: <PublicNewsDetailPage />,
+            },
+            {
+              path: "training-program",
+              element: <TrainingProgramPage />,
+            },
+            {
+              path: "prerequisite-subjects",
+              element: <PublicPrerequisiteSubjectsPage />,
+            },
+            {
+              path: "wishlist-registration",
+              element: <StudentWishlistRegistrationPage />,
+            },
+            {
+              path: "subject-registration",
+              element: <StudentSubjectRegistrationPage />,
+            },
+            {
+              path: "tuition-viewing",
+              element: <StudentTuitionViewingPage />,
+            },
+            {
+              path: "weekly-schedule",
+              element: <StudentWeeklySchedulePage />,
+            },
+            {
+              path: "exam-schedule",
+              element: <StudentExamSchedulePage />,
+            },
+            {
+              path: "grade-viewing",
+              element: <StudentGradePage />,
+            },
+          ],
         },
       ],
     },

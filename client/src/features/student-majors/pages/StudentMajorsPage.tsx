@@ -34,6 +34,7 @@ import type {
 } from "../types/student-major.types";
 import { toast } from "react-toastify";
 import { usePageMeta } from "@/hooks/usePageMeta";
+import { getErrorMessage } from "@/libs/toast.libs";
 
 export const StudentMajorsPage = () => {
   usePageMeta("Gán ngành và chuyên ngành cho sinh viên");
@@ -106,11 +107,11 @@ export const StudentMajorsPage = () => {
             setFormOpen(false);
           },
           onError: (error: any) => {
-            const msg =
-              error.response?.data || error.message || "Có lỗi xảy ra";
-            toast.error(
-              typeof msg === "string" ? msg : msg.message || "Có lỗi xảy ra"
+            const msg = getErrorMessage(
+              error,
+              "Có lỗi xảy ra khi cập nhật ngành/chuyên ngành."
             );
+            toast.error(msg);
           },
         }
       );
@@ -121,10 +122,11 @@ export const StudentMajorsPage = () => {
           setFormOpen(false);
         },
         onError: (error: any) => {
-          const msg = error.response?.data || error.message || "Có lỗi xảy ra";
-          toast.error(
-            typeof msg === "string" ? msg : msg.message || "Có lỗi xảy ra"
+          const msg = getErrorMessage(
+            error,
+            "Có lỗi xảy ra khi gán ngành/chuyên ngành."
           );
+          toast.error(msg);
         },
       });
     }
@@ -140,10 +142,11 @@ export const StudentMajorsPage = () => {
           setStudentMajorToDelete(null);
         },
         onError: (error: any) => {
-          const msg = error.response?.data || error.message || "Có lỗi xảy ra";
-          setDeleteError(
-            typeof msg === "string" ? msg : msg.message || "Có lỗi xảy ra"
+          const msg = getErrorMessage(
+            error,
+            "Có lỗi xảy ra khi xóa gán ngành/chuyên ngành."
           );
+          setDeleteError(msg);
         },
       });
     }

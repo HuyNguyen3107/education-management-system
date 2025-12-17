@@ -27,7 +27,7 @@ public class LecturerController {
     private String getCurrentUserEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new RuntimeException("User not authenticated");
+            throw new RuntimeException("Người dùng chưa được xác thực");
         }
         return authentication.getName(); // In this system, name is email
     }
