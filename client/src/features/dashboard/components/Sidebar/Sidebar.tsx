@@ -37,6 +37,7 @@ import {
   Assignment as AssignmentIcon,
   ExpandLess,
   ExpandMore,
+  Security as SecurityIcon,
 } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -91,6 +92,11 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           title: "Người dùng",
           path: ROUTE_PATHS.USERS,
           icon: <PeopleIcon />,
+        },
+        {
+          title: "Vai trò",
+          path: ROUTE_PATHS.ROLES,
+          icon: <SecurityIcon />,
         },
         {
           title: "Sinh viên",

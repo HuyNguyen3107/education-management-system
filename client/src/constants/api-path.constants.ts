@@ -19,6 +19,11 @@ export const API_PATHS = {
   },
   ROLES: {
     GET_ALL: "/roles",
+    GET_BY_ID: (id: string) => `/roles/${id}`,
+    GET_BY_NAME: (name: string) => `/roles/name/${name}`,
+    CREATE: "/roles",
+    UPDATE: (id: string) => `/roles/${id}`,
+    DELETE: (id: string) => `/roles/${id}`,
   },
   USER_ROLES: {
     GET_ALL: "/user-roles",

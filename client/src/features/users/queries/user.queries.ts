@@ -78,6 +78,34 @@ export const useGetUserRolesByUserId = (userId: string) => {
   });
 };
 
+export const useAddRoleToUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (params: { userId: string; roleId: string }) =>
+      userRoleService.addRoleToUser(params.userId, params.roleId),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: userRoleQueryKeys.byUser(variables.userId),
+      });
+      queryClient.invalidateQueries({ queryKey: userRoleQueryKeys.all });
+    },
+  });
+};
+
+export const useRemoveUserRole = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (params: { userRoleId: string; userId: string }) =>
+      userRoleService.removeUserRole(params.userRoleId),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: userRoleQueryKeys.byUser(variables.userId),
+      });
+      queryClient.invalidateQueries({ queryKey: userRoleQueryKeys.all });
+    },
+  });
+};
+
 // Combined hook to get users with their roles
 export const useGetUsersWithRoles = () => {
   const usersQuery = useGetAllUsers();

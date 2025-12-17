@@ -10,6 +10,7 @@ export const ROUTE_PATHS = {
   DEPARTMENTS: "/dashboard/departments",
   SPECIALIZATIONS: "/dashboard/specializations",
   CLASSES: "/dashboard/classes",
+  ROLES: "/dashboard/roles",
   CREDIT_CLASSES: "/dashboard/credit-classes",
   STUDENT_CREDIT_CLASSES: "/dashboard/student-credit-classes",
   SUBJECTS: "/dashboard/subjects",

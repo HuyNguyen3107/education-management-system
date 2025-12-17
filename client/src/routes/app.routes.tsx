@@ -46,6 +46,7 @@ import { LecturerClassDetailPage } from "@/features/lecturer-dashboard/pages/Lec
 import { LecturerSchedulePage } from "@/features/lecturer-dashboard/pages/LecturerSchedulePage";
 import { LecturerAdminClassesPage } from "@/features/lecturer-dashboard/pages/LecturerAdminClassesPage";
 import { LecturerAdminClassStudentsPage } from "@/features/lecturer-dashboard/pages/LecturerAdminClassStudentsPage";
+import { RolesPage } from "@/features/roles-permissions/pages/RolesPage";
 
 export const AppRoutes = () => {
   const routes = useRoutes([
@@ -168,6 +169,10 @@ export const AppRoutes = () => {
             {
               path: "users",
               element: <UsersPage />,
+            },
+            {
+              path: "roles",
+              element: <RolesPage />,
             },
             {
               path: "students",
