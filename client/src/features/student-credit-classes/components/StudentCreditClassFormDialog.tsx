@@ -147,9 +147,11 @@ export const StudentCreditClassFormDialog = ({
 
   const handleFormSubmit = (data: FormData) => {
     // Filter out empty scores
-    const validScores = data.scores.filter((s) => s.name.trim() !== "");
+    const validScores = data.scores.filter(
+      (s: ScoreItem) => s.name.trim() !== ""
+    );
     const validExams = data.examSchedule.filter(
-      (e) => e.examType.trim() !== ""
+      (e: ExamScheduleItem) => e.examType.trim() !== ""
     );
 
     const cleanData: CreateStudentCreditClassRequest = {

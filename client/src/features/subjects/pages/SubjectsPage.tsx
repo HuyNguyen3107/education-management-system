@@ -28,7 +28,6 @@ import {
   useDeleteSubject,
 } from "../queries/subject.queries";
 import { useMajors } from "../../majors/queries/major.queries";
-import { useSpecializations } from "../../specializations/queries/specialization.queries";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -68,8 +67,8 @@ export const SubjectsPage = () => {
   const { data: subjectsData, isLoading, isError } = useSubjects();
   const { data: majorsData } = useMajors({ size: 1000 });
   const majors = majorsData?.content || [];
-  const { data: specializationsData } = useSpecializations({ size: 1000 });
-  const specializations = specializationsData?.content || [];
+  // const { data: specializationsData } = useSpecializations({ size: 1000 });
+  // const specializations = specializationsData?.content || [];
 
   const createSubjectMutation = useCreateSubject();
   const updateSubjectMutation = useUpdateSubject();
@@ -83,15 +82,15 @@ export const SubjectsPage = () => {
     }, {} as Record<string, string>);
   }, [majors]);
 
-  const specializationMap = useMemo(() => {
-    return specializations.reduce(
-      (acc: { [x: string]: any }, spec: { id: string | number; name: any }) => {
-        acc[spec.id] = spec.name;
-        return acc;
-      },
-      {} as Record<string, string>
-    );
-  }, [specializations]);
+  // const specializationMap = useMemo(() => {
+  //   return specializations.reduce(
+  //     (acc: { [x: string]: any }, spec: { id: string | number; name: any }) => {
+  //       acc[spec.id] = spec.name;
+  //       return acc;
+  //     },
+  //     {} as Record<string, string>
+  //   );
+  // }, [specializations]);
 
   // Get unique semesters for filter
   const semesters = useMemo(() => {

@@ -9,7 +9,7 @@ import {
   CircularProgress,
   Alert,
 } from "@mui/material";
-import type { LecturerWithUserData } from "../../pages/LecturersPage";
+import type { LecturerWithUserData } from "@/features/lecturers/types/lecturer-with-user.types";
 
 interface LecturerDeleteDialogProps {
   open: boolean;
@@ -43,13 +43,22 @@ export const LecturerDeleteDialog = ({
           {lecturer?.user && (
             <>
               <br />
-              <Typography component="span" variant="body2" sx={{ mt: 1, display: "block" }}>
+              <Typography
+                component="span"
+                variant="body2"
+                sx={{ mt: 1, display: "block" }}
+              >
                 Thông tin: {lecturer.user.fullName} ({lecturer.user.email})
               </Typography>
             </>
           )}
           <br />
-          <Typography component="span" variant="body2" color="error" sx={{ mt: 1, display: "block" }}>
+          <Typography
+            component="span"
+            variant="body2"
+            color="error"
+            sx={{ mt: 1, display: "block" }}
+          >
             Hành động này không thể hoàn tác.
           </Typography>
         </DialogContentText>
@@ -70,4 +79,3 @@ export const LecturerDeleteDialog = ({
     </Dialog>
   );
 };
-

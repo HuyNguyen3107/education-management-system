@@ -5,9 +5,9 @@ import {
   Avatar,
   Chip,
   Skeleton,
-  Grid,
   Button,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { StatCard } from "../components/StatCard/StatCard";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import SchoolIcon from "@mui/icons-material/School";
@@ -78,7 +78,7 @@ export const DashboardPage = () => {
       ? "Chào buổi chiều"
       : "Chào buổi tối";
 
-  const displayName = user?.name || "Admin";
+  const displayName = (user as any)?.name || "Admin";
 
   // Generate chart data based on real registrations
   const monthlyData = [

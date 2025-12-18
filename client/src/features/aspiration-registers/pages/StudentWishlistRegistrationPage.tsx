@@ -17,8 +17,8 @@ import {
   MenuItem,
   Alert,
   IconButton,
-  Grid,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useAuthStore } from "@/store/auth.store";
@@ -137,7 +137,7 @@ export const StudentWishlistRegistrationPage = () => {
           </Alert>
         ) : (
           <Grid container spacing={2} alignItems="flex-start">
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <FormControl fullWidth size="small">
                 <InputLabel id="subject-select-label">Môn học *</InputLabel>
                 <Select
@@ -156,7 +156,7 @@ export const StudentWishlistRegistrationPage = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 fullWidth
                 size="small"
@@ -165,7 +165,7 @@ export const StudentWishlistRegistrationPage = () => {
                 onChange={(e) => setGroup(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 fullWidth
                 size="small"
@@ -176,11 +176,7 @@ export const StudentWishlistRegistrationPage = () => {
                 rows={2}
               />
             </Grid>
-            <Grid
-              item
-              xs={12}
-              sx={{ display: "flex", justifyContent: "center" }}
-            >
+            <Grid size={12} sx={{ display: "flex", justifyContent: "center" }}>
               <Button
                 variant="outlined"
                 color="error"

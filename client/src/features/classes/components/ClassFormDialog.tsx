@@ -18,6 +18,7 @@ import type { CreateClassRequest, Class } from "../types/class.types";
 import { useLecturers } from "../../lecturers/queries/lecturer.queries";
 import { useMajors } from "../../majors/queries/major.queries";
 import { useSpecializations } from "../../specializations/queries/specialization.queries";
+import type { Specialization } from "@/features/specializations/types/specialization.types";
 
 interface ClassFormDialogProps {
   open: boolean;
@@ -59,8 +60,13 @@ export const ClassFormDialog = ({
 
   // Filter specializations by selected major
   const filteredSpecializations = selectedMajorId
-    ? specializations.filter((s) => s.majorId === selectedMajorId)
+    ? specializations.filter(
+        (s: Specialization) => s.majorId === selectedMajorId
+      )
     : specializations;
+
+  // Ensure typing on map usage
+  // filteredSpecializations is Specialization[] so map callbacks will be typed accordingly.
 
   useEffect(() => {
     if (initialData) {
@@ -164,7 +170,7 @@ export const ClassFormDialog = ({
                     <MenuItem value="">
                       <em>Không chọn</em>
                     </MenuItem>
-                    {filteredSpecializations.map((spec) => (
+                    {filteredSpecializations.map((spec: Specialization) => (
                       <MenuItem key={spec.id} value={spec.id}>
                         {spec.name}
                       </MenuItem>
@@ -178,7 +184,11 @@ export const ClassFormDialog = ({
         <DialogActions>
           <Button onClick={onClose}>Hủy</Button>
           <Button type="submit" variant="contained" disabled={isLoading}>
-            {isLoading ? "Đang xử lý..." : initialData ? "Cập nhật" : "Thêm mới"}
+            {isLoading
+              ? "Đang xử lý..."
+              : initialData
+              ? "Cập nhật"
+              : "Thêm mới"}
           </Button>
         </DialogActions>
       </form>

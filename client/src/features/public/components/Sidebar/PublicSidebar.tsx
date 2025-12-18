@@ -11,7 +11,6 @@ import {
   useTheme,
   useMediaQuery,
   Tooltip,
-  Divider,
 } from "@mui/material";
 import {
   ChevronLeft as ChevronLeftIcon,
@@ -22,9 +21,7 @@ import {
   Assignment as AssignmentIcon,
   HowToReg as HowToRegIcon,
   AccountBalanceWallet as AccountBalanceWalletIcon,
-  Receipt as ReceiptIcon,
   CalendarToday as CalendarTodayIcon,
-  CalendarMonth as CalendarMonthIcon,
   EventNote as EventNoteIcon,
   Grade as GradeIcon,
   School as SchoolIcon,

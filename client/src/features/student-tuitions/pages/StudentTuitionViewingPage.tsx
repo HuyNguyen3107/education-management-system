@@ -1,6 +1,5 @@
 import {
   Box,
-  Typography,
   Paper,
   Table,
   TableBody,

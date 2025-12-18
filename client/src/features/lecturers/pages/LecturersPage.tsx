@@ -46,7 +46,7 @@ import {
 } from "../../users/constants/user-status.constants";
 import { usePageMeta } from "@/hooks/usePageMeta";
 
-interface LecturerWithUserData extends Lecturer {
+export interface LecturerWithUserData extends Lecturer {
   user?: User;
 }
 

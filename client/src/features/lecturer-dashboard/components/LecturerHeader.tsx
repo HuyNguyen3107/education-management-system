@@ -46,7 +46,8 @@ export const LecturerHeader = ({
     logoutMutation.mutate();
   };
 
-  const userDisplayName = user?.fullName || user?.name || "Giảng viên";
+  const userDisplayName =
+    (user as any)?.fullName || (user as any)?.name || "Giảng viên";
   const userEmail = user?.email || "";
 
   return (
@@ -161,7 +162,10 @@ export const LecturerHeader = ({
               },
             }}
           >
-            <MenuItem onClick={handleLogout} disabled={logoutMutation.isPending}>
+            <MenuItem
+              onClick={handleLogout}
+              disabled={logoutMutation.isPending}
+            >
               <ListItemIcon>
                 <LogoutIcon fontSize="small" />
               </ListItemIcon>
@@ -173,5 +177,3 @@ export const LecturerHeader = ({
     </AppBar>
   );
 };
-
-

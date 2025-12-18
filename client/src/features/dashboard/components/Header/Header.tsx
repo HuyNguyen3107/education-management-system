@@ -53,7 +53,8 @@ export const Header = ({ onMenuClick, sidebarOpen = true }: HeaderProps) => {
     logoutMutation.mutate();
   };
 
-  const userDisplayName = user?.fullName || user?.name || "User";
+  const userDisplayName =
+    (user as any)?.fullName || (user as any)?.name || "User";
   const userEmail = user?.email || "";
 
   return (
@@ -175,7 +176,10 @@ export const Header = ({ onMenuClick, sidebarOpen = true }: HeaderProps) => {
               Thông tin cá nhân
             </MenuItem>
             <Divider />
-            <MenuItem onClick={handleLogout} disabled={logoutMutation.isPending}>
+            <MenuItem
+              onClick={handleLogout}
+              disabled={logoutMutation.isPending}
+            >
               <ListItemIcon>
                 <LogoutIcon fontSize="small" />
               </ListItemIcon>

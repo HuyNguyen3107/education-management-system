@@ -14,11 +14,9 @@ import {
   CircularProgress,
   Alert,
   IconButton,
-  Tooltip,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
 import { useState, useMemo } from "react";
 import { useAuthStore } from "@/store/auth.store";
 import { usePageMeta } from "@/hooks/usePageMeta";
@@ -31,7 +29,6 @@ import {
 } from "../queries/student-credit-class.queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import type { ScoreItem } from "../types/student-credit-class.types";
 
 // Helper to format schedule for display
 const formatSchedule = (schedule: any[]) => {

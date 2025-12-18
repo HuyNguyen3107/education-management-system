@@ -30,9 +30,6 @@ export const PublicNewsListPage = () => {
   });
 
   const newsList = Array.isArray(newsData) ? newsData : newsData?.content || [];
-  const totalElements = Array.isArray(newsData)
-    ? newsData.length
-    : newsData?.totalElements || 0;
   const totalPages = Array.isArray(newsData) ? 1 : newsData?.totalPages || 1;
 
   usePageMeta(
@@ -64,7 +61,7 @@ export const PublicNewsListPage = () => {
   };
 
   const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
+    _event: React.ChangeEvent<unknown>,
     value: number
   ) => {
     setPage(value - 1); // Pagination is 1-based, but API is 0-based

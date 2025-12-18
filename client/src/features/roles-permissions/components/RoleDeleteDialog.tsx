@@ -7,12 +7,15 @@ import {
   Typography,
 } from "@mui/material";
 
+import type { Role } from "@/features/users/types/user.types";
+
 interface RoleDeleteDialogProps {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
   isLoading?: boolean;
   roleName?: string;
+  role?: Role | null;
 }
 
 export const RoleDeleteDialog = ({
@@ -21,6 +24,7 @@ export const RoleDeleteDialog = ({
   onConfirm,
   isLoading,
   roleName,
+  role,
 }: RoleDeleteDialogProps) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
@@ -28,8 +32,14 @@ export const RoleDeleteDialog = ({
       <DialogContent>
         <Typography>
           Bạn có chắc chắn muốn xóa vai trò{" "}
-          {roleName ? <strong>{roleName}</strong> : "này"} không? Hành động này
-          không thể hoàn tác.
+          {role?.name ? (
+            <strong>{role.name}</strong>
+          ) : roleName ? (
+            <strong>{roleName}</strong>
+          ) : (
+            "này"
+          )}{" "}
+          không? Hành động này không thể hoàn tác.
         </Typography>
       </DialogContent>
       <DialogActions>
@@ -46,5 +56,3 @@ export const RoleDeleteDialog = ({
     </Dialog>
   );
 };
-
-

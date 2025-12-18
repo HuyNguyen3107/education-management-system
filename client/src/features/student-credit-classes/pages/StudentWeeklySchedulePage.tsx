@@ -22,7 +22,6 @@ import { useAuthStore } from "@/store/auth.store";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { useWeeklySchedule } from "../queries/student-credit-class.queries";
 import { addDays, format, startOfWeek, subDays } from "date-fns";
-import { vi } from "date-fns/locale";
 
 // Helper to generate periods
 const periods = [
@@ -65,11 +64,11 @@ export const StudentWeeklySchedulePage = () => {
   const startDateStr = format(weekDays[0], "yyyy-MM-dd");
   const endDateStr = format(weekDays[6], "yyyy-MM-dd");
 
-  const {
-    data: scheduleData,
-    isLoading,
-    isError,
-  } = useWeeklySchedule(studentId, startDateStr, endDateStr);
+  const { data: scheduleData, isLoading } = useWeeklySchedule(
+    studentId,
+    startDateStr,
+    endDateStr
+  );
 
   const handlePrevWeek = () => setCurrentDate(subDays(currentDate, 7));
   const handleNextWeek = () => setCurrentDate(addDays(currentDate, 7));

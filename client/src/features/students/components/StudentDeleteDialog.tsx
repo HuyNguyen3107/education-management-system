@@ -9,7 +9,7 @@ import {
   CircularProgress,
   Alert,
 } from "@mui/material";
-import type { StudentWithUserData } from "../../pages/StudentsPage";
+import type { StudentWithUserData } from "@/features/students/types/student-with-user.types";
 
 interface StudentDeleteDialogProps {
   open: boolean;
@@ -43,13 +43,22 @@ export const StudentDeleteDialog = ({
           {student?.user && (
             <>
               <br />
-              <Typography component="span" variant="body2" sx={{ mt: 1, display: "block" }}>
+              <Typography
+                component="span"
+                variant="body2"
+                sx={{ mt: 1, display: "block" }}
+              >
                 Thông tin: {student.user.fullName} ({student.user.email})
               </Typography>
             </>
           )}
           <br />
-          <Typography component="span" variant="body2" color="error" sx={{ mt: 1, display: "block" }}>
+          <Typography
+            component="span"
+            variant="body2"
+            color="error"
+            sx={{ mt: 1, display: "block" }}
+          >
             Hành động này không thể hoàn tác.
           </Typography>
         </DialogContentText>
@@ -70,4 +79,3 @@ export const StudentDeleteDialog = ({
     </Dialog>
   );
 };
-

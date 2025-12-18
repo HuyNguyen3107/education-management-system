@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import {
   Dashboard as DashboardIcon,
-  Menu as MenuIcon,
   ChevronLeft as ChevronLeftIcon,
   ExpandLess,
   ExpandMore,
@@ -28,7 +27,6 @@ import {
 } from "@mui/icons-material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { API_PATHS } from "@/constants/api-path.constants";
 
 const DRAWER_WIDTH = 280;
 const DRAWER_WIDTH_COLLAPSED = 72;

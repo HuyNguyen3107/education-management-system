@@ -29,13 +29,13 @@ export const majorService = {
   },
 
   getAllMajors: async (): Promise<Major[]> => {
-    const response = await http.get<Major[]>("/majors", {
+    const response = await http.get<any>("/majors", {
       params: { page: 0, size: 10000 },
     });
     if (Array.isArray(response.data)) {
       return response.data;
     }
-    return response.data.content || [];
+    return response.data?.content || [];
   },
 
   getMajor: async (id: string): Promise<Major> => {

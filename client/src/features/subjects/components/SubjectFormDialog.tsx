@@ -22,9 +22,14 @@ import {
 } from "@mui/material";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { useEffect } from "react";
-import type { CreateSubjectRequest, Subject, IngredientSecretion } from "../types/subject.types";
+import type {
+  CreateSubjectRequest,
+  Subject,
+  IngredientSecretion,
+} from "../types/subject.types";
 import { useMajors } from "../../majors/queries/major.queries";
 import { useSpecializations } from "../../specializations/queries/specialization.queries";
+import type { Specialization } from "@/features/specializations/types/specialization.types";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -94,11 +99,15 @@ export const SubjectFormDialog = ({
   const ingredientSecretion = watch("ingredientSecretion");
 
   // Calculate total periods
-  const totalPeriods = ingredientSecretion?.reduce((sum, item) => sum + (item.periods || 0), 0) || 0;
+  const totalPeriods =
+    ingredientSecretion?.reduce((sum, item) => sum + (item.periods || 0), 0) ||
+    0;
 
   // Filter specializations by selected major
   const filteredSpecializations = selectedMajorId
-    ? specializations.filter((s) => s.majorId === selectedMajorId)
+    ? specializations.filter(
+        (s: Specialization) => s.majorId === selectedMajorId
+      )
     : specializations;
 
   useEffect(() => {
@@ -110,9 +119,10 @@ export const SubjectFormDialog = ({
         specializationId: initialData.specializationId || "",
         numberOfCredit: initialData.numberOfCredit || "",
         semester: initialData.semester,
-        ingredientSecretion: initialData.ingredientSecretion?.length > 0
-          ? initialData.ingredientSecretion
-          : DEFAULT_INGREDIENTS,
+        ingredientSecretion:
+          initialData.ingredientSecretion?.length > 0
+            ? initialData.ingredientSecretion
+            : DEFAULT_INGREDIENTS,
       });
     } else {
       reset({
@@ -140,7 +150,9 @@ export const SubjectFormDialog = ({
       ingredientSecretion: validIngredients,
       ...(data.majorId && { majorId: data.majorId }),
       ...(data.specializationId && { specializationId: data.specializationId }),
-      ...(data.numberOfCredit !== "" && { numberOfCredit: Number(data.numberOfCredit) }),
+      ...(data.numberOfCredit !== "" && {
+        numberOfCredit: Number(data.numberOfCredit),
+      }),
     };
     onSubmit(cleanData);
   };
@@ -219,7 +231,7 @@ export const SubjectFormDialog = ({
                     <MenuItem value="">
                       <em>Không chọn</em>
                     </MenuItem>
-                    {filteredSpecializations.map((spec) => (
+                    {filteredSpecializations.map((spec: Specialization) => (
                       <MenuItem key={spec.id} value={spec.id}>
                         {spec.name}
                       </MenuItem>
@@ -240,7 +252,11 @@ export const SubjectFormDialog = ({
                   fullWidth
                   placeholder="Nhập số tín chỉ"
                   inputProps={{ min: 0, step: 0.5 }}
-                  onChange={(e) => field.onChange(e.target.value === "" ? "" : parseFloat(e.target.value))}
+                  onChange={(e) =>
+                    field.onChange(
+                      e.target.value === "" ? "" : parseFloat(e.target.value)
+                    )
+                  }
                 />
               )}
             />
@@ -263,7 +279,14 @@ export const SubjectFormDialog = ({
 
             {/* Ingredient Secretion Section */}
             <Paper variant="outlined" sx={{ p: 2 }}>
-              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 2,
+                }}
+              >
                 <Box>
                   <Typography variant="subtitle1" fontWeight={600}>
                     Tiết thành phần
@@ -286,9 +309,16 @@ export const SubjectFormDialog = ({
                 <Table size="small">
                   <TableHead>
                     <TableRow sx={{ bgcolor: "#f9fafb" }}>
-                      <TableCell sx={{ fontWeight: 600, width: 50 }}>STT</TableCell>
-                      <TableCell sx={{ fontWeight: 600 }}>Tên thành phần</TableCell>
-                      <TableCell sx={{ fontWeight: 600, width: 100 }} align="center">
+                      <TableCell sx={{ fontWeight: 600, width: 50 }}>
+                        STT
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>
+                        Tên thành phần
+                      </TableCell>
+                      <TableCell
+                        sx={{ fontWeight: 600, width: 100 }}
+                        align="center"
+                      >
                         Số tiết
                       </TableCell>
                       <TableCell sx={{ width: 50 }} align="center"></TableCell>
@@ -325,9 +355,16 @@ export const SubjectFormDialog = ({
                                 size="small"
                                 type="number"
                                 variant="outlined"
-                                inputProps={{ min: 0, style: { textAlign: "center" } }}
+                                inputProps={{
+                                  min: 0,
+                                  style: { textAlign: "center" },
+                                }}
                                 sx={{ width: 70 }}
-                                onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 0)}
+                                onChange={(e) =>
+                                  field.onChange(
+                                    parseInt(e.target.value, 10) || 0
+                                  )
+                                }
                               />
                             )}
                           />
@@ -353,7 +390,11 @@ export const SubjectFormDialog = ({
         <DialogActions>
           <Button onClick={onClose}>Hủy</Button>
           <Button type="submit" variant="contained" disabled={isLoading}>
-            {isLoading ? "Đang xử lý..." : initialData ? "Cập nhật" : "Thêm mới"}
+            {isLoading
+              ? "Đang xử lý..."
+              : initialData
+              ? "Cập nhật"
+              : "Thêm mới"}
           </Button>
         </DialogActions>
       </form>

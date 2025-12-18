@@ -29,7 +29,6 @@ import {
   useMarkAsSeen,
 } from "../queries/notification.queries";
 import { useGetAllUsers } from "../../users/queries/user.queries";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
@@ -99,7 +98,13 @@ export const NotificationsPage = () => {
 
   // Combine Notification and User data
   const notificationsWithUsers: NotificationWithUser[] = useMemo(() => {
-    if (!notifications || !users || !Array.isArray(notifications) || !Array.isArray(users)) return [];
+    if (
+      !notifications ||
+      !users ||
+      !Array.isArray(notifications) ||
+      !Array.isArray(users)
+    )
+      return [];
     return notifications.map((notification) => ({
       ...notification,
       user: users.find((u) => u.id === notification.sendTo),
@@ -145,12 +150,6 @@ export const NotificationsPage = () => {
   const handleAddNotification = () => {
     setEditingNotification(null);
     setFormOpen(true);
-  };
-
-  const handleEditNotification = (notification: NotificationWithUser) => {
-    setEditingNotification(notification);
-    setFormOpen(true);
-    handleCloseMenu();
   };
 
   const handleViewDetail = (notification: NotificationWithUser) => {
@@ -430,11 +429,19 @@ export const NotificationsPage = () => {
                     </TableCell>
                     <TableCell>
                       <Typography variant="caption">
-                        {new Date(notification.createdAt).toLocaleString("vi-VN")}
+                        {new Date(notification.createdAt).toLocaleString(
+                          "vi-VN"
+                        )}
                       </Typography>
                     </TableCell>
                     <TableCell align="right">
-                      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 0.5 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          gap: 0.5,
+                        }}
+                      >
                         <Tooltip title="Xem chi tiết">
                           <IconButton
                             size="small"
@@ -490,7 +497,8 @@ export const NotificationsPage = () => {
       >
         <MenuItem
           onClick={() =>
-            selectedNotification && handleDeleteNotification(selectedNotification)
+            selectedNotification &&
+            handleDeleteNotification(selectedNotification)
           }
           sx={{ color: "error.main" }}
         >

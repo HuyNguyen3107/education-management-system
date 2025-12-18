@@ -29,6 +29,7 @@ import {
 import { useLecturers } from "../../lecturers/queries/lecturer.queries";
 import { useMajors } from "../../majors/queries/major.queries";
 import { useSpecializations } from "../../specializations/queries/specialization.queries";
+import type { Specialization } from "@/features/specializations/types/specialization.types";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -87,10 +88,13 @@ export const ClassesPage = () => {
   }, [majors]);
 
   const specializationMap = useMemo(() => {
-    return specializations.reduce((acc, spec) => {
-      acc[spec.id] = spec.name;
-      return acc;
-    }, {} as Record<string, string>);
+    return specializations.reduce(
+      (acc: Record<string, string>, spec: Specialization) => {
+        acc[spec.id] = spec.name;
+        return acc;
+      },
+      {} as Record<string, string>
+    );
   }, [specializations]);
 
   // Filter classes based on search and filters
@@ -115,7 +119,13 @@ export const ClassesPage = () => {
     }
 
     return result;
-  }, [classesData, debouncedSearch, selectedMajorId, selectedTeacherId, lecturerMap]);
+  }, [
+    classesData,
+    debouncedSearch,
+    selectedMajorId,
+    selectedTeacherId,
+    lecturerMap,
+  ]);
 
   const handleMajorFilterChange = (event: SelectChangeEvent) => {
     setSelectedMajorId(event.target.value);
@@ -354,4 +364,3 @@ export const ClassesPage = () => {
     </Box>
   );
 };
-

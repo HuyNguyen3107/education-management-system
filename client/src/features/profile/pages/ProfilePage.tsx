@@ -4,18 +4,18 @@ import {
   Paper,
   TextField,
   Button,
-  Grid,
   Avatar,
   MenuItem,
   CircularProgress,
   Alert,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { useForm, Controller } from "react-hook-form";
 import { useAuthStore } from "@/store/auth.store";
 import { useUpdateUser } from "@/features/users/queries/user.queries";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
-import PersonIcon from "@mui/icons-material/Person";
+
 import { usePageMeta } from "@/hooks/usePageMeta";
 
 const GENDER_OPTIONS = [
@@ -67,13 +67,13 @@ export const ProfilePage = () => {
     if (user) {
       reset({
         email: user.email || "",
-        fullName: user.fullName || user.name || "",
-        phone: user.phone || "",
-        dateOfBirth: user.dateOfBirth || "",
-        gender: user.gender || "",
-        address: user.address || "",
-        academicYear: user.academicYear || "",
-        educationLevel: user.educationLevel || "",
+        fullName: (user as any)?.fullName || (user as any)?.name || "",
+        phone: (user as any)?.phone || "",
+        dateOfBirth: (user as any)?.dateOfBirth || "",
+        gender: (user as any)?.gender || "",
+        address: (user as any)?.address || "",
+        academicYear: (user as any)?.academicYear || "",
+        educationLevel: (user as any)?.educationLevel || "",
       });
     }
   }, [user, reset]);
@@ -123,7 +123,8 @@ export const ProfilePage = () => {
     }
   };
 
-  const userDisplayName = user?.fullName || user?.name || "User";
+  const userDisplayName =
+    (user as any)?.fullName || (user as any)?.name || "User";
 
   return (
     <Box>
@@ -164,7 +165,14 @@ export const ProfilePage = () => {
           </Alert>
         )}
 
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 4 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            mb: 4,
+          }}
+        >
           <Avatar
             sx={{
               width: 120,
@@ -186,7 +194,7 @@ export const ProfilePage = () => {
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="email"
                 control={control}
@@ -211,7 +219,7 @@ export const ProfilePage = () => {
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="fullName"
                 control={control}
@@ -229,7 +237,7 @@ export const ProfilePage = () => {
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="phone"
                 control={control}
@@ -247,7 +255,7 @@ export const ProfilePage = () => {
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="dateOfBirth"
                 control={control}
@@ -267,7 +275,7 @@ export const ProfilePage = () => {
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="gender"
                 control={control}
@@ -292,7 +300,7 @@ export const ProfilePage = () => {
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="academicYear"
                 control={control}
@@ -308,7 +316,7 @@ export const ProfilePage = () => {
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="educationLevel"
                 control={control}
@@ -324,7 +332,7 @@ export const ProfilePage = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Controller
                 name="address"
                 control={control}
@@ -344,7 +352,7 @@ export const ProfilePage = () => {
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
                 <Button
                   variant="outlined"
@@ -381,4 +389,3 @@ export const ProfilePage = () => {
     </Box>
   );
 };
-

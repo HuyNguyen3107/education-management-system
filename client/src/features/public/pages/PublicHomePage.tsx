@@ -9,7 +9,7 @@ import {
   Divider,
   CircularProgress,
 } from "@mui/material";
-import { useEffect } from "react";
+
 import { useNavigate } from "react-router-dom";
 import { usePublicNews } from "../queries/public-news.queries";
 import CampaignIcon from "@mui/icons-material/Campaign";
@@ -31,9 +31,6 @@ export const PublicHomePage = () => {
   );
 
   const newsList = Array.isArray(newsData) ? newsData : newsData?.content || [];
-  const totalElements = Array.isArray(newsData)
-    ? newsData.length
-    : newsData?.totalElements || 0;
 
   // Format date as DD/MM/YYYY
   const formatDate = (dateString: string) => {

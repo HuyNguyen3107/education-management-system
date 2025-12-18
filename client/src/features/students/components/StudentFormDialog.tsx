@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { useEffect } from "react";
-import type { StudentWithUserData } from "../../pages/StudentsPage";
+import type { StudentWithUserData } from "@/features/students/types/student-with-user.types";
 import { useGetAllUsers } from "../../users/queries/user.queries";
 
 interface StudentFormDialogProps {
@@ -97,7 +97,11 @@ export const StudentFormDialog = ({
               render={({ field }) => (
                 <FormControl fullWidth error={!!errors.userId}>
                   <InputLabel>Người dùng</InputLabel>
-                  <Select {...field} label="Người dùng" disabled={!!initialData}>
+                  <Select
+                    {...field}
+                    label="Người dùng"
+                    disabled={!!initialData}
+                  >
                     {availableUsers.map((user) => (
                       <MenuItem key={user.id} value={user.id}>
                         {user.fullName} ({user.email})
@@ -105,7 +109,10 @@ export const StudentFormDialog = ({
                     ))}
                   </Select>
                   <FormHelperText>
-                    {errors.userId?.message || (initialData ? "Không thể thay đổi người dùng" : "Chọn người dùng để gán làm sinh viên")}
+                    {errors.userId?.message ||
+                      (initialData
+                        ? "Không thể thay đổi người dùng"
+                        : "Chọn người dùng để gán làm sinh viên")}
                   </FormHelperText>
                 </FormControl>
               )}
@@ -126,4 +133,3 @@ export const StudentFormDialog = ({
     </Dialog>
   );
 };
-

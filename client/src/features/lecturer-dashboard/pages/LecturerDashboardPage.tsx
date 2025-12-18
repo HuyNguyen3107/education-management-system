@@ -3,7 +3,6 @@ import {
   Typography,
   Card,
   CardContent,
-  Grid,
   Chip,
   Paper,
   Table,
@@ -15,6 +14,7 @@ import {
   Avatar,
   CircularProgress,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { useAuthStore } from "@/store/auth.store";
 import { useLecturerClasses } from "../queries/lecturer-dashboard.queries";
@@ -94,11 +94,11 @@ export const LecturerDashboardPage = () => {
             fontSize: "2rem",
           }}
         >
-          {user?.name?.charAt(0)}
+          {(user as any)?.name?.charAt(0)}
         </Avatar>
         <Box>
           <Typography variant="h4" sx={{ fontWeight: 700 }}>
-            Xin chào, {user?.name || "Giảng viên"}! 👋
+            Xin chào, {(user as any)?.name || "Giảng viên"}! 👋
           </Typography>
           <Typography variant="body1" color="text.secondary">
             Chúc bạn một ngày làm việc hiệu quả.
@@ -226,8 +226,7 @@ export const LecturerDashboardPage = () => {
                 }
                 size="small"
                 sx={{
-                  bgcolor:
-                    stats.todayClassesCount > 0 ? "#fef2f2" : "#f3f4f6",
+                  bgcolor: stats.todayClassesCount > 0 ? "#fef2f2" : "#f3f4f6",
                   color:
                     stats.todayClassesCount > 0 ? "#b91c1c" : "text.secondary",
                   fontWeight: 600,

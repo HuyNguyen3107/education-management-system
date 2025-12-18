@@ -32,7 +32,7 @@ export const PublicHeader = ({
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const logoutMutation = useLogoutMutation();
 
-  const userDisplayName = user?.name || "Khách";
+  const userDisplayName = (user as any)?.name || "Khách";
   const userEmail = user?.email || "";
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {

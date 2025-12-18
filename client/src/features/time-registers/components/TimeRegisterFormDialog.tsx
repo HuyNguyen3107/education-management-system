@@ -6,7 +6,6 @@ import {
   Button,
   TextField,
   Box,
-  FormHelperText,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { useEffect } from "react";
@@ -53,7 +52,6 @@ export const TimeRegisterFormDialog = ({
   });
 
   const openTime = watch("openTime");
-  const endTime = watch("endTime");
 
   useEffect(() => {
     if (initialData) {
@@ -111,7 +109,9 @@ export const TimeRegisterFormDialog = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        {initialData ? "Cập nhật thời gian đăng ký" : "Thêm mới thời gian đăng ký"}
+        {initialData
+          ? "Cập nhật thời gian đăng ký"
+          : "Thêm mới thời gian đăng ký"}
       </DialogTitle>
       <form onSubmit={handleSubmit(onFormSubmit)}>
         <DialogContent>
@@ -167,7 +167,11 @@ export const TimeRegisterFormDialog = ({
               rules={{
                 required: "Thời gian đóng là bắt buộc",
                 validate: (value) => {
-                  if (openTime && value && new Date(value) <= new Date(openTime)) {
+                  if (
+                    openTime &&
+                    value &&
+                    new Date(value) <= new Date(openTime)
+                  ) {
                     return "Thời gian đóng phải sau thời gian mở";
                   }
                   return true;
@@ -201,4 +205,3 @@ export const TimeRegisterFormDialog = ({
     </Dialog>
   );
 };
-

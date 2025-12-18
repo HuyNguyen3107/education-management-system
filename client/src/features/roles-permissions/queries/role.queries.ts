@@ -1,10 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { roleService } from "../services/role.services";
-import type {
-  Role,
-  CreateRoleRequest,
-  UpdateRoleRequest,
-} from "../types/role.types";
+import type { CreateRoleRequest, UpdateRoleRequest } from "../types/role.types";
 
 export const roleQueryKeys = {
   all: ["roles"] as const,
@@ -48,5 +44,3 @@ export const useDeleteRole = () => {
     },
   });
 };
-
-

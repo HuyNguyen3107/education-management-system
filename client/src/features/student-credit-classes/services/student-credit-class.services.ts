@@ -47,8 +47,8 @@ export const studentCreditClassService = {
 
   getWeeklySchedule: async (
     studentId: string,
-    startDate: string,
-    endDate: string
+    _startDate: string,
+    _endDate: string
   ): Promise<any[]> => {
     // We added a new endpoint for this: /schedule/{studentId}
     // This endpoint returns enriched CreditClass details including schedule.

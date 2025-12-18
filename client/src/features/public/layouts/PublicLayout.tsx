@@ -5,17 +5,12 @@ import { PublicHeader } from "../components/Header/PublicHeader";
 import { Footer } from "../components/Footer/Footer";
 import { Outlet } from "react-router-dom";
 
-const drawerWidth = 280;
-const drawerWidthCollapsed = 72;
-
 export const PublicLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleSidebarToggle = () => {
     setSidebarOpen((prev) => !prev);
   };
-
-  const currentDrawerWidth = sidebarOpen ? drawerWidth : drawerWidthCollapsed;
 
   return (
     <Box sx={{ display: "flex", bgcolor: "#f9fafb", minHeight: "100vh" }}>

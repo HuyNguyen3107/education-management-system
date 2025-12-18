@@ -31,13 +31,13 @@ export const specializationService = {
   },
 
   getAllSpecializations: async (): Promise<Specialization[]> => {
-    const response = await http.get<Specialization[]>("/specializations", {
+    const response = await http.get<any>("/specializations", {
       params: { page: 0, size: 10000 },
     });
     if (Array.isArray(response.data)) {
       return response.data;
     }
-    return response.data.content || [];
+    return response.data?.content || [];
   },
 
   getSpecializationsByMajorId: async (

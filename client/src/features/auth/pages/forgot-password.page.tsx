@@ -8,7 +8,7 @@ import {
   Container,
   InputAdornment,
 } from "@mui/material";
-import { School, ArrowBack, Email as EmailIcon, Send } from "@mui/icons-material";
+import { ArrowBack, Email as EmailIcon, Send } from "@mui/icons-material";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForgotPasswordForm } from "../hooks/useForgotPasswordForm";
@@ -18,12 +18,12 @@ import styles from "./login.module.scss";
 
 export const ForgotPasswordPage = () => {
   const navigate = useNavigate();
-  
+
   // Hide scrollbar on body when forgot password page is mounted
   useEffect(() => {
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
-    
+
     return () => {
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";

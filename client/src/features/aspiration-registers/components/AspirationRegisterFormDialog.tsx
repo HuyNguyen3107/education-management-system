@@ -14,7 +14,10 @@ import {
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { useEffect } from "react";
-import type { CreateAspirationRegisterRequest, AspirationRegister } from "../types/aspiration-register.types";
+import type {
+  CreateAspirationRegisterRequest,
+  AspirationRegister,
+} from "../types/aspiration-register.types";
 import { useStudents } from "../../students/queries/student.queries";
 import { useSubjects } from "../../subjects/queries/subject.queries";
 import { RichTextEditor } from "@/components/RichTextEditor";
@@ -74,7 +77,7 @@ export const AspirationRegisterFormDialog = ({
       studentId: data.studentId,
       subjectCode: data.subjectCode,
       semester: data.semester,
-      ...(data.reason && { reason: data.reason }),
+      reason: data.reason ?? "",
     };
     onSubmit(cleanData);
   };
@@ -82,7 +85,9 @@ export const AspirationRegisterFormDialog = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
-        {initialData ? "Cập nhật nguyện vọng đăng ký" : "Thêm mới nguyện vọng đăng ký"}
+        {initialData
+          ? "Cập nhật nguyện vọng đăng ký"
+          : "Thêm mới nguyện vọng đăng ký"}
       </DialogTitle>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <DialogContent>
@@ -159,7 +164,11 @@ export const AspirationRegisterFormDialog = ({
         <DialogActions>
           <Button onClick={onClose}>Hủy</Button>
           <Button type="submit" variant="contained" disabled={isLoading}>
-            {isLoading ? "Đang xử lý..." : initialData ? "Cập nhật" : "Thêm mới"}
+            {isLoading
+              ? "Đang xử lý..."
+              : initialData
+              ? "Cập nhật"
+              : "Thêm mới"}
           </Button>
         </DialogActions>
       </form>

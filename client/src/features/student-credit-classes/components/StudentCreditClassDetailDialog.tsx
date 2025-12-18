@@ -19,7 +19,6 @@ import {
 import type {
   StudentCreditClass,
   ScoreItem,
-  ExamScheduleItem,
 } from "../types/student-credit-class.types";
 
 interface StudentCreditClassDetailDialogProps {

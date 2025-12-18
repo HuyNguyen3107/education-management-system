@@ -14,11 +14,10 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Grid,
-  Stack,
   Chip,
   CircularProgress,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   useLecturerClassStudents,

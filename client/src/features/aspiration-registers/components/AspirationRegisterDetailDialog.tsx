@@ -8,8 +8,8 @@ import {
   Box,
   Divider,
   Chip,
-  Grid,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import type { AspirationRegister } from "../types/aspiration-register.types";
 import { RichTextDisplay } from "@/components/RichTextEditor";
 
@@ -39,7 +39,7 @@ export const AspirationRegisterDetailDialog = ({
       </DialogTitle>
       <DialogContent sx={{ p: 3 }}>
         <Grid container spacing={2} sx={{ mb: 3 }}>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <Typography variant="subtitle2" color="text.secondary">
               Sinh viên:
             </Typography>
@@ -50,7 +50,7 @@ export const AspirationRegisterDetailDialog = ({
               sx={{ mt: 0.5 }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <Typography variant="subtitle2" color="text.secondary">
               Học kỳ:
             </Typography>
@@ -61,7 +61,7 @@ export const AspirationRegisterDetailDialog = ({
               sx={{ mt: 0.5 }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <Typography variant="subtitle2" color="text.secondary">
               Mã môn học:
             </Typography>
@@ -72,7 +72,7 @@ export const AspirationRegisterDetailDialog = ({
               sx={{ mt: 0.5 }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <Typography variant="subtitle2" color="text.secondary">
               Tên môn học:
             </Typography>
@@ -80,7 +80,7 @@ export const AspirationRegisterDetailDialog = ({
               {subjectName || "-"}
             </Typography>
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Typography variant="subtitle2" color="text.secondary">
               Ngày đăng ký:
             </Typography>
@@ -122,4 +122,3 @@ export const AspirationRegisterDetailDialog = ({
     </Dialog>
   );
 };
-

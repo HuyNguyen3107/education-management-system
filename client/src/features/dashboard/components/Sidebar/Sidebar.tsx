@@ -17,7 +17,6 @@ import {
 import {
   Dashboard as DashboardIcon,
   Home as HomeIcon,
-  Menu as MenuIcon,
   ChevronLeft as ChevronLeftIcon,
   People as PeopleIcon,
   Person as PersonIcon,

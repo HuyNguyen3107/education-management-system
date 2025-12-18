@@ -46,7 +46,7 @@ import {
 } from "../../users/constants/user-status.constants";
 import { usePageMeta } from "@/hooks/usePageMeta";
 
-interface StudentWithUserData extends Student {
+export interface StudentWithUserData extends Student {
   user?: User;
 }
 
@@ -58,13 +58,16 @@ export const StudentsPage = () => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const [formOpen, setFormOpen] = useState(false);
-  const [editingStudent, setEditingStudent] = useState<StudentWithUserData | null>(null);
+  const [editingStudent, setEditingStudent] =
+    useState<StudentWithUserData | null>(null);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedStudent, setSelectedStudent] = useState<StudentWithUserData | null>(null);
+  const [selectedStudent, setSelectedStudent] =
+    useState<StudentWithUserData | null>(null);
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [studentToDelete, setStudentToDelete] = useState<StudentWithUserData | null>(null);
+  const [studentToDelete, setStudentToDelete] =
+    useState<StudentWithUserData | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   usePageMeta(
@@ -89,7 +92,13 @@ export const StudentsPage = () => {
 
   // Combine Student and User data
   const studentsWithUsers: StudentWithUserData[] = useMemo(() => {
-    if (!students || !users || !Array.isArray(students) || !Array.isArray(users)) return [];
+    if (
+      !students ||
+      !users ||
+      !Array.isArray(students) ||
+      !Array.isArray(users)
+    )
+      return [];
     return students.map((student) => ({
       ...student,
       user: users.find((u) => u.id === student.userId),
@@ -169,10 +178,16 @@ export const StudentsPage = () => {
     }
   };
 
-  const handleFormSubmit = async (data: { studentCode: string; userId: string }) => {
+  const handleFormSubmit = async (data: {
+    studentCode: string;
+    userId: string;
+  }) => {
     try {
       if (editingStudent) {
-        await updateStudentMutation.mutateAsync({ id: editingStudent.id, data });
+        await updateStudentMutation.mutateAsync({
+          id: editingStudent.id,
+          data,
+        });
         toast.success("Cập nhật sinh viên thành công");
       } else {
         await createStudentMutation.mutateAsync(data);
@@ -339,7 +354,10 @@ export const StudentsPage = () => {
                 paginatedStudents.map((student) => (
                   <TableRow key={student.id} hover>
                     <TableCell>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 600, color: "primary.main" }}>
+                      <Typography
+                        variant="subtitle2"
+                        sx={{ fontWeight: 600, color: "primary.main" }}
+                      >
                         {student.studentCode}
                       </Typography>
                     </TableCell>
@@ -395,11 +413,15 @@ export const StudentsPage = () => {
         open={Boolean(anchorEl)}
         onClose={handleCloseMenu}
       >
-        <MenuItem onClick={() => selectedStudent && handleEditStudent(selectedStudent)}>
+        <MenuItem
+          onClick={() => selectedStudent && handleEditStudent(selectedStudent)}
+        >
           <EditIcon fontSize="small" sx={{ mr: 1 }} /> Chỉnh sửa
         </MenuItem>
         <MenuItem
-          onClick={() => selectedStudent && handleDeleteStudent(selectedStudent)}
+          onClick={() =>
+            selectedStudent && handleDeleteStudent(selectedStudent)
+          }
           sx={{ color: "error.main" }}
         >
           <DeleteIcon fontSize="small" sx={{ mr: 1 }} /> Xóa
@@ -411,7 +433,9 @@ export const StudentsPage = () => {
         onClose={() => setFormOpen(false)}
         onSubmit={handleFormSubmit}
         initialData={editingStudent}
-        isLoading={createStudentMutation.isPending || updateStudentMutation.isPending}
+        isLoading={
+          createStudentMutation.isPending || updateStudentMutation.isPending
+        }
       />
 
       <StudentDeleteDialog

@@ -86,7 +86,7 @@ export const LecturerSchedulePage = () => {
     return scheduleData.filter((item) => item.dayOfWeek === selectedDay);
   }, [scheduleData, selectedDay]);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
     setSelectedDay(newValue);
   };
 

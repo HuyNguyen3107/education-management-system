@@ -3,7 +3,6 @@ import {
   Typography,
   Card,
   CardContent,
-  Grid,
   Chip,
   Button,
   Divider,
@@ -12,6 +11,7 @@ import {
   InputAdornment,
   CircularProgress,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import {
   CalendarToday as CalendarIcon,
   Room as RoomIcon,

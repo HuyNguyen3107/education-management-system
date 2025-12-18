@@ -2,20 +2,18 @@ import {
   Box,
   Card,
   CardContent,
-  Grid,
   Typography,
   Avatar,
   Divider,
-  Paper,
   Stack,
   Chip,
 } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import {
   Email as EmailIcon,
   Phone as PhoneIcon,
   LocationOn as LocationOnIcon,
   Cake as CakeIcon,
-  Person as PersonIcon,
   School as SchoolIcon,
   Badge as BadgeIcon,
 } from "@mui/icons-material";

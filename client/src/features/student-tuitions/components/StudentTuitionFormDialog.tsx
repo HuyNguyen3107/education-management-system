@@ -16,7 +16,10 @@ import {
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { useEffect, useMemo } from "react";
-import type { CreateStudentTuitionRequest, StudentTuition } from "../types/student-tuition.types";
+import type {
+  CreateStudentTuitionRequest,
+  StudentTuition,
+} from "../types/student-tuition.types";
 import { useStudents } from "../../students/queries/student.queries";
 import { useTuitions } from "../../tuitions/queries/tuition.queries";
 
@@ -92,7 +95,9 @@ export const StudentTuitionFormDialog = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        {initialData ? "Cập nhật học phí sinh viên" : "Thêm mới học phí sinh viên"}
+        {initialData
+          ? "Cập nhật học phí sinh viên"
+          : "Thêm mới học phí sinh viên"}
       </DialogTitle>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <DialogContent>
@@ -126,7 +131,8 @@ export const StudentTuitionFormDialog = ({
                   <Select {...field} label="Học phí">
                     {tuitions.map((tuition) => (
                       <MenuItem key={tuition.id} value={tuition.id}>
-                        {tuition.name} - {tuition.price.toLocaleString("vi-VN")} VNĐ
+                        {tuition.semester} {tuition.year} -{" "}
+                        {tuition.price.toLocaleString("vi-VN")} VNĐ
                       </MenuItem>
                     ))}
                   </Select>
@@ -146,10 +152,14 @@ export const StudentTuitionFormDialog = ({
                   fullWidth
                   placeholder="Nhập số tiền được ưu đãi hoặc miễn giảm"
                   InputProps={{
-                    endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
+                    endAdornment: (
+                      <InputAdornment position="end">VNĐ</InputAdornment>
+                    ),
                   }}
                   inputProps={{ min: 0 }}
-                  onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                  onChange={(e) =>
+                    field.onChange(parseFloat(e.target.value) || 0)
+                  }
                 />
               )}
             />
@@ -157,12 +167,18 @@ export const StudentTuitionFormDialog = ({
             {selectedTuition && (
               <Box sx={{ p: 2, bgcolor: "grey.50", borderRadius: 1 }}>
                 <Typography variant="body2" color="text.secondary">
-                  Học phí gốc: {selectedTuition.price.toLocaleString("vi-VN")} VNĐ
+                  Học phí gốc: {selectedTuition.price.toLocaleString("vi-VN")}{" "}
+                  VNĐ
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Ưu đãi: {(endow || 0).toLocaleString("vi-VN")} VNĐ
                 </Typography>
-                <Typography variant="subtitle1" fontWeight={600} color="primary.main" sx={{ mt: 1 }}>
+                <Typography
+                  variant="subtitle1"
+                  fontWeight={600}
+                  color="primary.main"
+                  sx={{ mt: 1 }}
+                >
                   Thành tiền: {finalAmount.toLocaleString("vi-VN")} VNĐ
                 </Typography>
               </Box>
@@ -172,7 +188,11 @@ export const StudentTuitionFormDialog = ({
         <DialogActions>
           <Button onClick={onClose}>Hủy</Button>
           <Button type="submit" variant="contained" disabled={isLoading}>
-            {isLoading ? "Đang xử lý..." : initialData ? "Cập nhật" : "Thêm mới"}
+            {isLoading
+              ? "Đang xử lý..."
+              : initialData
+              ? "Cập nhật"
+              : "Thêm mới"}
           </Button>
         </DialogActions>
       </form>
