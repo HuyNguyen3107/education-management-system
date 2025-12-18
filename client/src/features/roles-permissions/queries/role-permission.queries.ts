@@ -4,7 +4,10 @@ import {
   permissionService,
   rolePermissionService,
 } from "../services/role-permission.services";
-import type { Permission, RolePermission } from "../types/role-permission.types";
+import type {
+  Permission,
+  RolePermission,
+} from "../types/role-permission.types";
 import type { Role } from "@/features/users/types/user.types";
 
 export const roleMgmtQueryKeys = {
@@ -126,5 +129,3 @@ export const useDeleteRolePermission = () => {
     },
   });
 };
-
-
