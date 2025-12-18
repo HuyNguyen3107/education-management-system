@@ -125,6 +125,7 @@ export const ForgotPasswordPage = () => {
               <Box className={styles.forgotPasswordSection}>
                 <Link
                   component="button"
+                  type="button"
                   onClick={() => navigate(ROUTE_PATHS.LOGIN)}
                   className={styles.forgotPasswordLink}
                   sx={{ display: "flex", alignItems: "center", gap: 1 }}

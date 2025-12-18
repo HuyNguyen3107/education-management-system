@@ -39,7 +39,7 @@ export const LoginPage = () => {
   useEffect(() => {
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
-    
+
     return () => {
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
@@ -188,6 +188,7 @@ export const LoginPage = () => {
               <Box className={styles.forgotPasswordSection}>
                 <Link
                   component="button"
+                  type="button"
                   onClick={() => navigate(ROUTE_PATHS.FORGOT_PASSWORD)}
                   className={styles.forgotPasswordLink}
                 >
