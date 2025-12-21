@@ -186,6 +186,14 @@ export const UserFormDialog = ({
                 control={control}
                 rules={{
                   required: !initialData ? "Mật khẩu là bắt buộc" : false,
+                  minLength: {
+                    value: 6,
+                    message: "Mật khẩu phải có ít nhất 6 ký tự",
+                  },
+                  pattern: {
+                    value: /^(?=.*[A-Za-z])(?=.*\d)/,
+                    message: "Mật khẩu phải chứa cả chữ và số",
+                  },
                 }}
                 render={({ field }) => (
                   <TextField

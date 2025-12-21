@@ -9,4 +9,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, UUID> {
     boolean existsByTeacherCodeIgnoreCase(String teacherCode);
 
     java.util.Optional<Teacher> findByUserId(UUID userId);
+
+    void deleteByUserId(UUID userId);
 }

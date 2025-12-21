@@ -14,14 +14,7 @@ import {
   Typography,
   IconButton,
   Paper,
-  Divider,
   InputAdornment,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
 } from "@mui/material";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { useEffect } from "react";
@@ -86,15 +79,6 @@ export const StudentCreditClassFormDialog = ({
   });
 
   const {
-    fields: scoreFields,
-    append: appendScore,
-    remove: removeScore,
-  } = useFieldArray({
-    control,
-    name: "scores",
-  });
-
-  const {
     fields: examFields,
     append: appendExam,
     remove: removeExam,
@@ -103,7 +87,6 @@ export const StudentCreditClassFormDialog = ({
     name: "examSchedule",
   });
 
-  const scores = watch("scores");
   const selectedCreditClassId = watch("creditClassId");
 
   // Get selected credit class info
@@ -111,19 +94,7 @@ export const StudentCreditClassFormDialog = ({
     (cc) => cc.id === selectedCreditClassId
   );
 
-  // Calculate average score
-  const safeScores = Array.isArray(scores) ? scores : [];
-  const totalPercentage =
-    safeScores.reduce((acc, curr) => acc + (curr.percentage || 0), 0) || 0;
-  const averageScore =
-    safeScores.length > 0 && totalPercentage > 0
-      ? safeScores.reduce(
-          (acc, curr) =>
-            acc +
-            ((curr.score || 0) * (curr.percentage || 0)) / totalPercentage,
-          0
-        )
-      : 0;
+
 
   useEffect(() => {
     if (initialData) {
@@ -227,157 +198,6 @@ export const StudentCreditClassFormDialog = ({
                 </FormControl>
               )}
             />
-
-            {/* Scores Section */}
-            <Paper variant="outlined" sx={{ p: 2 }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  mb: 2,
-                }}
-              >
-                <Box>
-                  <Typography variant="subtitle1" fontWeight={600}>
-                    Điểm thành phần
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Tổng trọng số: <strong>{totalPercentage}%</strong> | Điểm
-                    trung bình:{" "}
-                    <strong
-                      style={{ color: averageScore >= 5 ? "green" : "red" }}
-                    >
-                      {averageScore.toFixed(2)}
-                    </strong>
-                  </Typography>
-                </Box>
-                <Button
-                  size="small"
-                  startIcon={<AddIcon />}
-                  onClick={() =>
-                    appendScore({ name: "", percentage: 0, score: 0 })
-                  }
-                  variant="outlined"
-                >
-                  Thêm
-                </Button>
-              </Box>
-
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow sx={{ bgcolor: "#f9fafb" }}>
-                      <TableCell sx={{ fontWeight: 600, width: 50 }}>
-                        STT
-                      </TableCell>
-                      <TableCell sx={{ fontWeight: 600 }}>
-                        Tên thành phần
-                      </TableCell>
-                      <TableCell
-                        sx={{ fontWeight: 600, width: 120 }}
-                        align="center"
-                      >
-                        Trọng số (%)
-                      </TableCell>
-                      <TableCell
-                        sx={{ fontWeight: 600, width: 120 }}
-                        align="center"
-                      >
-                        Điểm
-                      </TableCell>
-                      <TableCell sx={{ width: 50 }} align="center"></TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {scoreFields.map((field, index) => (
-                      <TableRow key={field.id} hover>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell>
-                          <Controller
-                            name={`scores.${index}.name`}
-                            control={control}
-                            render={({ field }) => (
-                              <TextField
-                                {...field}
-                                size="small"
-                                fullWidth
-                                variant="standard"
-                                placeholder="Nhập tên thành phần"
-                                InputProps={{ disableUnderline: true }}
-                              />
-                            )}
-                          />
-                        </TableCell>
-                        <TableCell align="center">
-                          <Controller
-                            name={`scores.${index}.percentage`}
-                            control={control}
-                            render={({ field }) => (
-                              <TextField
-                                {...field}
-                                size="small"
-                                type="number"
-                                variant="outlined"
-                                inputProps={{
-                                  min: 0,
-                                  max: 100,
-                                  style: { textAlign: "center" },
-                                }}
-                                sx={{ width: 80 }}
-                                onChange={(e) =>
-                                  field.onChange(
-                                    parseFloat(e.target.value) || 0
-                                  )
-                                }
-                              />
-                            )}
-                          />
-                        </TableCell>
-                        <TableCell align="center">
-                          <Controller
-                            name={`scores.${index}.score`}
-                            control={control}
-                            render={({ field }) => (
-                              <TextField
-                                {...field}
-                                size="small"
-                                type="number"
-                                variant="outlined"
-                                inputProps={{
-                                  min: 0,
-                                  max: 10,
-                                  step: 0.1,
-                                  style: { textAlign: "center" },
-                                }}
-                                sx={{ width: 80 }}
-                                onChange={(e) =>
-                                  field.onChange(
-                                    parseFloat(e.target.value) || 0
-                                  )
-                                }
-                              />
-                            )}
-                          />
-                        </TableCell>
-                        <TableCell align="center">
-                          <IconButton
-                            size="small"
-                            color="error"
-                            onClick={() => removeScore(index)}
-                            disabled={scoreFields.length <= 1}
-                          >
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
-
-            <Divider />
 
             {/* Exam Schedule Section */}
             <Paper variant="outlined" sx={{ p: 2 }}>

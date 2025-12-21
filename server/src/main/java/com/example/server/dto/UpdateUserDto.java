@@ -1,6 +1,7 @@
 package com.example.server.dto;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class UpdateUserDto {
@@ -9,6 +10,7 @@ public class UpdateUserDto {
     private String email;
 
     @Size(min = 6, message = "Mật khẩu phải có ít nhất 6 ký tự")
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d).+$", message = "Mật khẩu phải chứa cả chữ và số")
     private String password;
 
     private String fullName;

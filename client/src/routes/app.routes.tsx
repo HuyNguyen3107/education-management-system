@@ -14,6 +14,7 @@ import { SpecializationsPage } from "@/features/specializations/pages/Specializa
 import { ClassesPage } from "@/features/classes/pages/ClassesPage";
 import { CreditClassesPage } from "@/features/credit-classes/pages/CreditClassesPage";
 import { StudentCreditClassesPage } from "@/features/student-credit-classes/pages/StudentCreditClassesPage";
+import { GradeEntryPage } from "@/features/student-credit-classes/pages/GradeEntryPage";
 import { SubjectsPage } from "@/features/subjects/pages/SubjectsPage";
 import { AspirationRegistersPage } from "@/features/aspiration-registers/pages/AspirationRegistersPage";
 import { NotificationsPage } from "@/features/notifications/pages/NotificationsPage";
@@ -210,6 +211,10 @@ export const AppRoutes = () => {
             {
               path: "student-credit-classes",
               element: <StudentCreditClassesPage />,
+            },
+            {
+              path: "grade-entry",
+              element: <GradeEntryPage />,
             },
             {
               path: "subjects",

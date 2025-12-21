@@ -35,6 +35,7 @@ import {
   HowToReg as HowToRegIcon,
   Receipt as ReceiptIcon,
   Assignment as AssignmentIcon,
+  EditNote as EditNoteIcon,
   ExpandLess,
   ExpandMore,
 } from "@mui/icons-material";
@@ -142,6 +143,11 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           title: "ĐK lớp tín chỉ",
           path: ROUTE_PATHS.STUDENT_CREDIT_CLASSES,
           icon: <AssignmentIcon />,
+        },
+        {
+          title: "Nhập điểm sinh viên",
+          path: ROUTE_PATHS.GRADE_ENTRY,
+          icon: <EditNoteIcon />,
         },
         {
           title: "Môn học",

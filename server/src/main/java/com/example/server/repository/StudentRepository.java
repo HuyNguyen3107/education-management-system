@@ -20,4 +20,6 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
 
     // Tìm sinh viên theo class_id
     java.util.List<Student> findByClassId(UUID classId);
+
+    void deleteByUserId(UUID userId);
 }

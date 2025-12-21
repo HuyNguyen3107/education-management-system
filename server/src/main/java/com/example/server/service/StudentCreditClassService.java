@@ -130,6 +130,15 @@ public class StudentCreditClassService {
             return null;
         }
         try {
+            // Try ISO datetime format first (e.g., 2025-12-21T09:00:00.000Z)
+            if (dateStr.contains("T")) {
+                java.time.OffsetDateTime odt = java.time.OffsetDateTime.parse(dateStr);
+                return odt.toLocalDate();
+            }
+        } catch (Exception e) {
+            // Continue to try other formats
+        }
+        try {
             return LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         } catch (Exception e) {
             try {

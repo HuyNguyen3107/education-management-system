@@ -12,6 +12,7 @@ export const ROUTE_PATHS = {
   CLASSES: "/dashboard/classes",
   CREDIT_CLASSES: "/dashboard/credit-classes",
   STUDENT_CREDIT_CLASSES: "/dashboard/student-credit-classes",
+  GRADE_ENTRY: "/dashboard/grade-entry",
   SUBJECTS: "/dashboard/subjects",
   ASPIRATION_REGISTERS: "/dashboard/aspiration-registers",
   NOTIFICATIONS: "/dashboard/notifications",

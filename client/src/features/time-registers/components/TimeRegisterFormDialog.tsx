@@ -6,10 +6,30 @@ import {
   Button,
   TextField,
   Box,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { useEffect } from "react";
 import type { TimeRegister } from "../types/time-register.types";
+
+// Options for semester type dropdown
+const SEMESTER_TYPE_OPTIONS = [
+  { value: "", label: "-- Chọn loại học kỳ --" },
+  { value: "SEMESTER_1", label: "Học kỳ 1" },
+  { value: "SEMESTER_2", label: "Học kỳ 2" },
+  { value: "SUMMER", label: "Học kỳ hè" },
+];
+
+// Options for registration type dropdown
+const REGISTRATION_TYPE_OPTIONS = [
+  { value: "", label: "-- Chọn loại đăng ký --" },
+  { value: "subject_registration", label: "Đăng ký học phần" },
+  { value: "wishlist_registration", label: "Đăng ký nguyện vọng" },
+];
 
 interface TimeRegisterFormDialogProps {
   open: boolean;
@@ -120,13 +140,21 @@ export const TimeRegisterFormDialog = ({
               name="typeSemester"
               control={control}
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Loại học kỳ"
-                  fullWidth
-                  placeholder="VD: Học kỳ 1, Học kỳ 2, Học kỳ hè"
-                  helperText="Loại học kỳ (tùy chọn)"
-                />
+                <FormControl fullWidth>
+                  <InputLabel id="type-semester-label">Loại học kỳ</InputLabel>
+                  <Select
+                    {...field}
+                    labelId="type-semester-label"
+                    label="Loại học kỳ"
+                  >
+                    {SEMESTER_TYPE_OPTIONS.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  <FormHelperText>Loại học kỳ (tùy chọn)</FormHelperText>
+                </FormControl>
               )}
             />
 
@@ -134,13 +162,21 @@ export const TimeRegisterFormDialog = ({
               name="typeRegister"
               control={control}
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Loại đăng ký"
-                  fullWidth
-                  placeholder="VD: Đăng ký học phần, Đăng ký lại"
-                  helperText="Loại đăng ký (tùy chọn)"
-                />
+                <FormControl fullWidth>
+                  <InputLabel id="type-register-label">Loại đăng ký</InputLabel>
+                  <Select
+                    {...field}
+                    labelId="type-register-label"
+                    label="Loại đăng ký"
+                  >
+                    {REGISTRATION_TYPE_OPTIONS.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  <FormHelperText>Loại đăng ký (tùy chọn)</FormHelperText>
+                </FormControl>
               )}
             />
 

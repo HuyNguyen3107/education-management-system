@@ -52,7 +52,7 @@ public class PasswordResetService {
         tokenRepository.save(token);
 
         // 4. Gửi email với link reset
-        String resetLink = "http://localhost:3000/reset-password?token=" + tokenString;
+        String resetLink = "https://client.aplusss.top/reset-password?token=" + tokenString;
         String emailBody = "Xin chào,\n\n" +
                          "Bạn đã yêu cầu đặt lại mật khẩu. Vui lòng nhấp vào liên kết bên dưới để tiếp tục:\n\n" +
                          resetLink + "\n\n" +

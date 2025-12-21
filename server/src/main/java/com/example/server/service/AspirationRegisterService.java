@@ -116,26 +116,31 @@ public class AspirationRegisterService {
         aspirationRegisterRepository.deleteById(id);
     }
 
-    public List<SubjectResponseDto> getAvailableSubjects(UUID studentId) {
+    public List<SubjectResponseDto> getAvailableSubjects(UUID userId) {
         // 1. Check Time Window
         TimeRegister activePeriod = findActiveWishlistPeriod();
         if (activePeriod == null) {
             throw new RuntimeException("Hiện không trong thời gian đăng ký nguyện vọng.");
         }
 
-        // 2. Get Student Info
-        User student = userRepository.findById(studentId)
+        // 2. Get User Info
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
 
-        // 3. Parse Semester Info
+        // 3. Get Student record from User (Student table has separate ID)
+        Student studentRecord = studentRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin sinh viên. Vui lòng liên hệ phòng đào tạo."));
+        UUID studentId = studentRecord.getId();
+
+        // 4. Parse Semester Info
         String typeSemester = activePeriod.getTypeSemester(); // e.g., "Học kỳ 1 năm 2024-2025"
         SemesterInfo semesterInfo = parseSemesterString(typeSemester);
 
-        // 4. Parse Student Academic Year
-        String academicYear = student.getAcademicYear(); // e.g., "2021-2025"
+        // 5. Parse Student Academic Year
+        String academicYear = user.getAcademicYear(); // e.g., "2021-2025"
         int startYear = parseStartYear(academicYear);
 
-        // 5. Calculate Student Year and Program Semester
+        // 6. Calculate Student Year and Program Semester
         int currentStudentYear = semesterInfo.year - startYear + 1;
         // Assuming 2 semesters per year for the calculation logic
         // Program Semester = (Year - 1) * 2 + SemesterIndex
@@ -144,10 +149,15 @@ public class AspirationRegisterService {
         List<Subject> subjects = new ArrayList<>();
 
         if (semesterInfo.semesterIndex == 1 || semesterInfo.semesterIndex == 2) {
-            // Main Semester Logic
-            StudentMajor studentMajor = studentMajorRepository.findByStudentId(studentId).stream()
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Sinh viên chưa có chuyên ngành"));
+            // Main Semester Logic - Use Student.id (not User.id) to find StudentMajor
+            Optional<StudentMajor> studentMajorOpt = studentMajorRepository.findByStudentId(studentId).stream()
+                    .findFirst();
+            
+            if (studentMajorOpt.isEmpty()) {
+                throw new RuntimeException("Sinh viên chưa được gán chuyên ngành. Vui lòng liên hệ phòng đào tạo để được hỗ trợ.");
+            }
+            
+            StudentMajor studentMajor = studentMajorOpt.get();
 
             // Find subjects for this Major/Specialization and Semester
             // Using a helper method to filter in memory or we could add a repository method
@@ -184,21 +194,40 @@ public class AspirationRegisterService {
     private TimeRegister findActiveWishlistPeriod() {
         List<TimeRegister> periods = timeRegisterRepository.findByTypeRegister("wishlist_registration");
         LocalDate now = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
 
         for (TimeRegister p : periods) {
-            try {
-                LocalDate start = LocalDate.parse(p.getOpenTime(), formatter);
-                LocalDate end = LocalDate.parse(p.getEndTime(), formatter);
+            LocalDate start = parseDate(p.getOpenTime());
+            LocalDate end = parseDate(p.getEndTime());
+
+            if (start != null && end != null) {
                 if (!now.isBefore(start) && !now.isAfter(end)) {
                     return p;
                 }
-            } catch (Exception e) {
-                // Ignore parsing errors, maybe log them
-                continue;
             }
         }
         return null;
+    }
+
+    private LocalDate parseDate(String dateStr) {
+        if (dateStr == null || dateStr.trim().isEmpty()) {
+            return null;
+        }
+        // Try dd/MM/yyyy format first
+        try {
+            return LocalDate.parse(dateStr, DateTimeFormatter.ofPattern(DATE_FORMAT));
+        } catch (Exception e) {
+            // Try ISO format (e.g., 2024-12-20T00:00:00.000Z)
+            try {
+                return LocalDate.parse(dateStr.substring(0, 10));
+            } catch (Exception ex) {
+                // Try default LocalDate parsing
+                try {
+                    return LocalDate.parse(dateStr);
+                } catch (Exception exc) {
+                    return null;
+                }
+            }
+        }
     }
 
     private static class SemesterInfo {
@@ -212,8 +241,21 @@ public class AspirationRegisterService {
     }
 
     private SemesterInfo parseSemesterString(String typeSemester) {
-        // Example: "Học kỳ 1 năm 2024-2025"
-        // Regex to extract semester and first year
+        if (typeSemester == null || typeSemester.trim().isEmpty()) {
+            throw new RuntimeException("Định dạng học kỳ không hợp lệ: " + typeSemester);
+        }
+
+        // Handle new format: SEMESTER_1, SEMESTER_2, SUMMER
+        int currentYear = LocalDate.now().getYear();
+        if (typeSemester.equals("SEMESTER_1")) {
+            return new SemesterInfo(1, currentYear);
+        } else if (typeSemester.equals("SEMESTER_2")) {
+            return new SemesterInfo(2, currentYear);
+        } else if (typeSemester.equals("SUMMER")) {
+            return new SemesterInfo(3, currentYear); // Summer semester
+        }
+
+        // Handle old format: "Học kỳ 1 năm 2024-2025"
         Pattern pattern = Pattern.compile("Học kỳ (\\d+) năm (\\d{4})");
         Matcher matcher = pattern.matcher(typeSemester);
 
@@ -222,6 +264,7 @@ public class AspirationRegisterService {
             int year = Integer.parseInt(matcher.group(2));
             return new SemesterInfo(sem, year);
         }
+
         // Fallback or error
         throw new RuntimeException("Định dạng học kỳ không hợp lệ: " + typeSemester);
     }
