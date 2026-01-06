@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -79,6 +80,82 @@ public class LecturerService {
 
             return dto;
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * Get assigned classes for the current semester only
+     * @param email Lecturer's email
+     * @return List of credit classes for current semester
+     */
+    public List<CreditClassResponseDto> getAssignedClassesForCurrentSemester(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng"));
+
+        Teacher teacher = teacherRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy hồ sơ giảng viên cho người dùng"));
+
+        List<CreditClass> allClasses = creditClassRepository.findByTeacherId(teacher.getId());
+        String currentSemester = determineCurrentSemester();
+
+        // Filter by current semester
+        List<CreditClass> currentSemesterClasses = allClasses.stream()
+                .filter(cc -> cc.getSemester().equals(currentSemester))
+                .collect(Collectors.toList());
+
+        return currentSemesterClasses.stream().map(cc -> {
+            CreditClassResponseDto dto = new CreditClassResponseDto();
+            dto.setId(cc.getId());
+            dto.setSubjectCode(cc.getSubjectCode());
+            dto.setTeacherId(cc.getTeacherId());
+            dto.setGroup(cc.getGroup());
+            dto.setQuantity(cc.getQuantity());
+            dto.setRoom(cc.getRoom());
+            dto.setSemester(cc.getSemester());
+            dto.setCreatedAt(cc.getCreatedAt());
+            dto.setUpdatedAt(cc.getUpdatedAt());
+
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                if (cc.getSchedule() != null) {
+                    dto.setSchedule(mapper.convertValue(cc.getSchedule(), new TypeReference<List<ScheduleItemDto>>() {
+                    }));
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+
+            subjectRepository.findBySubjectCode(cc.getSubjectCode())
+                    .ifPresent(subject -> dto.setName(subject.getName()));
+
+            int enrolledCount = studentCreditClassRepository.findByCreditClassId(cc.getId()).size();
+            dto.setEnrolledCount(enrolledCount);
+
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    /**
+     * Determine the current semester based on the current date
+     * Semester 1: September to January (9-1)
+     * Semester 2: February to June (2-6)
+     * @return Semester number as string ("1" or "2")
+     */
+    private String determineCurrentSemester() {
+        LocalDate now = LocalDate.now();
+        int month = now.getMonthValue();
+        
+        // Semester 1: September (9) to January (1)
+        if (month >= 9 || month <= 1) {
+            return "1";
+        }
+        // Semester 2: February (2) to June (6)
+        else if (month >= 2 && month <= 6) {
+            return "2";
+        }
+        // Summer: July (7) to August (8) - consider as semester 2 for simplicity
+        else {
+            return "2";
+        }
     }
 
     public List<LecturerStudentResponseDto> getStudentsInClass(UUID classId) {

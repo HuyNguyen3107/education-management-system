@@ -20,6 +20,7 @@ import {
   AccessTime as AccessTimeIcon,
   Room as RoomIcon,
 } from "@mui/icons-material";
+import { format, parseISO, isAfter, isBefore } from "date-fns";
 
 export const LecturerSchedulePage = () => {
   usePageMeta("Lịch dạy");
@@ -43,16 +44,31 @@ export const LecturerSchedulePage = () => {
     }
 
     const items: FlatScheduleItem[] = [];
+    const currentDate = new Date();
+
     classes.forEach((cls) => {
       if (cls.schedule && cls.schedule.length > 0) {
         cls.schedule.forEach((sch) => {
-          items.push({
-            ...sch,
-            className: cls.name,
-            subjectCode: cls.subjectCode,
-            group: cls.group,
-            room: sch.room || cls.room,
-          });
+          // Parse schedule dates
+          const scheduleStartDate = parseISO(sch.startDate);
+          const scheduleEndDate = parseISO(sch.endDate);
+
+          // Check if schedule is active (current date falls within schedule range)
+          const isScheduleActive =
+            (!isAfter(scheduleStartDate, currentDate) ||
+              format(currentDate, "yyyy-MM-dd") === sch.startDate) &&
+            (!isBefore(scheduleEndDate, currentDate) ||
+              format(currentDate, "yyyy-MM-dd") === sch.endDate);
+
+          if (isScheduleActive) {
+            items.push({
+              ...sch,
+              className: cls.name,
+              subjectCode: cls.subjectCode,
+              group: cls.group,
+              room: sch.room || cls.room,
+            });
+          }
         });
       }
     });

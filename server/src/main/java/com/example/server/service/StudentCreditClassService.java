@@ -157,7 +157,19 @@ public class StudentCreditClassService {
         List<Map<String, Object>> result = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
 
+        // Determine current semester based on current date
+        String currentSemester = determineCurrentSemester();
+        LocalDate now = LocalDate.now();
+
         for (StudentCreditClass scc : enrolled) {
+            CreditClass cc = creditClassRepository.findById(scc.getCreditClassId()).orElse(null);
+            if (cc == null)
+                continue;
+
+            // Only include classes from the current semester
+            if (!cc.getSemester().equals(currentSemester))
+                continue;
+
             JsonNode examNode = scc.getExamSchedule();
             if (examNode == null || examNode.isNull() || examNode.isEmpty())
                 continue;
@@ -173,10 +185,6 @@ public class StudentCreditClassService {
                 exams.add(examNode);
             }
 
-            CreditClass cc = creditClassRepository.findById(scc.getCreditClassId()).orElse(null);
-            if (cc == null)
-                continue;
-
             String subjectName = subjectRepository.findBySubjectCode(cc.getSubjectCode())
                     .map(Subject::getName).orElse("Không xác định");
 
@@ -186,6 +194,7 @@ public class StudentCreditClassService {
                 map.put("subjectName", subjectName);
                 map.put("group", cc.getGroup());
                 map.put("quantity", cc.getQuantity()); // Sĩ số
+                map.put("semester", cc.getSemester()); // Add semester for display
 
                 // Exam details from JSON
                 map.put("examDate", exam.has("date") ? exam.get("date").asText() : "");
@@ -201,6 +210,30 @@ public class StudentCreditClassService {
             }
         }
         return result;
+    }
+
+    /**
+     * Determine the current semester based on the current date
+     * Semester 1: September to January (9-1)
+     * Semester 2: February to June (2-6)
+     * @return Semester number as string ("1" or "2")
+     */
+    private String determineCurrentSemester() {
+        LocalDate now = LocalDate.now();
+        int month = now.getMonthValue();
+        
+        // Semester 1: September (9) to January (1)
+        if (month >= 9 || month <= 1) {
+            return "1";
+        }
+        // Semester 2: February (2) to June (6)
+        else if (month >= 2 && month <= 6) {
+            return "2";
+        }
+        // Summer: July (7) to August (8) - consider as semester 2 for simplicity
+        else {
+            return "2";
+        }
     }
 
     public List<Map<String, Object>> getStudentGrades(UUID studentId) {

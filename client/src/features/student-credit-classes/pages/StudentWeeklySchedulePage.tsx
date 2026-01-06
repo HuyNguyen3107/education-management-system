@@ -84,45 +84,64 @@ export const StudentWeeklySchedulePage = () => {
       if (!classInfo.schedule) return;
 
       classInfo.schedule.forEach((item: any) => {
-        // item: { day: 2, startTime: "07:00", endTime: "09:00", room: "A205" }
-        // day: 2 (Monday) -> 8 (Sunday)
-        // We map day to index 0-6 (Monday-Sunday)
+        // item: { dayOfWeek: "2", startPeriod: 1, numberOfPeriods: 3, startDate: "2025-01-01", endDate: "2025-05-30", room: "A205" }
+        // dayOfWeek: "2" (Monday) -> "7" (Saturday), "CN" (Sunday)
+        // startPeriod: Period number (1-17)
+        // numberOfPeriods: Number of consecutive periods
+        // startDate/endDate: Date range for this schedule (yyyy-MM-dd)
 
-        // Map day number to index (2->0, 3->1, ..., 8->6)
-        // Assuming API returns 2 for Monday, 8 for Sunday (CN)
+        // Map dayOfWeek string to index (0-6 for Monday-Sunday)
         let dayIndex = -1;
-        if (item.day >= 2 && item.day <= 7) dayIndex = item.day - 2;
-        else if (item.day === 8 || item.day === "CN") dayIndex = 6;
+        if (item.dayOfWeek === "CN") {
+          dayIndex = 6; // Sunday
+        } else {
+          const dayNum = parseInt(item.dayOfWeek, 10);
+          if (dayNum >= 2 && dayNum <= 7) {
+            dayIndex = dayNum - 2; // 2->0 (Mon), 3->1 (Tue), ..., 7->5 (Sat)
+          }
+        }
 
         if (dayIndex === -1) return;
 
-        // Determine periods
-        // Parse startTime and endTime to find matching periods
-        // Simple logic: start hour
-        const startHour = parseInt(item.startTime.split(":")[0], 10);
-        const endHour = parseInt(item.endTime.split(":")[0], 10);
+        // Check if the class schedule falls within the selected week
+        // Parse dates
+        const classStartDate = new Date(item.startDate);
+        const classEndDate = new Date(item.endDate);
+        const weekStartDate = weekDays[0];
+        const weekEndDate = weekDays[6];
 
-        // Find periods that fall within this range
-        periods.forEach((p, pIndex) => {
-          const pHour = parseInt(p.time.split(":")[0], 10);
-          // If class covers this period
-          // Assuming period starts at p.time. Class covers if startHour <= pHour < endHour
-          if (startHour <= pHour && pHour < endHour) {
+        // Check if the class schedule overlaps with the selected week
+        const isScheduleActive =
+          classStartDate <= weekEndDate && classEndDate >= weekStartDate;
+
+        if (!isScheduleActive) return;
+
+        // Determine which periods are covered by this class
+        const startPeriod = item.startPeriod || 1;
+        const numberOfPeriods = item.numberOfPeriods || 1;
+        const endPeriod = startPeriod + numberOfPeriods - 1;
+
+        // Map each period to the grid
+        for (let periodNum = startPeriod; periodNum <= endPeriod; periodNum++) {
+          const pIndex = periodNum - 1; // Convert to 0-based index
+
+          // Check if period is within valid range
+          if (pIndex >= 0 && pIndex < periods.length) {
             const key = `${pIndex}-${dayIndex}`;
             if (!grid[key]) grid[key] = [];
             grid[key].push({
               name: classInfo.name,
               code: classInfo.subjectCode,
-              room: item.room,
+              room: item.room || classInfo.room,
               group: classInfo.group,
             });
           }
-        });
+        }
       });
     });
 
     return grid;
-  }, [scheduleData]);
+  }, [scheduleData, weekDays]);
 
   if (!studentId) return <Alert severity="error">Vui lòng đăng nhập</Alert>;
 

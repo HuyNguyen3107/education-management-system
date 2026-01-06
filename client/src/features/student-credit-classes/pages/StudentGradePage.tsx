@@ -53,24 +53,80 @@ export const StudentGradePage = () => {
     setSelectedSubject(null);
   };
 
-  // Group by Semester
+  // Group by Semester and sort chronologically
   const groupedData = useMemo(() => {
     if (!gradesData) return {};
     const groups: Record<string, any[]> = {};
+
     gradesData.forEach((item: any) => {
-      // Assume item.semester contains full info or we use a fallback
-      // The API returns 'semester' as a string (e.g., "1").
-      // We might want to group by year too if available, but let's assume 'semester' field is distinct enough
-      // or we need to fetch year. For now, let's group by whatever 'semester' key holds.
-      // Actually, the UI shows "Học kỳ X - Năm học YYYY-ZZZZ".
-      // The current API might just return "1", "2".
-      // Ideally we fetch Tuition or Year info.
-      // For simplicity, I'll group by the raw semester value.
-      const key = `Học kỳ ${item.semester}`;
+      // Parse semester to determine academic year
+      // Semester format: "1" or "2" (we need to infer academic year)
+      // For current implementation, we'll use semester number and infer year from current date
+      const semesterNum = parseInt(item.semester, 10);
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth() + 1; // 1-12
+
+      // Determine academic year based on semester and current date
+      // Semester 1: Sep-Jan (months 9-1) -> Academic year: currentYear - currentYear+1
+      // Semester 2: Feb-Aug (months 2-8) -> Academic year: currentYear-1 - currentYear
+      let academicYearStart, academicYearEnd;
+
+      if (semesterNum === 1) {
+        if (currentMonth >= 9) {
+          academicYearStart = currentYear;
+          academicYearEnd = currentYear + 1;
+        } else {
+          academicYearStart = currentYear - 1;
+          academicYearEnd = currentYear;
+        }
+      } else {
+        // semesterNum === 2
+        if (currentMonth >= 2 && currentMonth <= 8) {
+          academicYearStart = currentYear - 1;
+          academicYearEnd = currentYear;
+        } else {
+          academicYearStart = currentYear;
+          academicYearEnd = currentYear + 1;
+        }
+      }
+
+      const key = `Học kỳ ${semesterNum} - Năm học ${academicYearStart}-${academicYearEnd}`;
       if (!groups[key]) groups[key] = [];
       groups[key].push(item);
     });
-    return groups;
+
+    // Sort semesters chronologically (newest first)
+    const sortedGroups: Record<string, any[]> = {};
+    const sortedKeys = Object.keys(groups).sort((a, b) => {
+      // Extract year and semester from key
+      const extractInfo = (key: string) => {
+        const match = key.match(/Học kỳ (\d+) - Năm học (\d+)-(\d+)/);
+        if (match) {
+          return {
+            semester: parseInt(match[1], 10),
+            yearStart: parseInt(match[2], 10),
+            yearEnd: parseInt(match[3], 10),
+          };
+        }
+        return { semester: 0, yearStart: 0, yearEnd: 0 };
+      };
+
+      const aInfo = extractInfo(a);
+      const bInfo = extractInfo(b);
+
+      // Sort by year descending, then by semester descending
+      if (aInfo.yearStart !== bInfo.yearStart) {
+        return bInfo.yearStart - aInfo.yearStart;
+      }
+      return bInfo.semester - aInfo.semester;
+    });
+
+    sortedKeys.forEach((key) => {
+      sortedGroups[key] = groups[key];
+    });
+
+    return sortedGroups;
   }, [gradesData]);
 
   // Calculate summary for a group

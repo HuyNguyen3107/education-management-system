@@ -62,9 +62,9 @@ public class LecturerController {
 
     @GetMapping("/schedule")
     public ResponseEntity<List<CreditClassResponseDto>> getSchedule() {
-        // Schedule is derived from assigned classes
+        // Schedule is derived from assigned classes for current semester
         String email = getCurrentUserEmail();
-        return ResponseEntity.ok(lecturerService.getAssignedClasses(email));
+        return ResponseEntity.ok(lecturerService.getAssignedClassesForCurrentSemester(email));
     }
 
     @GetMapping("/admin-classes")

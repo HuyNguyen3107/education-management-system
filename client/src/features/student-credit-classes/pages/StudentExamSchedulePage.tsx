@@ -84,7 +84,7 @@ export const StudentExamSchedulePage = () => {
               onChange={(e) => setSelectedSemester(e.target.value)}
               displayEmpty
             >
-              <MenuItem value="all">Học kỳ 1 Năm học 2025-2026</MenuItem>
+              <MenuItem value="all">Học kỳ hiện tại</MenuItem>
               {/* Add more semesters if needed */}
             </Select>
           </FormControl>
