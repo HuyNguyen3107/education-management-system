@@ -1,11 +1,9 @@
 import {
   Box,
   Card,
-  CardContent,
   Typography,
   Avatar,
   Divider,
-  Stack,
   Chip,
   TextField,
   Button,

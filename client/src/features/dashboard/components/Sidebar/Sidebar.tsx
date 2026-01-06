@@ -33,7 +33,6 @@ import {
   CreditScore as CreditScoreIcon,
   MenuBook as MenuBookIcon,
   HowToReg as HowToRegIcon,
-  Receipt as ReceiptIcon,
   Assignment as AssignmentIcon,
   EditNote as EditNoteIcon,
   ExpandLess,
