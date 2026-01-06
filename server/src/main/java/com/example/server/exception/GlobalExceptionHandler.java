@@ -1,5 +1,6 @@
 package com.example.server.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +15,23 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // Phương thức helper để thêm CORS headers vào response
+    private ResponseEntity<Map<String, Object>> withCorsHeaders(ResponseEntity<Map<String, Object>> response, HttpServletRequest request) {
+        String origin = request.getHeader("Origin");
+        if (origin != null) {
+            return ResponseEntity.status(response.getStatusCode())
+                    .header("Access-Control-Allow-Origin", origin)
+                    .header("Access-Control-Allow-Credentials", "true")
+                    .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD")
+                    .header("Access-Control-Allow-Headers", "*")
+                    .header("Access-Control-Max-Age", "3600")
+                    .body(response.getBody());
+        }
+        return response;
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
+    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
         Map<String, Object> body = new HashMap<>();
         body.put("message", "Validation failed");
         Map<String, String> errors = new HashMap<>();
@@ -23,43 +39,43 @@ public class GlobalExceptionHandler {
             errors.put(fe.getField(), fe.getDefaultMessage());
         }
         body.put("errors", errors);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        return withCorsHeaders(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body), request);
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleNotFound(NotFoundException ex) {
+    public ResponseEntity<Map<String, Object>> handleNotFound(NotFoundException ex, HttpServletRequest request) {
         Map<String, Object> body = new HashMap<>();
         body.put("message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+        return withCorsHeaders(ResponseEntity.status(HttpStatus.NOT_FOUND).body(body), request);
     }
 
     @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<Map<String, Object>> handleConflict(ConflictException ex) {
+    public ResponseEntity<Map<String, Object>> handleConflict(ConflictException ex, HttpServletRequest request) {
         Map<String, Object> body = new HashMap<>();
         body.put("message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+        return withCorsHeaders(ResponseEntity.status(HttpStatus.CONFLICT).body(body), request);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex, HttpServletRequest request) {
         Map<String, Object> body = new HashMap<>();
         body.put("message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        return withCorsHeaders(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body), request);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Map<String, Object>> handleDataIntegrity(DataIntegrityViolationException ex) {
+    public ResponseEntity<Map<String, Object>> handleDataIntegrity(DataIntegrityViolationException ex, HttpServletRequest request) {
         Map<String, Object> body = new HashMap<>();
         body.put("message", "Data integrity violation");
         body.put("detail", ex.getMostSpecificCause() != null ? ex.getMostSpecificCause().getMessage() : ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+        return withCorsHeaders(ResponseEntity.status(HttpStatus.CONFLICT).body(body), request);
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, Object>> handleRuntime(RuntimeException ex) {
+    public ResponseEntity<Map<String, Object>> handleRuntime(RuntimeException ex, HttpServletRequest request) {
         Map<String, Object> body = new HashMap<>();
         body.put("message", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+        return withCorsHeaders(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body), request);
     }
 }
 

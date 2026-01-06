@@ -13,7 +13,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/majors")
-@CrossOrigin(origins = "*")
 public class MajorController {
 
     private final MajorService majorService;

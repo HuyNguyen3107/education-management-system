@@ -12,7 +12,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/specializations")
-@CrossOrigin(origins = "*")
 public class SpecializationController {
 
     private final SpecializationService specializationService;
