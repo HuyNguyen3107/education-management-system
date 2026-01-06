@@ -1,7 +1,9 @@
 package com.example.server.config;
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -47,5 +49,13 @@ public class CorsConfig implements WebMvcConfigurer {
         
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
+    }
+
+    // Đăng ký CorsFilter với độ ưu tiên cao nhất để chạy trước Spring Security
+    @Bean
+    public FilterRegistrationBean<CorsFilter> corsFilterRegistration() {
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(corsFilter());
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
     }
 }

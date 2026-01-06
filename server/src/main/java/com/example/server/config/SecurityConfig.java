@@ -68,6 +68,8 @@ public class SecurityConfig {
                         .authenticationEntryPoint(authenticationEntryPoint())
                         .accessDeniedHandler(accessDeniedHandler()))
                 .authorizeHttpRequests(auth -> auth
+                        // Cho phép tất cả CORS preflight requests
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/logout").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/password-reset/**").permitAll()
