@@ -21,9 +21,9 @@ public class StudentTuitionController {
         this.studentTuitionService = studentTuitionService;
     }
 
-    @GetMapping("/details/{studentId}")
-    public List<Map<String, Object>> getDetailsByStudent(@PathVariable UUID studentId) {
-        return studentTuitionService.getStudentTuitionDetails(studentId);
+    @GetMapping("/details/{userId}")
+    public List<Map<String, Object>> getDetailsByStudent(@PathVariable UUID userId) {
+        return studentTuitionService.getStudentTuitionDetails(userId);
     }
 
     @GetMapping

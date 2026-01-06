@@ -11,12 +11,21 @@ import {
   InputLabel,
   Select,
   FormHelperText,
+  Typography,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import { useEffect } from "react";
-import type { CreateUserRequest, User } from "../types/user.types";
+import { useEffect, useState } from "react";
+import type { CreateUserRequest, User, Role } from "../types/user.types";
+import type { Major } from "../../majors/types/major.types";
 
 import { USER_STATUS } from "../constants/user-status.constants";
+import { useGetAllRoles } from "../queries/user.queries";
+import { useMajors } from "../../majors/queries/major.queries";
+import {
+  generateStudentCode,
+  generateLecturerCode,
+  validateAcademicYear,
+} from "../utils/id-generator.utils";
 
 interface UserFormDialogProps {
   open: boolean;
@@ -33,6 +42,14 @@ export const UserFormDialog = ({
   initialData,
   isLoading,
 }: UserFormDialogProps) => {
+  const { data: roles } = useGetAllRoles();
+  const { data: majorsData } = useMajors();
+  const majors = Array.isArray(majorsData)
+    ? majorsData
+    : majorsData?.content || [];
+
+  const [generatedCode, setGeneratedCode] = useState<string>("");
+
   const {
     control,
     handleSubmit,
@@ -53,10 +70,14 @@ export const UserFormDialog = ({
       academicYear: "",
       educationLevel: "",
       role: "STUDENT",
+      roleId: "",
+      majorId: "",
     },
   });
 
   const watchedRole = watch("role");
+  const watchedAcademicYear = watch("academicYear");
+  const watchedMajorId = watch("majorId");
 
   // Define status options
   const STATUS_OPTIONS = USER_STATUS;
@@ -88,7 +109,10 @@ export const UserFormDialog = ({
         educationLevel: initialData.educationLevel || "",
         password: "", // Don't show password
         role: inferredRole,
+        roleId: "",
+        majorId: initialData.majorId || "",
       });
+      setGeneratedCode(""); // Clear generated code for edit mode
     } else {
       reset({
         email: "",
@@ -102,7 +126,10 @@ export const UserFormDialog = ({
         academicYear: "",
         educationLevel: "",
         role: "STUDENT",
+        roleId: "",
+        majorId: "",
       });
+      setGeneratedCode(""); // Clear generated code for new user
     }
   }, [initialData, reset, open]);
 
@@ -111,7 +138,7 @@ export const UserFormDialog = ({
   // If user switches role, we might want to default to the first status of that role.
   useEffect(() => {
     const currentStatus = watch("status");
-    const currentRole = watch("role") as keyof typeof STATUS_OPTIONS;
+    const currentRole = watchedRole as keyof typeof STATUS_OPTIONS;
 
     if (currentRole && STATUS_OPTIONS[currentRole]) {
       const isValidStatus = STATUS_OPTIONS[currentRole].some(
@@ -121,7 +148,36 @@ export const UserFormDialog = ({
         setValue("status", STATUS_OPTIONS[currentRole][0].value);
       }
     }
-  }, [watchedRole, setValue]);
+  }, [watchedRole, setValue, watch]);
+
+  // Auto-generate code when role, academic year, or major changes
+  useEffect(() => {
+    if (!initialData) {
+      // Only generate code for new users
+      const selectedMajor = majors.find((m: Major) => m.id === watchedMajorId);
+
+      if (
+        watchedRole === "STUDENT" &&
+        selectedMajor &&
+        watchedAcademicYear &&
+        validateAcademicYear(watchedAcademicYear)
+      ) {
+        // Generate student code: B + year + major + sequence (default to 1 for preview)
+        const code = generateStudentCode(
+          watchedAcademicYear,
+          selectedMajor.name,
+          1
+        );
+        setGeneratedCode(code);
+      } else if (watchedRole === "LECTURER" && selectedMajor) {
+        // Generate lecturer code: G + year + major + sequence (default to 1 for preview)
+        const code = generateLecturerCode(selectedMajor.name, 1);
+        setGeneratedCode(code);
+      } else {
+        setGeneratedCode("");
+      }
+    }
+  }, [watchedRole, watchedAcademicYear, watchedMajorId, majors, initialData]);
 
   const onFormSubmit = (data: CreateUserRequest) => {
     onSubmit(data);
@@ -187,12 +243,14 @@ export const UserFormDialog = ({
                 rules={{
                   required: !initialData ? "Mật khẩu là bắt buộc" : false,
                   minLength: {
-                    value: 6,
-                    message: "Mật khẩu phải có ít nhất 6 ký tự",
+                    value: 8,
+                    message: "Mật khẩu phải có ít nhất 8 ký tự",
                   },
                   pattern: {
-                    value: /^(?=.*[A-Za-z])(?=.*\d)/,
-                    message: "Mật khẩu phải chứa cả chữ và số",
+                    value:
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/,
+                    message:
+                      "Mật khẩu phải chứa ít nhất 1 chữ thường, 1 chữ hoa, 1 số và 1 ký tự đặc biệt",
                   },
                 }}
                 render={({ field }) => (
@@ -216,7 +274,13 @@ export const UserFormDialog = ({
               <Controller
                 name="phone"
                 control={control}
-                rules={{ required: "Số điện thoại là bắt buộc" }}
+                rules={{
+                  required: "Số điện thoại là bắt buộc",
+                  pattern: {
+                    value: /^[0-9]{10,11}$/,
+                    message: "Số điện thoại phải có 10-11 chữ số",
+                  },
+                }}
                 render={({ field }) => (
                   <TextField
                     {...field}
@@ -292,12 +356,13 @@ export const UserFormDialog = ({
                 control={control}
                 rules={{ required: "Vai trò là bắt buộc" }}
                 render={({ field }) => (
-                  <FormControl fullWidth>
+                  <FormControl fullWidth error={!!errors.role}>
                     <InputLabel>Loại người dùng</InputLabel>
                     <Select {...field} label="Loại người dùng">
                       <MenuItem value="LECTURER">Giảng viên</MenuItem>
                       <MenuItem value="STUDENT">Sinh viên</MenuItem>
                     </Select>
+                    <FormHelperText>{errors.role?.message}</FormHelperText>
                   </FormControl>
                 )}
               />
@@ -307,8 +372,9 @@ export const UserFormDialog = ({
               <Controller
                 name="status"
                 control={control}
+                rules={{ required: "Trạng thái là bắt buộc" }}
                 render={({ field }) => (
-                  <FormControl fullWidth>
+                  <FormControl fullWidth error={!!errors.status}>
                     <InputLabel>Trạng thái</InputLabel>
                     <Select {...field} label="Trạng thái">
                       {(
@@ -321,18 +387,108 @@ export const UserFormDialog = ({
                         </MenuItem>
                       ))}
                     </Select>
+                    <FormHelperText>{errors.status?.message}</FormHelperText>
                   </FormControl>
                 )}
               />
             </Box>
+
+            {!initialData && (
+              <Box sx={{ gridColumn: "1 / -1" }}>
+                <Controller
+                  name="roleId"
+                  control={control}
+                  rules={{
+                    required: "Vai trò hệ thống là bắt buộc",
+                  }}
+                  render={({ field }) => (
+                    <FormControl fullWidth error={!!errors.roleId}>
+                      <InputLabel>Vai trò hệ thống</InputLabel>
+                      <Select {...field} label="Vai trò hệ thống">
+                        {roles && roles.length > 0 ? (
+                          roles.map((role: Role) => (
+                            <MenuItem key={role.id} value={role.id}>
+                              {role.name}
+                            </MenuItem>
+                          ))
+                        ) : (
+                          <MenuItem disabled value="">
+                            Chưa có vai trò nào
+                          </MenuItem>
+                        )}
+                      </Select>
+                      <FormHelperText>{errors.roleId?.message}</FormHelperText>
+                    </FormControl>
+                  )}
+                />
+              </Box>
+            )}
+
+            {(watchedRole === "STUDENT" || watchedRole === "LECTURER") && (
+              <Box>
+                <Controller
+                  name="majorId"
+                  control={control}
+                  rules={{ required: "Ngành học là bắt buộc" }}
+                  render={({ field }) => (
+                    <FormControl fullWidth error={!!errors.majorId}>
+                      <InputLabel>Ngành học</InputLabel>
+                      <Select {...field} label="Ngành học">
+                        {majors && majors.length > 0 ? (
+                          majors.map((major: Major) => (
+                            <MenuItem key={major.id} value={major.id}>
+                              {major.name}
+                            </MenuItem>
+                          ))
+                        ) : (
+                          <MenuItem disabled value="">
+                            Chưa có ngành nào
+                          </MenuItem>
+                        )}
+                      </Select>
+                      <FormHelperText>{errors.majorId?.message}</FormHelperText>
+                    </FormControl>
+                  )}
+                />
+              </Box>
+            )}
 
             {watchedRole === "STUDENT" && (
               <Box>
                 <Controller
                   name="academicYear"
                   control={control}
+                  rules={{
+                    required: "Niên khóa là bắt buộc",
+                    pattern: {
+                      value: /^\d{4}-\d{4}$/,
+                      message:
+                        "Niên khóa phải theo định dạng YYYY-YYYY (ví dụ: 2021-2026)",
+                    },
+                    validate: (value) => {
+                      if (!value) return true;
+                      const currentYear = new Date().getFullYear();
+                      const startYear = parseInt(value.split("-")[0]);
+                      const endYear = parseInt(value.split("-")[1]);
+
+                      if (startYear !== currentYear) {
+                        return `Năm bắt đầu phải là năm hiện tại (${currentYear})`;
+                      }
+                      if (endYear <= startYear) {
+                        return "Năm kết thúc phải lớn hơn năm bắt đầu";
+                      }
+                      return true;
+                    },
+                  }}
                   render={({ field }) => (
-                    <TextField {...field} label="Niên khóa" fullWidth />
+                    <TextField
+                      {...field}
+                      label="Niên khóa"
+                      placeholder="Ví dụ: 2026-2030"
+                      fullWidth
+                      error={!!errors.academicYear}
+                      helperText={errors.academicYear?.message}
+                    />
                   )}
                 />
               </Box>
@@ -343,9 +499,34 @@ export const UserFormDialog = ({
                 <Controller
                   name="educationLevel"
                   control={control}
+                  rules={{ required: "Trình độ học vấn là bắt buộc" }}
                   render={({ field }) => (
-                    <TextField {...field} label="Trình độ học vấn" fullWidth />
+                    <TextField
+                      {...field}
+                      label="Trình độ học vấn"
+                      fullWidth
+                      error={!!errors.educationLevel}
+                      helperText={errors.educationLevel?.message}
+                    />
                   )}
+                />
+              </Box>
+            )}
+
+            {!initialData && generatedCode && (
+              <Box sx={{ gridColumn: "1 / -1" }}>
+                <TextField
+                  label="Mã sinh viên/giảng viên (Tự động tạo)"
+                  value={generatedCode}
+                  fullWidth
+                  disabled
+                  helperText="Mã sẽ được tạo tự động dựa trên ngành và niên khóa"
+                  InputProps={{
+                    sx: {
+                      backgroundColor: "#f3f4f6",
+                      fontWeight: "bold",
+                    },
+                  }}
                 />
               </Box>
             )}

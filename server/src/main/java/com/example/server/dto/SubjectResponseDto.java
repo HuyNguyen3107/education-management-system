@@ -4,6 +4,7 @@ import com.example.server.entity.Subject;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public class SubjectResponseDto {
@@ -17,6 +18,7 @@ public class SubjectResponseDto {
     private JsonNode ingredientSecretion;
     private String semester;
     private Boolean isStudied; // New field
+    private List<PrerequisiteSubjectInfoDto> prerequisites; // New field for prerequisites
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -34,6 +36,7 @@ public class SubjectResponseDto {
         this.ingredientSecretion = subject.getIngredientSecretion();
         this.semester = subject.getSemester();
         this.isStudied = false; // Default
+        this.prerequisites = null; // Default
         this.createdAt = subject.getCreatedAt();
         this.updatedAt = subject.getUpdatedAt();
     }
@@ -42,6 +45,13 @@ public class SubjectResponseDto {
     public SubjectResponseDto(Subject subject, Boolean isStudied) {
         this(subject);
         this.isStudied = isStudied;
+    }
+
+    // Constructor with isStudied and prerequisites
+    public SubjectResponseDto(Subject subject, Boolean isStudied, List<PrerequisiteSubjectInfoDto> prerequisites) {
+        this(subject);
+        this.isStudied = isStudied;
+        this.prerequisites = prerequisites;
     }
 
     // Getters and Setters
@@ -131,5 +141,13 @@ public class SubjectResponseDto {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<PrerequisiteSubjectInfoDto> getPrerequisites() {
+        return prerequisites;
+    }
+
+    public void setPrerequisites(List<PrerequisiteSubjectInfoDto> prerequisites) {
+        this.prerequisites = prerequisites;
     }
 }

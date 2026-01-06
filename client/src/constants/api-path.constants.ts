@@ -45,6 +45,7 @@ export const API_PATHS = {
   TEACHERS: {
     GET_ALL: "/teachers",
     GET_BY_ID: (id: string) => `/teachers/${id}`,
+    GET_BY_USER_ID: (userId: string) => `/teachers/user/${userId}`,
     CREATE: "/teachers",
     UPDATE: (id: string) => `/teachers/${id}`,
     DELETE: (id: string) => `/teachers/${id}`,

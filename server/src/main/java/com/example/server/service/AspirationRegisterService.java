@@ -6,6 +6,7 @@ import com.example.server.dto.SubjectResponseDto;
 import com.example.server.entity.*;
 import com.example.server.repository.AspirationRegisterRepository;
 import com.example.server.repository.CreditClassRepository;
+import com.example.server.repository.PrerequisiteSubjectRepository;
 import com.example.server.repository.StudentCreditClassRepository;
 import com.example.server.repository.StudentMajorRepository;
 import com.example.server.repository.StudentRepository;
@@ -20,8 +21,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,6 +57,9 @@ public class AspirationRegisterService {
     @Autowired
     private CreditClassRepository creditClassRepository;
 
+    @Autowired
+    private PrerequisiteSubjectRepository prerequisiteSubjectRepository;
+
     private static final String DATE_FORMAT = "dd/MM/yyyy";
 
     public List<AspirationRegisterResponseDto> getAll() {
@@ -81,9 +87,39 @@ public class AspirationRegisterService {
         // - Student self-service pages send User.id -> check in UserRepository
         boolean existsInStudentTable = studentRepository.existsById(dto.getStudentId());
         boolean existsInUserTable = userRepository.existsById(dto.getStudentId());
-
+ 
         if (!existsInStudentTable && !existsInUserTable) {
             throw new RuntimeException("Không tìm thấy sinh viên");
+        }
+
+        // Get subject being registered
+        Optional<Subject> subjectOpt = subjectRepository.findBySubjectCode(dto.getSubjectCode());
+        if (subjectOpt.isEmpty()) {
+            throw new RuntimeException("Không tìm thấy môn học với mã: " + dto.getSubjectCode());
+        }
+        Subject subject = subjectOpt.get();
+
+        // Get student ID (convert from User ID if necessary)
+        UUID studentId = dto.getStudentId();
+        if (existsInUserTable && !existsInStudentTable) {
+            // If it's a User ID, get the corresponding Student ID
+            Student studentRecord = studentRepository.findByUserId(studentId)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin sinh viên"));
+            studentId = studentRecord.getId();
+        }
+
+        // Validate prerequisites
+        if (!validatePrerequisites(subject, studentId)) {
+            // Get prerequisites for error message
+            List<PrerequisiteSubject> prerequisites = prerequisiteSubjectRepository
+                    .findByRegisterCode(subject.getSubjectCode());
+            StringBuilder errorMsg = new StringBuilder("Bạn chưa đáp ứng điều kiện tiên quyết cho môn này. ");
+            errorMsg.append("Bạn cần học và đạt điểm qua (không phải F) các môn: ");
+            for (int i = 0; i < prerequisites.size(); i++) {
+                if (i > 0) errorMsg.append(", ");
+                errorMsg.append(prerequisites.get(i).getPrerequisiteCode());
+            }
+            throw new RuntimeException(errorMsg.toString());
         }
 
         AspirationRegister aspiration = new AspirationRegister();
@@ -148,6 +184,9 @@ public class AspirationRegisterService {
 
         List<Subject> subjects = new ArrayList<>();
 
+        // Get all subjects that match the criteria first
+        List<Subject> potentialSubjects = new ArrayList<>();
+
         if (semesterInfo.semesterIndex == 1 || semesterInfo.semesterIndex == 2) {
             // Main Semester Logic - Use Student.id (not User.id) to find StudentMajor
             Optional<StudentMajor> studentMajorOpt = studentMajorRepository.findByStudentId(studentId).stream()
@@ -165,8 +204,27 @@ public class AspirationRegisterService {
                     studentMajor.getMajorId(), studentMajor.getSpecializationId());
 
             String targetSemesterStr = String.valueOf(programSemester);
-            subjects = allSubjects.stream()
+            potentialSubjects = allSubjects.stream()
                     .filter(s -> s.getSemester().equals(targetSemesterStr))
+                    .collect(Collectors.toList());
+
+            // EXCLUDE subjects that student has already PASSED
+            List<StudentCreditClass> enrolledClasses = studentCreditClassRepository.findByStudentId(studentId);
+            Set<String> passedSubjectCodes = new HashSet<>();
+            
+            for (StudentCreditClass scc : enrolledClasses) {
+                if (!isFailed(scc.getScores()) && scc.getScores() != null) {
+                    // Student passed this subject
+                    Optional<CreditClass> creditClassOpt = creditClassRepository.findById(scc.getCreditClassId());
+                    if (creditClassOpt.isPresent()) {
+                        passedSubjectCodes.add(creditClassOpt.get().getSubjectCode());
+                    }
+                }
+            }
+            
+            // Filter out passed subjects
+            potentialSubjects = potentialSubjects.stream()
+                    .filter(s -> !passedSubjectCodes.contains(s.getSubjectCode()))
                     .collect(Collectors.toList());
 
         } else {
@@ -180,11 +238,16 @@ public class AspirationRegisterService {
                     if (creditClassOpt.isPresent()) {
                         CreditClass cc = creditClassOpt.get();
                         Optional<Subject> subjectOpt = subjectRepository.findBySubjectCode(cc.getSubjectCode());
-                        subjectOpt.ifPresent(subjects::add);
+                        subjectOpt.ifPresent(potentialSubjects::add);
                     }
                 }
             }
         }
+
+        // Filter subjects based on prerequisite validation
+        subjects = potentialSubjects.stream()
+                .filter(subject -> validatePrerequisites(subject, studentId))
+                .collect(Collectors.toList());
 
         return subjects.stream()
                 .map(SubjectResponseDto::new)
@@ -284,10 +347,12 @@ public class AspirationRegisterService {
         // Check for specific "F" grade or score < 4.0
         // Structure assumption: simple key-value or complex object
 
-        // Strategy 1: Look for "grade": "F" or "letter_grade": "F"
+        // Strategy 1: Look for "grade": "F" or "letter_grade": "F" or "letter": "F"
         if (scores.has("grade") && "F".equalsIgnoreCase(scores.get("grade").asText()))
             return true;
         if (scores.has("letter_grade") && "F".equalsIgnoreCase(scores.get("letter_grade").asText()))
+            return true;
+        if (scores.has("letter") && "F".equalsIgnoreCase(scores.get("letter").asText()))
             return true;
 
         // Strategy 2: Look for "final_score" or "final" < 4.0
@@ -300,6 +365,62 @@ public class AspirationRegisterService {
         if (finalScore >= 0 && finalScore < 4.0)
             return true;
 
+        return false;
+    }
+
+    /**
+     * Validate that a student has passed all prerequisites for a subject
+     * @param subject The subject to check prerequisites for
+     * @param studentId The student ID
+     * @return true if all prerequisites are met, false otherwise
+     */
+    private boolean validatePrerequisites(Subject subject, UUID studentId) {
+        // Get all prerequisites for this subject
+        List<PrerequisiteSubject> prerequisites = prerequisiteSubjectRepository
+                .findByRegisterCode(subject.getSubjectCode());
+
+        // If no prerequisites, subject is available
+        if (prerequisites.isEmpty()) {
+            return true;
+        }
+
+        // Check each prerequisite
+        for (PrerequisiteSubject prerequisite : prerequisites) {
+            String prerequisiteCode = prerequisite.getPrerequisiteCode();
+
+            // Check if student has passed this prerequisite subject
+            if (!hasPassedPrerequisite(studentId, prerequisiteCode)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if a student has passed a prerequisite subject
+     * @param studentId The student ID
+     * @param subjectCode The subject code to check
+     * @return true if student has passed the subject (not F grade), false otherwise
+     */
+    private boolean hasPassedPrerequisite(UUID studentId, String subjectCode) {
+        // Get all credit classes the student has enrolled in
+        List<StudentCreditClass> studentCreditClasses = studentCreditClassRepository
+                .findByStudentId(studentId);
+
+        // Check each credit class to see if it matches the prerequisite subject
+        for (StudentCreditClass scc : studentCreditClasses) {
+            Optional<CreditClass> creditClassOpt = creditClassRepository.findById(scc.getCreditClassId());
+            if (creditClassOpt.isPresent()) {
+                CreditClass cc = creditClassOpt.get();
+                if (cc.getSubjectCode().equals(subjectCode)) {
+                    // Found the subject, check if student passed (not failed)
+                    return !isFailed(scc.getScores());
+                }
+            }
+        }
+
+        // Student hasn't taken this prerequisite subject yet
         return false;
     }
 }

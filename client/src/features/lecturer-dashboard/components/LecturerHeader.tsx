@@ -12,8 +12,10 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
+import PersonIcon from "@mui/icons-material/Person";
 import { useAuthStore } from "@/store/auth.store";
 import { useLogoutMutation } from "@/features/auth/mutations/auth.mutations";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 interface LecturerHeaderProps {
@@ -30,6 +32,7 @@ export const LecturerHeader = ({
 }: LecturerHeaderProps) => {
   const user = useAuthStore((state) => state.user);
   const logoutMutation = useLogoutMutation();
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -39,6 +42,11 @@ export const LecturerHeader = ({
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleProfile = () => {
+    handleClose();
+    navigate("/lecturer/profile");
   };
 
   const handleLogout = () => {
@@ -143,7 +151,7 @@ export const LecturerHeader = ({
               elevation: 3,
               sx: {
                 mt: 1.5,
-                minWidth: 180,
+                minWidth: 200,
                 borderRadius: 2,
                 overflow: "visible",
                 filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.1))",
@@ -162,6 +170,12 @@ export const LecturerHeader = ({
               },
             }}
           >
+            <MenuItem onClick={handleProfile}>
+              <ListItemIcon>
+                <PersonIcon fontSize="small" />
+              </ListItemIcon>
+              Thông tin cá nhân
+            </MenuItem>
             <MenuItem
               onClick={handleLogout}
               disabled={logoutMutation.isPending}

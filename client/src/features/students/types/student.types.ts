@@ -31,6 +31,12 @@ export interface UpdateStudentRequest {
   userId?: string;
 }
 
+export interface PrerequisiteSubjectInfoDto {
+  id: string;
+  prerequisiteCode: string;
+  prerequisiteName: string;
+}
+
 export interface SubjectResponseDto {
   id: string;
   name: string;
@@ -41,6 +47,7 @@ export interface SubjectResponseDto {
   semester: string;
   ingredientSecretion: any;
   isStudied: boolean;
+  prerequisites?: PrerequisiteSubjectInfoDto[];
   createdAt: string;
   updatedAt: string;
 }

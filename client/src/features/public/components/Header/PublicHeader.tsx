@@ -7,12 +7,16 @@ import {
   Avatar,
   Menu,
   MenuItem,
+  ListItemIcon,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import PersonIcon from "@mui/icons-material/Person";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useState } from "react";
 import { useAuthStore } from "@/store/auth.store";
 import { useLogoutMutation } from "@/features/auth/mutations/auth.mutations";
+import { useNavigate } from "react-router-dom";
 
 interface PublicHeaderProps {
   onMenuClick?: () => void;
@@ -31,6 +35,7 @@ export const PublicHeader = ({
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const logoutMutation = useLogoutMutation();
+  const navigate = useNavigate();
 
   const userDisplayName = (user as any)?.name || "Khách";
   const userEmail = user?.email || "";
@@ -41,6 +46,11 @@ export const PublicHeader = ({
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleProfile = () => {
+    handleClose();
+    navigate("/public/profile");
   };
 
   const handleLogout = () => {
@@ -158,15 +168,26 @@ export const PublicHeader = ({
           PaperProps={{
             sx: {
               mt: 1,
-              minWidth: 160,
+              minWidth: 180,
               boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
             },
           }}
         >
+          {isAuthenticated() && (
+            <MenuItem onClick={handleProfile}>
+              <ListItemIcon>
+                <PersonIcon fontSize="small" />
+              </ListItemIcon>
+              Thông tin cá nhân
+            </MenuItem>
+          )}
           <MenuItem
             onClick={handleLogout}
             disabled={!isAuthenticated() || logoutMutation.isPending}
           >
+            <ListItemIcon>
+              <LogoutIcon fontSize="small" />
+            </ListItemIcon>
             <Typography variant="body2" color="error">
               Đăng xuất
             </Typography>

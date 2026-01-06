@@ -174,11 +174,11 @@ export const Sidebar = ({ open, onToggle }: SidebarProps) => {
           path: ROUTE_PATHS.TUITIONS,
           icon: <AttachMoneyIcon />,
         },
-        {
-          title: "Học phí sinh viên",
-          path: ROUTE_PATHS.STUDENT_TUITIONS,
-          icon: <ReceiptIcon />,
-        },
+        // {
+        //   title: "Học phí sinh viên",
+        //   path: ROUTE_PATHS.STUDENT_TUITIONS,
+        //   icon: <ReceiptIcon />,
+        // },
         {
           title: "Gán ngành/chuyên ngành",
           path: ROUTE_PATHS.STUDENT_MAJORS,

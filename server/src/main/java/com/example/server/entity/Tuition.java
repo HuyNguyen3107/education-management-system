@@ -16,7 +16,7 @@ public class Tuition {
     private UUID id;
 
     @Column(nullable = false)
-    private Double price;
+    private Double price; // Price per credit
 
     @Column(nullable = false, length = 100)
     private String semester;

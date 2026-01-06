@@ -51,8 +51,8 @@ const DEFAULT_WEIGHTS = {
   attendance: 10,
   midterm: 10,
   practice: 20,
-  homework: 0,
-  final: 60,
+  homework: 10,
+  final: 50,
 };
 
 const calculateGrade = (grades: GradeFormData) => {
@@ -112,7 +112,8 @@ const calculateGrade = (grades: GradeFormData) => {
 export const GradeEntryPage = () => {
   usePageMeta("Nhập điểm sinh viên");
 
-  const [selectedCreditClassId, setSelectedCreditClassId] = useState<string>("");
+  const [selectedCreditClassId, setSelectedCreditClassId] =
+    useState<string>("");
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedEnrollment, setSelectedEnrollment] =
     useState<StudentCreditClass | null>(null);
@@ -133,16 +134,13 @@ export const GradeEntryPage = () => {
 
   // Create student lookup map
   const studentMap = useMemo(() => {
-    return students.reduce(
-      (acc, student) => {
-        acc[student.id] = {
-          code: student.studentCode,
-          name: student.studentCode, // Use student code as name since we don't have name in Student type
-        };
-        return acc;
-      },
-      {} as Record<string, { code: string; name: string }>
-    );
+    return students.reduce((acc, student) => {
+      acc[student.id] = {
+        code: student.studentCode,
+        name: student.studentCode, // Use student code as name since we don't have name in Student type
+      };
+      return acc;
+    }, {} as Record<string, { code: string; name: string }>);
   }, [students]);
 
   // Filter enrollments by selected credit class
@@ -152,8 +150,6 @@ export const GradeEntryPage = () => {
       (scc) => scc.creditClassId === selectedCreditClassId
     );
   }, [studentCreditClassesData, selectedCreditClassId]);
-
-
 
   const handleCreditClassChange = (event: SelectChangeEvent) => {
     setSelectedCreditClassId(event.target.value);
@@ -236,7 +232,11 @@ export const GradeEntryPage = () => {
           weight: DEFAULT_WEIGHTS.homework,
           score: grades.homework,
         },
-        { name: "Điểm thi", weight: DEFAULT_WEIGHTS.final, score: grades.final },
+        {
+          name: "Điểm thi",
+          weight: DEFAULT_WEIGHTS.final,
+          score: grades.final,
+        },
       ],
     };
 
@@ -354,7 +354,10 @@ export const GradeEntryPage = () => {
                 }}
                 elevation={0}
               >
-                <Typography variant="h4" sx={{ fontWeight: 700, color: "primary.main" }}>
+                <Typography
+                  variant="h4"
+                  sx={{ fontWeight: 700, color: "primary.main" }}
+                >
                   {stats.total}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -372,7 +375,10 @@ export const GradeEntryPage = () => {
                 }}
                 elevation={0}
               >
-                <Typography variant="h4" sx={{ fontWeight: 700, color: "info.main" }}>
+                <Typography
+                  variant="h4"
+                  sx={{ fontWeight: 700, color: "info.main" }}
+                >
                   {stats.graded}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -390,7 +396,10 @@ export const GradeEntryPage = () => {
                 }}
                 elevation={0}
               >
-                <Typography variant="h4" sx={{ fontWeight: 700, color: "success.main" }}>
+                <Typography
+                  variant="h4"
+                  sx={{ fontWeight: 700, color: "success.main" }}
+                >
                   {stats.passed}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -408,7 +417,10 @@ export const GradeEntryPage = () => {
                 }}
                 elevation={0}
               >
-                <Typography variant="h4" sx={{ fontWeight: 700, color: "warning.main" }}>
+                <Typography
+                  variant="h4"
+                  sx={{ fontWeight: 700, color: "warning.main" }}
+                >
                   {stats.passRate}%
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -502,7 +514,9 @@ export const GradeEntryPage = () => {
                             }
                             size="small"
                             variant={
-                              scoreDisplay.letter === "F" ? "filled" : "outlined"
+                              scoreDisplay.letter === "F"
+                                ? "filled"
+                                : "outlined"
                             }
                             sx={{ fontWeight: 700, minWidth: 40 }}
                           />
@@ -529,7 +543,12 @@ export const GradeEntryPage = () => {
       )}
 
       {/* Grade Entry Dialog */}
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Nhập điểm sinh viên</DialogTitle>
         <DialogContent>
           <Box sx={{ mt: 2 }}>
@@ -638,7 +657,9 @@ export const GradeEntryPage = () => {
                       <Typography variant="h6" sx={{ fontWeight: 700 }}>
                         <Chip
                           label={calculated.letter}
-                          color={calculated.letter === "F" ? "error" : "success"}
+                          color={
+                            calculated.letter === "F" ? "error" : "success"
+                          }
                           size="small"
                         />
                       </Typography>

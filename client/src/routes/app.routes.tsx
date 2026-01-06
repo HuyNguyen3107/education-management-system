@@ -153,6 +153,10 @@ export const AppRoutes = () => {
               path: "grade-viewing",
               element: <StudentGradePage />,
             },
+            {
+              path: "profile",
+              element: <ProfilePage />,
+            },
           ],
         },
       ],

@@ -1,15 +1,18 @@
 package com.example.server.service;
 
 import com.example.server.dto.CreateStudentDto;
+import com.example.server.dto.PrerequisiteSubjectInfoDto;
 import com.example.server.dto.StudentResponseDto;
 import com.example.server.dto.SubjectResponseDto;
 import com.example.server.dto.TrainingProgramDto;
 import com.example.server.dto.UpdateStudentDto;
+import com.example.server.entity.PrerequisiteSubject;
 import com.example.server.entity.Student;
 import com.example.server.entity.StudentMajor;
 import com.example.server.entity.Subject;
 import com.example.server.entity.StudentCreditClass;
 import com.example.server.entity.CreditClass;
+import com.example.server.repository.PrerequisiteSubjectRepository;
 import com.example.server.repository.StudentMajorRepository;
 import com.example.server.repository.StudentRepository;
 import com.example.server.repository.SubjectRepository;
@@ -44,6 +47,9 @@ public class StudentService {
 
     @Autowired
     private CreditClassRepository creditClassRepository;
+
+    @Autowired
+    private PrerequisiteSubjectRepository prerequisiteSubjectRepository;
 
     // Lấy tất cả sinh viên
 
@@ -179,7 +185,24 @@ public class StudentService {
         List<TrainingProgramDto> result = new ArrayList<>();
         grouped.forEach((semester, subList) -> {
             List<SubjectResponseDto> subDtos = subList.stream()
-                    .map(s -> new SubjectResponseDto(s, studiedSubjectCodes.contains(s.getSubjectCode())))
+                    .map(s -> {
+                        // Get prerequisites for this subject
+                        List<PrerequisiteSubject> prerequisites = prerequisiteSubjectRepository
+                                .findByRegisterCode(s.getSubjectCode());
+                        
+                        // Build prerequisite info list
+                        List<PrerequisiteSubjectInfoDto> prerequisiteInfos = prerequisites.stream()
+                                .map(ps -> {
+                                    // Find prerequisite subject name
+                                    Subject prereqSubject = subjectRepository.findBySubjectCode(ps.getPrerequisiteCode())
+                                            .orElse(null);
+                                    String prereqName = prereqSubject != null ? prereqSubject.getName() : ps.getPrerequisiteCode();
+                                    return new PrerequisiteSubjectInfoDto(ps.getId(), ps.getPrerequisiteCode(), prereqName);
+                                })
+                                .collect(Collectors.toList());
+                        
+                        return new SubjectResponseDto(s, studiedSubjectCodes.contains(s.getSubjectCode()), prerequisiteInfos);
+                    })
                     .collect(Collectors.toList());
             double total = subList.stream().mapToDouble(s -> s.getNumberOfCredit() != null ? s.getNumberOfCredit() : 0)
                     .sum();

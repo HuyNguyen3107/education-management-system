@@ -26,10 +26,19 @@ export const useLecturerById = (id: string) => {
   });
 };
 
+export const useLecturerByUserId = (userId: string) => {
+  return useQuery({
+    queryKey: [...lecturerQueryKeys.all, "user", userId],
+    queryFn: () => lecturerService.getLecturerByUserId(userId),
+    enabled: !!userId,
+  });
+};
+
 export const useCreateLecturer = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateLecturerRequest) => lecturerService.createLecturer(data),
+    mutationFn: (data: CreateLecturerRequest) =>
+      lecturerService.createLecturer(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: lecturerQueryKeys.all });
     },
@@ -56,4 +65,3 @@ export const useDeleteLecturer = () => {
     },
   });
 };
-

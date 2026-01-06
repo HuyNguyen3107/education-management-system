@@ -135,9 +135,8 @@ public class PrerequisiteSubjectService {
                 }
             }
         }
-        // Nếu không có userId hoặc không tìm thấy sinh viên/ngành, trả về tất cả (hoặc
-        // list rỗng tùy logic, ở đây giữ nguyên logic cũ là trả về tất cả nếu không
-        // lọc)
-        return prerequisiteSubjectRepository.findAllWithNames();
+        // Nếu không có userId hoặc không tìm thấy sinh viên/ngành, trả về list rỗng
+        // Chỉ hiển thị môn học tiên quyết của ngành/chuyên ngành của user đó
+        return Collections.emptyList();
     }
 }

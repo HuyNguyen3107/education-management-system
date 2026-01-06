@@ -13,7 +13,6 @@ import {
   Visibility,
   VisibilityOff,
   School,
-  Microsoft,
   Email as EmailIcon,
   Lock,
 } from "@mui/icons-material";
@@ -205,20 +204,6 @@ export const LoginPage = () => {
                 size="large"
               >
                 {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
-              </Button>
-
-              <Box className={styles.divider}>
-                <span>Hoặc</span>
-              </Box>
-
-              <Button
-                fullWidth
-                variant="outlined"
-                className={styles.microsoftButton}
-                startIcon={<Microsoft />}
-                size="large"
-              >
-                Đăng nhập với Microsoft
               </Button>
             </form>
           </Paper>

@@ -19,6 +19,10 @@ public class Student {
     @Column(name = "user_id", nullable = false)
     private UUID userId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User user;
+
     @Column(name = "class_id")
     private UUID classId;
 
@@ -71,6 +75,14 @@ public class Student {
 
     public void setUserId(UUID userId) {
         this.userId = userId;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public UUID getClassId() {

@@ -25,7 +25,6 @@ import { useMajors } from "@/features/majors/queries/major.queries";
 import { useSpecializations } from "@/features/specializations/queries/specialization.queries";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import ListIcon from "@mui/icons-material/List";
-import CheckIcon from "@mui/icons-material/Check";
 import { useMemo, Fragment, useState } from "react";
 import type {
   TrainingProgramDto,
@@ -41,6 +40,33 @@ export const TrainingProgramPage = () => {
     isError,
     error,
   } = useTrainingProgram(user?.id || "");
+
+  // Sort training program by semester (year 1 to final year)
+  const sortedTrainingProgram = useMemo(() => {
+    if (!trainingProgram || trainingProgram.length === 0) return [];
+
+    return [...trainingProgram].sort((a, b) => {
+      // Parse semester format: "Năm X - Học kỳ Y"
+      const parseSemester = (semesterStr: string) => {
+        const yearMatch = semesterStr.match(/Năm\s*(\d+)/i);
+        const semesterMatch = semesterStr.match(/Học kỳ\s*(\d+)/i);
+
+        const year = yearMatch ? parseInt(yearMatch[1], 10) : 0;
+        const semester = semesterMatch ? parseInt(semesterMatch[1], 10) : 0;
+
+        return { year, semester };
+      };
+
+      const semesterA = parseSemester(a.semester);
+      const semesterB = parseSemester(b.semester);
+
+      // Sort by year first, then by semester
+      if (semesterA.year !== semesterB.year) {
+        return semesterA.year - semesterB.year;
+      }
+      return semesterA.semester - semesterB.semester;
+    });
+  }, [trainingProgram]);
 
   const [openModal, setOpenModal] = useState(false);
   const [selectedSubject, setSelectedSubject] =
@@ -104,7 +130,7 @@ export const TrainingProgramPage = () => {
     return (
       <Fragment key={semesterData.semester}>
         <TableRow sx={{ backgroundColor: "#e0e0e0" }}>
-          <TableCell colSpan={11}>
+          <TableCell colSpan={9}>
             <Box
               sx={{ display: "flex", justifyContent: "space-between", pr: 2 }}
             >
@@ -128,12 +154,6 @@ export const TrainingProgramPage = () => {
                 : ""}
             </TableCell>
             <TableCell align="center">{subject.numberOfCredit}</TableCell>
-            <TableCell align="center" sx={{ color: "red" }}>
-              x
-            </TableCell>
-            <TableCell align="center" sx={{ color: "red" }}>
-              {subject.isStudied ? <CheckIcon fontSize="small" /> : ""}
-            </TableCell>
             <TableCell align="center">{getPeriods(subject, "total")}</TableCell>
             <TableCell align="center">
               {getPeriods(subject, "lý thuyết")}
@@ -225,8 +245,6 @@ export const TrainingProgramPage = () => {
               <TableCell>Tên môn học</TableCell>
               <TableCell>Chuyên ngành</TableCell>
               <TableCell>Số tín chỉ</TableCell>
-              <TableCell>Môn bắt buộc</TableCell>
-              <TableCell>Đã học</TableCell>
               <TableCell>Tổng tiết</TableCell>
               <TableCell>Lý thuyết</TableCell>
               <TableCell>Thực hành</TableCell>
@@ -234,11 +252,11 @@ export const TrainingProgramPage = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {trainingProgram && trainingProgram.length > 0 ? (
-              trainingProgram.map(renderSemester)
+            {sortedTrainingProgram && sortedTrainingProgram.length > 0 ? (
+              sortedTrainingProgram.map(renderSemester)
             ) : (
               <TableRow>
-                <TableCell colSpan={11} align="center">
+                <TableCell colSpan={9} align="center">
                   Không có dữ liệu
                 </TableCell>
               </TableRow>
@@ -250,55 +268,108 @@ export const TrainingProgramPage = () => {
       <Dialog
         open={openModal}
         onClose={handleCloseModal}
-        maxWidth="sm"
+        maxWidth="md"
         fullWidth
       >
         <DialogTitle sx={{ borderBottom: "1px solid #e0e0e0", pb: 1 }}>
           <Typography variant="h6" fontWeight="bold">
-            Tiết thành phần - {selectedSubject?.name}
+            Chi tiết môn học - {selectedSubject?.name}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {selectedSubject?.subjectCode}
           </Typography>
         </DialogTitle>
         <DialogContent sx={{ mt: 2 }}>
-          {selectedSubject?.ingredientSecretion &&
-          Array.isArray(selectedSubject.ingredientSecretion) &&
-          selectedSubject.ingredientSecretion.length > 0 ? (
-            <TableContainer component={Paper} variant="outlined">
-              <Table size="small">
-                <TableHead>
-                  <TableRow sx={{ bgcolor: "#f5f5f5" }}>
-                    <TableCell>Tên thành phần</TableCell>
-                    <TableCell align="center">Số tiết</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {selectedSubject.ingredientSecretion.map(
-                    (item: any, idx: number) => (
-                      <TableRow key={idx} hover>
-                        <TableCell>{item.name}</TableCell>
-                        <TableCell align="center">{item.periods}</TableCell>
-                      </TableRow>
-                    )
-                  )}
-                  <TableRow sx={{ bgcolor: "#f9fafb" }}>
-                    <TableCell sx={{ fontWeight: "bold" }}>Tổng cộng</TableCell>
-                    <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                      {selectedSubject.ingredientSecretion.reduce(
-                        (sum: number, item: any) => sum + (item.periods || 0),
-                        0
-                      )}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
-          ) : (
-            <Typography align="center" color="text.secondary" sx={{ py: 3 }}>
-              Không có thông tin tiết thành phần
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
+              Tiết thành phần
             </Typography>
-          )}
+            {selectedSubject?.ingredientSecretion &&
+            Array.isArray(selectedSubject.ingredientSecretion) &&
+            selectedSubject.ingredientSecretion.length > 0 ? (
+              <TableContainer component={Paper} variant="outlined">
+                <Table size="small">
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: "#f5f5f5" }}>
+                      <TableCell>Tên thành phần</TableCell>
+                      <TableCell align="center">Số tiết</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {selectedSubject.ingredientSecretion.map(
+                      (item: any, idx: number) => (
+                        <TableRow key={idx} hover>
+                          <TableCell>{item.name}</TableCell>
+                          <TableCell align="center">{item.periods}</TableCell>
+                        </TableRow>
+                      )
+                    )}
+                    <TableRow sx={{ bgcolor: "#f9fafb" }}>
+                      <TableCell sx={{ fontWeight: "bold" }}>
+                        Tổng cộng
+                      </TableCell>
+                      <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                        {selectedSubject.ingredientSecretion.reduce(
+                          (sum: number, item: any) => sum + (item.periods || 0),
+                          0
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            ) : (
+              <Typography align="center" color="text.secondary" sx={{ py: 2 }}>
+                Không có thông tin tiết thành phần
+              </Typography>
+            )}
+          </Box>
+
+          <Box>
+            <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
+              Môn học tiên quyết
+            </Typography>
+            {selectedSubject?.prerequisites &&
+            Array.isArray(selectedSubject.prerequisites) &&
+            selectedSubject.prerequisites.length > 0 ? (
+              <TableContainer component={Paper} variant="outlined">
+                <Table size="small">
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: "#f5f5f5" }}>
+                      <TableCell>STT</TableCell>
+                      <TableCell>Mã môn tiên quyết</TableCell>
+                      <TableCell>Tên môn tiên quyết</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {selectedSubject.prerequisites.map(
+                      (prereq: any, idx: number) => (
+                        <TableRow key={idx} hover>
+                          <TableCell align="center">{idx + 1}</TableCell>
+                          <TableCell>
+                            <Typography
+                              component="span"
+                              sx={{
+                                fontWeight: 600,
+                                color: "#b71c1c",
+                              }}
+                            >
+                              {prereq.prerequisiteCode}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>{prereq.prerequisiteName}</TableCell>
+                        </TableRow>
+                      )
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            ) : (
+              <Typography align="center" color="text.secondary" sx={{ py: 2 }}>
+                Không có môn học tiên quyết
+              </Typography>
+            )}
+          </Box>
         </DialogContent>
         <DialogActions sx={{ borderTop: "1px solid #e0e0e0", pt: 1 }}>
           <Button onClick={handleCloseModal} color="inherit">

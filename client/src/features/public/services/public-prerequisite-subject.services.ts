@@ -4,7 +4,7 @@ import { type PrerequisiteSubjectPublic } from "../types/public-prerequisite-sub
 export const getPublicPrerequisiteSubjects = async (userId?: string) => {
   const params = userId ? { userId } : {};
   const response = await http.get<PrerequisiteSubjectPublic[]>(
-    "/api/prerequisite-subjects/public",
+    "/prerequisite-subjects/public",
     { params }
   );
   return response.data;

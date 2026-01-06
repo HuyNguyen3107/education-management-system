@@ -49,8 +49,8 @@ const DEFAULT_SCORES: ScoreItem[] = [
   { name: "Chuyên cần", percentage: 10, score: 0 },
   { name: "Kiểm tra", percentage: 10, score: 0 },
   { name: "Thực hành", percentage: 20, score: 0 },
-  { name: "Bài tập", percentage: 0, score: 0 },
-  { name: "Điểm thi", percentage: 60, score: 0 },
+  { name: "Bài tập", percentage: 10, score: 0 },
+  { name: "Điểm thi", percentage: 50, score: 0 },
 ];
 
 export const StudentCreditClassFormDialog = ({
@@ -93,8 +93,6 @@ export const StudentCreditClassFormDialog = ({
   const selectedCreditClass = creditClasses.find(
     (cc) => cc.id === selectedCreditClassId
   );
-
-
 
   useEffect(() => {
     if (initialData) {

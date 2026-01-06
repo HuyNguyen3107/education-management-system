@@ -35,9 +35,16 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useState, useEffect, useMemo } from "react";
 import { StudentTuitionFormDialog } from "../components/StudentTuitionFormDialog";
 import { StudentTuitionDeleteDialog } from "../components/StudentTuitionDeleteDialog";
-import type { StudentTuition, CreateStudentTuitionRequest } from "../types/student-tuition.types";
+import type {
+  StudentTuition,
+  CreateStudentTuitionRequest,
+} from "../types/student-tuition.types";
 import { toast } from "react-toastify";
 import { usePageMeta } from "@/hooks/usePageMeta";
+import { TuitionCalculationDialog } from "../../tuition-calculation/components/TuitionCalculationDialog";
+import { tuitionCalculationService } from "../../tuition-calculation/services/tuition-calculation.services";
+import type { TuitionCalculation } from "../../tuition-calculation/types/tuition-calculation.types";
+import CalculateIcon from "@mui/icons-material/Calculate";
 
 export const StudentTuitionsPage = () => {
   usePageMeta("Quản lý học phí sinh viên");
@@ -47,10 +54,18 @@ export const StudentTuitionsPage = () => {
   const [selectedTuitionId, setSelectedTuitionId] = useState<string>("");
 
   const [formOpen, setFormOpen] = useState(false);
-  const [editingStudentTuition, setEditingStudentTuition] = useState<StudentTuition | null>(null);
+  const [editingStudentTuition, setEditingStudentTuition] =
+    useState<StudentTuition | null>(null);
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [studentTuitionToDelete, setStudentTuitionToDelete] = useState<StudentTuition | null>(null);
+  const [studentTuitionToDelete, setStudentTuitionToDelete] =
+    useState<StudentTuition | null>(null);
+
+  // Tuition calculation dialog state
+  const [calculationDialogOpen, setCalculationDialogOpen] = useState(false);
+  const [calculationData, setCalculationData] =
+    useState<TuitionCalculation | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -59,7 +74,11 @@ export const StudentTuitionsPage = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const { data: studentTuitionsData, isLoading, isError } = useStudentTuitions();
+  const {
+    data: studentTuitionsData,
+    isLoading,
+    isError,
+  } = useStudentTuitions();
   const { data: students = [] } = useStudents();
   const { data: tuitions = [] } = useTuitions();
 
@@ -107,7 +126,13 @@ export const StudentTuitionsPage = () => {
     }
 
     return result;
-  }, [studentTuitionsData, debouncedSearch, selectedStudentId, selectedTuitionId, studentMap]);
+  }, [
+    studentTuitionsData,
+    debouncedSearch,
+    selectedStudentId,
+    selectedTuitionId,
+    studentMap,
+  ]);
 
   const handleStudentFilterChange = (event: SelectChangeEvent) => {
     setSelectedStudentId(event.target.value);
@@ -171,6 +196,27 @@ export const StudentTuitionsPage = () => {
           toast.error(error.response?.data?.message || "Có lỗi xảy ra");
         },
       });
+    }
+  };
+
+  const handleCalculateTuition = async (studentId: string) => {
+    try {
+      setIsCalculating(true);
+      const result = await tuitionCalculationService.calculateStudentTuition(
+        studentId
+      );
+      if (result && result.length > 0) {
+        setCalculationData(result[0]);
+        setCalculationDialogOpen(true);
+      } else {
+        toast.error("Không thể tính học phí cho sinh viên này");
+      }
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message || "Có lỗi xảy ra khi tính học phí"
+      );
+    } finally {
+      setIsCalculating(false);
     }
   };
 
@@ -351,6 +397,14 @@ export const StudentTuitionsPage = () => {
                           <EditIcon />
                         </IconButton>
                         <IconButton
+                          color="info"
+                          onClick={() => handleCalculateTuition(st.studentId)}
+                          disabled={isCalculating}
+                          title="Tính học phí tự động"
+                        >
+                          <CalculateIcon />
+                        </IconButton>
+                        <IconButton
                           color="error"
                           onClick={() => handleDeleteClick(st)}
                         >
@@ -383,7 +437,13 @@ export const StudentTuitionsPage = () => {
         onConfirm={handleConfirmDelete}
         isLoading={deleteStudentTuitionMutation.isPending}
       />
+
+      <TuitionCalculationDialog
+        open={calculationDialogOpen}
+        onClose={() => setCalculationDialogOpen(false)}
+        data={calculationData}
+        isLoading={isCalculating}
+      />
     </Box>
   );
 };
-

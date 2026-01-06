@@ -64,6 +64,8 @@ export interface CreateUserRequest {
   academicYear?: string;
   educationLevel?: string;
   role: string;
+  roleId?: string;
+  majorId?: string;
 }
 
 export interface UpdateUserRequest {

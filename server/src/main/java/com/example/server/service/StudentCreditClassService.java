@@ -24,19 +24,22 @@ public class StudentCreditClassService {
     private final CreditClassRepository creditClassRepository;
     private final SubjectRepository subjectRepository;
     private final TeacherRepository teacherRepository;
+    private final PrerequisiteSubjectRepository prerequisiteSubjectRepository;
 
     public StudentCreditClassService(StudentCreditClassRepository studentCreditClassRepository,
             TimeRegisterRepository timeRegisterRepository,
             AspirationRegisterRepository aspirationRegisterRepository,
             CreditClassRepository creditClassRepository,
             SubjectRepository subjectRepository,
-            TeacherRepository teacherRepository) {
+            TeacherRepository teacherRepository,
+            PrerequisiteSubjectRepository prerequisiteSubjectRepository) {
         this.studentCreditClassRepository = studentCreditClassRepository;
         this.timeRegisterRepository = timeRegisterRepository;
         this.aspirationRegisterRepository = aspirationRegisterRepository;
         this.creditClassRepository = creditClassRepository;
         this.subjectRepository = subjectRepository;
         this.teacherRepository = teacherRepository;
+        this.prerequisiteSubjectRepository = prerequisiteSubjectRepository;
     }
 
     public List<CreditClassResponseDto> getAvailableClassesForRegistration(UUID studentId) {
@@ -358,6 +361,24 @@ public class StudentCreditClassService {
             throw new RuntimeException("Sinh viên đã đăng ký lớp học phần này");
         }
 
+        // Validate prerequisites
+        Optional<Subject> subjectOpt = subjectRepository.findBySubjectCode(creditClass.getSubjectCode());
+        if (subjectOpt.isPresent()) {
+            Subject subject = subjectOpt.get();
+            if (!validatePrerequisites(subject, createStudentCreditClassDto.getStudentId())) {
+                // Get prerequisites for error message
+                List<PrerequisiteSubject> prerequisites = prerequisiteSubjectRepository
+                        .findByRegisterCode(subject.getSubjectCode());
+                StringBuilder errorMsg = new StringBuilder("Bạn chưa đáp ứng điều kiện tiên quyết cho môn này. ");
+                errorMsg.append("Bạn cần học và đạt điểm qua (không phải F) các môn: ");
+                for (int i = 0; i < prerequisites.size(); i++) {
+                    if (i > 0) errorMsg.append(", ");
+                    errorMsg.append(prerequisites.get(i).getPrerequisiteCode());
+                }
+                throw new RuntimeException(errorMsg.toString());
+            }
+        }
+
         StudentCreditClass studentCreditClass = new StudentCreditClass();
         studentCreditClass.setStudentId(createStudentCreditClassDto.getStudentId());
         studentCreditClass.setCreditClassId(createStudentCreditClassDto.getCreditClassId());
@@ -415,5 +436,93 @@ public class StudentCreditClassService {
             throw new RuntimeException("Không tìm thấy đăng ký lớp tín chỉ với ID: " + id);
         }
         studentCreditClassRepository.deleteById(id);
+    }
+
+    /**
+     * Validate that a student has passed all prerequisites for a subject
+     * @param subject The subject to check prerequisites for
+     * @param studentId The student ID
+     * @return true if all prerequisites are met, false otherwise
+     */
+    private boolean validatePrerequisites(Subject subject, UUID studentId) {
+        // Get all prerequisites for this subject
+        List<PrerequisiteSubject> prerequisites = prerequisiteSubjectRepository
+                .findByRegisterCode(subject.getSubjectCode());
+
+        // If no prerequisites, subject is available
+        if (prerequisites.isEmpty()) {
+            return true;
+        }
+
+        // Check each prerequisite
+        for (PrerequisiteSubject prerequisite : prerequisites) {
+            String prerequisiteCode = prerequisite.getPrerequisiteCode();
+
+            // Check if student has passed this prerequisite subject
+            if (!hasPassedPrerequisite(studentId, prerequisiteCode)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if a student has passed a prerequisite subject
+     * @param studentId The student ID
+     * @param subjectCode The subject code to check
+     * @return true if student has passed the subject (not F grade), false otherwise
+     */
+    private boolean hasPassedPrerequisite(UUID studentId, String subjectCode) {
+        // Get all credit classes the student has enrolled in
+        List<StudentCreditClass> studentCreditClasses = studentCreditClassRepository
+                .findByStudentId(studentId);
+
+        // Check each credit class to see if it matches the prerequisite subject
+        for (StudentCreditClass scc : studentCreditClasses) {
+            Optional<CreditClass> creditClassOpt = creditClassRepository.findById(scc.getCreditClassId());
+            if (creditClassOpt.isPresent()) {
+                CreditClass cc = creditClassOpt.get();
+                if (cc.getSubjectCode().equals(subjectCode)) {
+                    // Found the subject, check if student passed (not failed)
+                    return !isFailed(scc.getScores());
+                }
+            }
+        }
+
+        // Student hasn't taken this prerequisite subject yet
+        return false;
+    }
+
+    /**
+     * Check if a score indicates a failed grade
+     * @param scores The scores JSON node
+     * @return true if failed (F grade or score < 4.0), false otherwise
+     */
+    private boolean isFailed(JsonNode scores) {
+        if (scores == null)
+            return false;
+        // Check for specific "F" grade or score < 4.0
+        // Structure assumption: simple key-value or complex object
+
+        // Strategy 1: Look for "grade": "F" or "letter_grade": "F"
+        if (scores.has("grade") && "F".equalsIgnoreCase(scores.get("grade").asText()))
+            return true;
+        if (scores.has("letter_grade") && "F".equalsIgnoreCase(scores.get("letter_grade").asText()))
+            return true;
+        if (scores.has("letter") && "F".equalsIgnoreCase(scores.get("letter").asText()))
+            return true;
+
+        // Strategy 2: Look for "final_score" or "final" < 4.0
+        double finalScore = -1;
+        if (scores.has("final_score"))
+            finalScore = scores.get("final_score").asDouble();
+        else if (scores.has("final"))
+            finalScore = scores.get("final").asDouble();
+
+        if (finalScore >= 0 && finalScore < 4.0)
+            return true;
+
+        return false;
     }
 }

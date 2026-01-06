@@ -36,9 +36,12 @@ interface IUserRoleService {
 // User Service Implementation
 class UserService implements IUserService {
   async getAllUsers(): Promise<User[]> {
-    const response = await http.get<PageResponse<User>>(API_PATHS.USERS.GET_ALL, {
-      params: { size: 10000 }, // Get all users
-    });
+    const response = await http.get<PageResponse<User>>(
+      API_PATHS.USERS.GET_ALL,
+      {
+        params: { size: 10000 }, // Get all users
+      }
+    );
     // Handle both PageResponse and array response
     if (Array.isArray(response.data)) {
       return response.data;
@@ -52,9 +55,12 @@ class UserService implements IUserService {
   }
 
   async getUsers(params?: UserSearchParams): Promise<PageResponse<User>> {
-    const response = await http.get<PageResponse<User>>(API_PATHS.USERS.GET_ALL, {
-      params,
-    });
+    const response = await http.get<PageResponse<User>>(
+      API_PATHS.USERS.GET_ALL,
+      {
+        params,
+      }
+    );
     // Handle legacy list response just in case
     if (Array.isArray(response.data)) {
       return {
@@ -73,7 +79,9 @@ class UserService implements IUserService {
   }
 
   async createUser(data: CreateUserRequest): Promise<User> {
-    const response = await http.post<User>(API_PATHS.USERS.CREATE, data);
+    // Remove roleId from data if it exists, as it's used separately for role assignment
+    const { roleId, ...userData } = data as any;
+    const response = await http.post<User>(API_PATHS.USERS.CREATE, userData);
     return response.data;
   }
 

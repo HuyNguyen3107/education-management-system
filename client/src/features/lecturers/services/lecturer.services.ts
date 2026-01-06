@@ -17,13 +17,26 @@ export const lecturerService = {
     return response.data;
   },
 
+  getLecturerByUserId: async (userId: string): Promise<Lecturer> => {
+    const response = await http.get<Lecturer>(
+      API_PATHS.TEACHERS.GET_BY_USER_ID(userId)
+    );
+    return response.data;
+  },
+
   createLecturer: async (data: CreateLecturerRequest): Promise<Lecturer> => {
     const response = await http.post<Lecturer>(API_PATHS.TEACHERS.CREATE, data);
     return response.data;
   },
 
-  updateLecturer: async (id: string, data: UpdateLecturerRequest): Promise<Lecturer> => {
-    const response = await http.put<Lecturer>(API_PATHS.TEACHERS.UPDATE(id), data);
+  updateLecturer: async (
+    id: string,
+    data: UpdateLecturerRequest
+  ): Promise<Lecturer> => {
+    const response = await http.put<Lecturer>(
+      API_PATHS.TEACHERS.UPDATE(id),
+      data
+    );
     return response.data;
   },
 
@@ -31,4 +44,3 @@ export const lecturerService = {
     await http.delete(API_PATHS.TEACHERS.DELETE(id));
   },
 };
-

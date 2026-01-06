@@ -43,6 +43,39 @@ export const TuitionFormDialog = ({
   initialData,
   isLoading,
 }: TuitionFormDialogProps) => {
+  const validateYearFormat = (year: string) => {
+    // Validate year format (YYYY)
+    const yearRegex = /^\d{4}$/;
+    if (!year) return "Năm học là bắt buộc";
+    if (!yearRegex.test(year)) {
+      return "Năm học phải có định dạng YYYY (ví dụ: 2025)";
+    }
+    const yearNum = parseInt(year);
+    const currentYear = new Date().getFullYear();
+    if (yearNum < 2000 || yearNum > currentYear + 1) {
+      return `Năm học phải từ 2000 đến ${currentYear + 1}`;
+    }
+    return true;
+  };
+
+  const validateAcademicYearFormat = (academicYear: string) => {
+    // Validate academic year format (YYYY-YYYY)
+    const academicYearRegex = /^\d{4}-\d{4}$/;
+    if (!academicYear) return "Niên khóa là bắt buộc";
+    if (!academicYearRegex.test(academicYear)) {
+      return "Niên khóa phải có định dạng YYYY-YYYY (ví dụ: 2021-2026)";
+    }
+    const [startYear, endYear] = academicYear.split("-").map(Number);
+    const currentYear = new Date().getFullYear();
+    if (startYear < 2000 || endYear > currentYear + 10) {
+      return "Niên khóa không hợp lệ";
+    }
+    if (endYear - startYear < 3 || endYear - startYear > 6) {
+      return "Niên khóa phải từ 3-6 năm (ví dụ: 2021-2026)";
+    }
+    return true;
+  };
+
   const {
     control,
     handleSubmit,
@@ -60,6 +93,7 @@ export const TuitionFormDialog = ({
       year: "",
       academicYear: "",
     },
+    mode: "onBlur", // Validate on blur for better UX
   });
 
   useEffect(() => {
@@ -119,15 +153,20 @@ export const TuitionFormDialog = ({
             <Controller
               name="year"
               control={control}
-              rules={{ required: "Năm học là bắt buộc" }}
+              rules={{
+                required: "Năm học là bắt buộc",
+                validate: validateYearFormat,
+              }}
               render={({ field }) => (
                 <TextField
                   {...field}
                   label="Năm học"
                   fullWidth
                   error={!!errors.year}
-                  helperText={errors.year?.message}
-                  placeholder="VD: 2024-2025"
+                  helperText={
+                    errors.year?.message || "Định dạng: YYYY (ví dụ: 2025)"
+                  }
+                  placeholder="VD: 2025"
                 />
               )}
             />
@@ -135,15 +174,21 @@ export const TuitionFormDialog = ({
             <Controller
               name="academicYear"
               control={control}
-              rules={{ required: "Niên khóa là bắt buộc" }}
+              rules={{
+                required: "Niên khóa là bắt buộc",
+                validate: validateAcademicYearFormat,
+              }}
               render={({ field }) => (
                 <TextField
                   {...field}
                   label="Niên khóa"
                   fullWidth
                   error={!!errors.academicYear}
-                  helperText={errors.academicYear?.message}
-                  placeholder="VD: K2024"
+                  helperText={
+                    errors.academicYear?.message ||
+                    "Định dạng: YYYY-YYYY (ví dụ: 2021-2026)"
+                  }
+                  placeholder="VD: 2021-2026"
                 />
               )}
             />
@@ -153,18 +198,28 @@ export const TuitionFormDialog = ({
               control={control}
               rules={{
                 required: "Học phí là bắt buộc",
-                min: { value: 0, message: "Học phí phải lớn hơn 0" },
+                min: {
+                  value: 10000,
+                  message: "Học phí mỗi tín chỉ phải ít nhất 10,000 VND",
+                },
+                max: {
+                  value: 5000000,
+                  message: "Học phí mỗi tín chỉ không được quá 5,000,000 VND",
+                },
               }}
               render={({ field }) => (
                 <TextField
                   {...field}
-                  label="Học phí (VND)"
+                  label="Học phí mỗi tín chỉ (VND)"
                   type="number"
                   fullWidth
                   error={!!errors.price}
-                  helperText={errors.price?.message}
+                  helperText={
+                    errors.price?.message ||
+                    "Học phí sẽ được tính: Tổng số tín chỉ × Học phí mỗi tín chỉ"
+                  }
                   InputProps={{
-                    inputProps: { min: 0, step: 1000 },
+                    inputProps: { min: 10000, max: 5000000, step: 1000 },
                   }}
                   onChange={(e) => {
                     const value = parseFloat(e.target.value) || 0;
@@ -189,4 +244,3 @@ export const TuitionFormDialog = ({
     </Dialog>
   );
 };
-

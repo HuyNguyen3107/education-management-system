@@ -21,6 +21,10 @@ public class StudentCreditClass {
     @Column(name = "credit_class_id", nullable = false)
     private UUID creditClassId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "credit_class_id", insertable = false, updatable = false)
+    private CreditClass creditClass;
+
     @Column(name = "scores")
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode scores;
@@ -80,6 +84,14 @@ public class StudentCreditClass {
 
     public void setCreditClassId(UUID creditClassId) {
         this.creditClassId = creditClassId;
+    }
+
+    public CreditClass getCreditClass() {
+        return creditClass;
+    }
+
+    public void setCreditClass(CreditClass creditClass) {
+        this.creditClass = creditClass;
     }
 
     public JsonNode getScores() {

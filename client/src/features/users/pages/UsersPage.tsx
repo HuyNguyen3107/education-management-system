@@ -28,6 +28,7 @@ import {
   useDeleteUser,
   useGetAllRoles,
   useGetAllUserRoles,
+  useAddRoleToUser,
 } from "../queries/user.queries";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -39,7 +40,12 @@ import { useState, useEffect, useMemo } from "react";
 import { UserFormDialog } from "../components/UserFormDialog";
 import { UserDeleteDialog } from "../components/UserDeleteDialog";
 import { UserRoleDialog } from "../components/UserRoleDialog";
-import type { User, CreateUserRequest, Role, UserRole } from "../types/user.types";
+import type {
+  User,
+  CreateUserRequest,
+  Role,
+  UserRole,
+} from "../types/user.types";
 import { SUPER_ADMIN_EMAIL } from "../constants/super-admin.constants";
 import { toast } from "react-toastify";
 import {
@@ -114,6 +120,7 @@ export const UsersPage = () => {
   const createUserMutation = useCreateUser();
   const updateUserMutation = useUpdateUser();
   const deleteUserMutation = useDeleteUser();
+  const addRoleToUserMutation = useAddRoleToUser();
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
@@ -151,7 +158,9 @@ export const UsersPage = () => {
 
   const handleAssignRoles = (user: User) => {
     if (user.email === SUPER_ADMIN_EMAIL) {
-      toast.error("Tài khoản super admin luôn là ADMIN và không thể thay đổi vai trò");
+      toast.error(
+        "Tài khoản super admin luôn là ADMIN và không thể thay đổi vai trò"
+      );
       return;
     }
     setSelectedUser(user);
@@ -179,7 +188,17 @@ export const UsersPage = () => {
         await updateUserMutation.mutateAsync({ id: editingUser.id, data });
         toast.success("Cập nhật người dùng thành công");
       } else {
-        await createUserMutation.mutateAsync(data);
+        // Create user first
+        const newUser = await createUserMutation.mutateAsync(data);
+
+        // Assign role if roleId is provided
+        if (data.roleId && newUser?.id) {
+          await addRoleToUserMutation.mutateAsync({
+            userId: newUser.id,
+            roleId: data.roleId,
+          });
+        }
+
         toast.success("Thêm mới người dùng thành công");
       }
       setFormOpen(false);
@@ -365,9 +384,7 @@ export const UsersPage = () => {
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.phone}</TableCell>
                     <TableCell>{user.gender}</TableCell>
-                    <TableCell>
-                      {userRoleNameMap[user.id] || "—"}
-                    </TableCell>
+                    <TableCell>{userRoleNameMap[user.id] || "—"}</TableCell>
                     <TableCell>
                       <Chip
                         label={getStatusLabel(user.status)}
@@ -410,15 +427,20 @@ export const UsersPage = () => {
       >
         <MenuItem
           onClick={() => selectedUser && handleAssignRoles(selectedUser)}
+          disabled={selectedUser?.email === SUPER_ADMIN_EMAIL}
         >
           <SecurityIcon fontSize="small" sx={{ mr: 1 }} /> Gán vai trò
         </MenuItem>
-        <MenuItem onClick={() => selectedUser && handleEditUser(selectedUser)}>
+        <MenuItem
+          onClick={() => selectedUser && handleEditUser(selectedUser)}
+          disabled={selectedUser?.email === SUPER_ADMIN_EMAIL}
+        >
           <EditIcon fontSize="small" sx={{ mr: 1 }} /> Chỉnh sửa
         </MenuItem>
         <MenuItem
           onClick={() => selectedUser && handleDeleteUser(selectedUser)}
           sx={{ color: "error.main" }}
+          disabled={selectedUser?.email === SUPER_ADMIN_EMAIL}
         >
           <DeleteIcon fontSize="small" sx={{ mr: 1 }} /> Xóa
         </MenuItem>

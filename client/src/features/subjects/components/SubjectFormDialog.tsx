@@ -266,14 +266,31 @@ export const SubjectFormDialog = ({
               control={control}
               rules={{ required: "Học kỳ là bắt buộc" }}
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Học kỳ"
-                  fullWidth
-                  error={!!errors.semester}
-                  helperText={errors.semester?.message}
-                  placeholder="Nhập học kỳ (Ví dụ: HK1 2024-2025)"
-                />
+                <FormControl fullWidth error={!!errors.semester}>
+                  <InputLabel>Học kỳ</InputLabel>
+                  <Select {...field} label="Học kỳ">
+                    <MenuItem value="">
+                      <em>Chọn học kỳ</em>
+                    </MenuItem>
+                    <MenuItem value="Học kỳ 1 năm 1">Học kỳ 1 năm 1</MenuItem>
+                    <MenuItem value="Học kỳ 2 năm 1">Học kỳ 2 năm 1</MenuItem>
+                    <MenuItem value="Học kỳ 1 năm 2">Học kỳ 1 năm 2</MenuItem>
+                    <MenuItem value="Học kỳ 2 năm 2">Học kỳ 2 năm 2</MenuItem>
+                    <MenuItem value="Học kỳ 1 năm 3">Học kỳ 1 năm 3</MenuItem>
+                    <MenuItem value="Học kỳ 2 năm 3">Học kỳ 2 năm 3</MenuItem>
+                    <MenuItem value="Học kỳ 1 năm 4">Học kỳ 1 năm 4</MenuItem>
+                    <MenuItem value="Học kỳ 2 năm 4">Học kỳ 2 năm 4</MenuItem>
+                  </Select>
+                  {errors.semester && (
+                    <Typography
+                      variant="caption"
+                      color="error"
+                      sx={{ mt: 0.5 }}
+                    >
+                      {errors.semester.message}
+                    </Typography>
+                  )}
+                </FormControl>
               )}
             />
 

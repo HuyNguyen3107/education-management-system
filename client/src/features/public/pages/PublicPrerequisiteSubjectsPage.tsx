@@ -11,30 +11,51 @@ import {
 } from "@mui/material";
 import { usePublicPrerequisiteSubjects } from "../queries/public-prerequisite-subject.queries";
 import { type PrerequisiteSubjectPublic } from "../types/public-prerequisite-subject.types";
-import { useEffect, useState } from "react";
 import { usePageMeta } from "@/hooks/usePageMeta";
+import { useEffect, useState } from "react";
+
+// Helper function to get userId from localStorage
+const getUserIdFromLocalStorage = (): string => {
+  try {
+    const authStorage = localStorage.getItem("auth-storage");
+    if (authStorage) {
+      const authData = JSON.parse(authStorage);
+      if (authData?.state?.user?.id) {
+        return authData.state.user.id;
+      }
+    }
+  } catch (error) {
+    console.error("Error reading userId from localStorage:", error);
+  }
+  return "";
+};
 
 export const PublicPrerequisiteSubjectsPage = () => {
-  const [userId, setUserId] = useState<string | undefined>(undefined);
+  const [userId, setUserId] = useState<string>("");
 
   usePageMeta(
     "Tra cứu môn học tiên quyết",
     "Tra cứu danh sách môn học tiên quyết theo chương trình đào tạo của sinh viên."
   );
 
+  // Get userId from localStorage on component mount and listen for changes
   useEffect(() => {
-    // Try to get user info from localStorage
-    try {
-      const userStr = localStorage.getItem("education_client_user");
-      if (userStr) {
-        const user = JSON.parse(userStr);
-        if (user && user.id) {
-          setUserId(user.id);
-        }
+    const id = getUserIdFromLocalStorage();
+    setUserId(id);
+
+    // Listen for storage changes (e.g., when user logs in/out in another tab)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "auth-storage") {
+        const newId = getUserIdFromLocalStorage();
+        setUserId(newId);
       }
-    } catch (error) {
-      console.error("Error reading user from localStorage:", error);
-    }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   const { data: subjects, isLoading } = usePublicPrerequisiteSubjects(userId);

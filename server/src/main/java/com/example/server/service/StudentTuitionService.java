@@ -2,6 +2,7 @@ package com.example.server.service;
 
 import com.example.server.dto.StudentTuitionRequestDto;
 import com.example.server.dto.StudentTuitionResponseDto;
+import com.example.server.entity.Student;
 import com.example.server.entity.StudentTuition;
 import com.example.server.entity.Tuition;
 import com.example.server.repository.StudentRepository;
@@ -11,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,17 +38,57 @@ public class StudentTuitionService {
         this.tuitionRepository = tuitionRepository;
     }
 
-    public List<Map<String, Object>> getStudentTuitionDetails(UUID studentId) {
-        // 1. Get all tuition records assigned to student
-        List<StudentTuition> studentTuitions = studentTuitionRepository.findByStudentId(studentId);
+    public List<Map<String, Object>> getStudentTuitionDetails(UUID userId) {
+        // 1. Get student by user ID to find enrollment date
+        Student student = studentRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Không tìm thấy sinh viên với user id: " + userId));
 
-        // 2. Fetch Tuition details and map
+        LocalDateTime studentEnrollmentDate = student.getCreatedAt();
+        LocalDate enrollmentDate = studentEnrollmentDate.toLocalDate();
+        LocalDate currentDate = LocalDate.now();
+
+        // 2. Get all tuition records assigned to student
+        List<StudentTuition> studentTuitions = studentTuitionRepository.findByStudentId(student.getId());
+
+        // 3. Fetch Tuition details and map
         List<Map<String, Object>> result = new ArrayList<>();
 
         for (StudentTuition st : studentTuitions) {
             Tuition tuition = tuitionRepository.findById(st.getTuitionId()).orElse(null);
             if (tuition == null)
                 continue;
+
+            // Parse tuition year to check if it's within student's study period
+            // Year format is expected to be "YYYY - ZZZZ" or similar
+            String yearStr = tuition.getYear();
+            String[] yearParts = yearStr.split("-");
+            int startYear = 0;
+            int endYear = 0;
+
+            try {
+                if (yearParts.length >= 1) {
+                    startYear = Integer.parseInt(yearParts[0].trim());
+                }
+                if (yearParts.length >= 2) {
+                    endYear = Integer.parseInt(yearParts[1].trim());
+                } else {
+                    endYear = startYear + 1;
+                }
+            } catch (NumberFormatException e) {
+                // If parsing fails, skip this tuition record
+                continue;
+            }
+
+            // Calculate the start date of this academic year (typically September 1st)
+            LocalDate academicYearStart = LocalDate.of(startYear, 9, 1);
+            
+            // Check if this tuition period is after or equal to student's enrollment date
+            // and before or equal to current date
+            if (academicYearStart.isBefore(enrollmentDate) || academicYearStart.isAfter(currentDate)) {
+                continue;
+            }
 
             Map<String, Object> map = new HashMap<>();
             map.put("id", st.getId());
